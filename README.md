@@ -1,3 +1,5 @@
+General Idea
+============
 
 1. DSL to move the turtle/robot is written in Groovy, get inspired by
 http://groovy.codeplex.com/wikipage?title=Guillaume%20Laforge%27s%20%22Mars%20Rover%22%20tutorial%20on%20Groovy%20DSL%27s
@@ -9,3 +11,23 @@ http://groovy.codeplex.com/wikipage?title=Guillaume%20Laforge%27s%20%22Mars%20Ro
 4. html5-mobile-scaffolding for the UI. No GSP, only HTML and JS. http://3musket33rs.github.com/ To go further if time permit:
 
 5. push/ pooling notification: multi players joining a virtual room.
+
+How to organize ourself
+=======================
+
+* use of github issues
+
+* chat room: <http://grails48.hackathon.io/teams/mine>
+
+* I've added Mathieu, Fabrice and Martyn as collaborators, no need to fork.
+
+Who's doing what
+================
+
+* Mathieu dealing with HTML5 canvas
+
+* Corinne working with DSL
+
+* Fabrice for Mobile stuff
+
+* Add your name and what you like to do
