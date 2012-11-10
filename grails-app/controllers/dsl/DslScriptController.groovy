@@ -36,7 +36,7 @@ class DslScriptController {
         def shell = new GroovyShell(binding)
         shell.evaluate(script)
         def json = binding.turtle.result as JSON
-        println json
+        render json
     }
 
 }

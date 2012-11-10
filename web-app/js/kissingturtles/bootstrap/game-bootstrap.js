@@ -11,7 +11,7 @@
                 view:
                 {
                     'list': $('#section-list-games'),
-                    'save': $("#submit-game"),
+                    'execute': $("#submit-game"),
                     'add': $('#section-show-game'),
                     'remove': $("#delete-game")
                 }

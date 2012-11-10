@@ -27,6 +27,7 @@ grails.mobile.mvc.view = function (model, elements) {
     that.elements = elements;
 
     // List of events for the view
+    that.executeButtonClicked = grails.mobile.event();
     that.createButtonClicked = grails.mobile.event();
     that.updateButtonClicked = grails.mobile.event();
     that.addButtonClicked = grails.mobile.event();
