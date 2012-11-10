@@ -10,6 +10,7 @@ target
 *.ipr
 *.iml
 *.iws
+*.backup
 /out
 
 # eclipse
