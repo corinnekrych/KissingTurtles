@@ -21,7 +21,8 @@ class DslScriptController {
         println "in the inputs" + params
         def scriptInstance = new DslScript(params)
         def script = scriptInstance.content
-        def turtle = new Turtle()
+        def turtle = new Turtle("Fanklin", "image")
+
         def binding = new Binding([
                 turtle: turtle,
                 left: dsl.Direction.left,
@@ -29,10 +30,12 @@ class DslScriptController {
                 backward: dsl.Direction.backward,
                 forward: dsl.Direction.forward,
                 turn: turtle.&turn,
-                move: turtle.&move
+                move: turtle.&move,
+                kiss:  turtle.&kiss
         ])
         def shell = new GroovyShell(binding)
         shell.evaluate(script)
+        def json = binding.turtle.result as JSON
 
     }
 
