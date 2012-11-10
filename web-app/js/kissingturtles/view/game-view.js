@@ -175,7 +175,7 @@ kissingturtles.view.gameview = function (model, elements) {
             });
         });
         var div = $("#" + form);
-        div.find('input:text, input:hidden, input[type="number"], input:file, input:password').val('');
+        div.find('input:text, input:hidden, input[type="number"], input:file, input:password, textarea').val('');
         div.find('input:radio, input:checkbox').removeAttr('checked').removeAttr('selected');//.checkboxradio('refresh');
     };
     
@@ -185,65 +185,16 @@ kissingturtles.view.gameview = function (model, elements) {
         $('#list-games').empty();
         var key, items = model.getItems();
         for (key in items) {
-            renderElement(items[key]);
+            var game = items[key];
+            if (game.user1.id != sessionStorage.getItem("KissingTurtles.UserId")) {
+                renderElement(items[key]);
+            }
         }
         $('#list-games').listview('refresh');
-        
     };
 
 
     
-    var refreshSelectDropDown = function (select, newOptions) {
-        var options = null;
-        if(select.prop) {
-            options = select.prop('options');
-        }
-        else {
-            options = select.attr('options');
-        }
-        $('option', select).remove();
-
-        $.each(newOptions, function(val, text) {
-            options[options.length] = new Option(text, val);
-        });
-        select.val(options[0]);
-        select.selectmenu('refresh');
-    };
-
-     var renderDependentList = function (dependentName, items) {
-
-        var manyToOneSelectForDependent = $('select[data-gorm-relation="many-to-one"][name=' + dependentName + ']');
-        var options = {};
-        $.each(items, function() {
-            var key = this.id;
-            var value = this[Object.keys(this)[2]];;
-            options[key] = value;
-            });
-
-        refreshSelectDropDown(manyToOneSelectForDependent, options);
-    };
-
-
-    var refreshMultiChoices = function (oneToMany, dependentName, newOptions) {
-        oneToMany.empty();
-        $.each(newOptions, function(key, val) {
-            oneToMany.append($('<input type="checkbox" data-gorm-relation="one-to-many" name="'+ dependentName +'" id="checkbox-'+ dependentName +'-' + key + '"/><label for="checkbox-'+ dependentName +'-'+key+'">'+val+'</label>'));
-        });
-    };
-
-    var renderMultiChoiceDependentList = function (dependentName, items) {
-        var oneToMany = $('#multichoice-' + dependentName);
-        var options = {};
-        $.each(items, function() {
-            var key = this.id;
-            var value = this[Object.keys(this)[2]];
-            options[key] = value;
-        });
-
-        refreshMultiChoices(oneToMany, dependentName, options);
-    };
-
-
     var renderElement = function (element) {
         if (element.offlineAction !== 'DELETED') {
             var a = $('<a>').attr({ href: '#section-show-game'});
@@ -261,7 +212,7 @@ kissingturtles.view.gameview = function (model, elements) {
     };
 
     var getText = function (data) {
-        return 'Play with ' + data.user1;
+        return 'Play with ' + data.user1.name;
     };
 
     return that;

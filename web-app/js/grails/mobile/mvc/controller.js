@@ -84,9 +84,9 @@ grails.mobile.mvc.controller = function (feed, model, view) {
     };
 
     that.listItem = function () {
-        if ($.isEmptyObject(that.model.getItems())) {
-            var list = feed.listItems(listed);
-        }
+        //if ($.isEmptyObject(that.model.getItems())) {
+            feed.listItems(listed);
+        //}
     };
 
     var listed = function (data) {

@@ -31,6 +31,21 @@
     <script src="js/kissingturtles/manager-bootstrap.js"></script>
     <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
     <script src="js/ktMaze.js"></script>
+
+    <style>
+        #canvas {
+            display: block;
+            margin: 0 auto;
+        }
+
+        .center-wrapper{
+            text-align: center;
+        }
+        .center-wrapper * {
+            margin: 0 auto;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -38,30 +53,37 @@
     <div data-role="header" data-position="fixed">
 
         <h1>Kissing Turtle</h1>
-
     </div>
 
-    <img class="" src="/images/game/turtle_cool.png" />
-    <div data-theme="a" class="text-with-image-centered" data-content-theme="a">
-        <h3>Instructions</h3>
-        <p>Some wonderful text to explain the game</p>
-    </div>
-
-
-
-    <div data-role="content" id="start-presentation">
-
-
-            <div class="ui-block-a"><a href="#section-list-games" data-role="button">Play a Game</a></div>
-
-
+    <div class="center-wrapper" data-role="content" id="start-presentation">
+        <div>
+            <img src="images/game/turtle_cool.png"/>
+        </div>
+        <div data-theme="a" class="center-wrapper" data-content-theme="a">
+            <p>"Kissing Turtles", a Mobile Game to learn programming for kids using Groovy DSL to move the turtle. When starting a new game, little Franklin is lost in the maze, help him find his true love. </p>
+        </div>
+        <div>
+            <a href="#section-list-games" data-role="button" data-inline="true">Play a Game</a>
+            <a href="#section-settings" data-role="button" data-inline="true">Settings</a>
+        </div>
     </div>
 
     <div data-role="footer" data-position="fixed">
-        <div data-role="navbar">
-        </div>
+        <h4>Grails48 - The World's Hackathon</h4>
     </div>
 </section>
+
+<section data-role="page" id="section-settings">
+    <div data-role="header" data-position="fixed">
+
+        <h1>Kissing Turtle</h1>
+    </div>
+    <div data-role="footer" data-position="fixed">
+            <h4>Grails48 - The World's Hackathon</h4>
+    </div>
+</section>
+
+
 
 <section data-role="page" id="section-list-users">
     <div data-role="header" data-position="fixed">
@@ -155,11 +177,14 @@
         <h1>Game</h1>
     </div>
     <form id="form-run" name="form-run">
+
+
+
         <canvas id="canvas" width=300 height=300 style='width:300px;height:300px'></canvas>
         <ul data-role="listview" data-inset="true">
             <li data-role="fieldcontain">
                 <label for="input-move-name">What's your move ?</label>
-                <input type="text" class="validate[required]" name="name" id="input-move-name" value=""/>
+                <textarea class="validate[required]" name="name" id="input-move-name"></textarea>
             </li>
         </ul>
 

@@ -1,7 +1,7 @@
 package kissingturtles
 
 
-import grails.converters.JSON
+import grails.converters.deep.JSON
 import grails.validation.ValidationErrors
 import groovy.json.JsonBuilder;
 
@@ -18,8 +18,7 @@ class GameController {
     }
 
     def list() {
-        params.max = Math.min(params.max ? params.int('max') : 10, 100)
-        render Game.list(params) as JSON
+        render Game.list([fetch: [user1: 'eager', user2: 'eager']]) as JSON
     }
 
     def save() {
