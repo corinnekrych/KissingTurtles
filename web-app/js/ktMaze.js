@@ -8,6 +8,15 @@
   }
 }(this, function () {
   var pixelsPerStep = 100;
+  // Polyfill for requestAnimationFrame
+  var requestAnimationFrame = window.requestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    function (cb) { return setTimeout(function () {
+      cb(Date.now());
+    }, 1000/60); };
+  // Image prefetching
   function preFetchImage(image, callback) {
     var img = new Image();
     img.onload = function () {
@@ -43,6 +52,7 @@
     }
     mayReply();// In case there is no image at all
   }
+  // Drawing
   function getRotationAngle(direction) {
     switch (direction) {
       case '+x':
@@ -98,6 +108,7 @@
   /* The public function, example:
    * ktMaze($('#canvas'), {
    *   grid: 15,
+   *   stepDuration: 1000,
    *   images: {
    *     flankin: 'turtle.png',
    *     emily: 'turle.png',
@@ -125,26 +136,38 @@
     canvas.setAttribute('height', pixels);
     canvas.setAttribute('width', pixels);
     var ctx = canvas.getContext('2d');
-    var idx = 0;
     drawGrid(ctx, config.grid);
     preFetchImages(config.images, function (err, images) {
-      var currentObjects = {};
-      function iterate () {
-        if (idx < config.steps.length) {
-          ctx.clearRect(0, 0, pixels, pixels);
-          drawGrid(ctx, config.grid);
-          var step = config.steps[idx];
-          for (var obj in step) {
-            if (step.hasOwnProperty(obj)) {
-              currentObjects[obj] = step[obj];
+      var fixedObjects = {};
+      var endStep = Date.now() + config.stepDuration;
+      var idx = 0;
+      var currentStep = config.steps[0];
+      function iterate (timestamp) {
+        var name;
+        if (timestamp > endStep) {
+          endStep = timestamp + config.stepDuration;
+          idx++;
+          if (idx >= config.steps.length) {
+            onfinish();
+            return;
+          }
+          for (name in currentStep) {
+            if (currentStep.hasOwnProperty(name)) {
+              fixedObjects[name] = currentStep[name];
             }
           }
-          displayStep(ctx, images, currentObjects, config.grid);
-          idx++;
-          setTimeout(iterate, 1000);
-        } else {
-          onfinish();
+          currentStep = config.steps[idx];
+          for (name in currentStep) {
+            if (currentStep.hasOwnProperty(name)) {
+              delete fixedObjects[name];
+            }
+          }
         }
+        ctx.clearRect(0, 0, pixels, pixels);
+        drawGrid(ctx, config.grid);
+        displayStep(ctx, images, fixedObjects, config.grid);
+        displayStep(ctx, images, currentStep, config.grid);
+        requestAnimationFrame(iterate);
       }
       if (err) {
         onfinish(err);
