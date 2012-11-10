@@ -12,11 +12,14 @@
     var half = Math.floor(pixelsPerStep / 2);
     var img = new Image();
     img.onload = function () {
+      ctx.save();
       ctx.drawImage(img, (x * pixelsPerStep) + half, (( grid - y - 1) * pixelsPerStep) + half, pixelsPerStep, pixelsPerStep);
+      ctx.restore();
     };
     img.src = 'images/game/' + image;
   }
   function drawGrid(ctx, grid) {
+    ctx.save();
     var start = Math.floor(pixelsPerStep / 2);
     var end = ((grid + 1) * pixelsPerStep) - start;
     var offset;
@@ -36,6 +39,7 @@
     }
     ctx.stroke();
     ctx.closePath();
+    ctx.restore();
   }
   function displayStep(ctx, images, step, grid) {
     for (var obj in step) {
