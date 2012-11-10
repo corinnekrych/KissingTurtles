@@ -8,6 +8,41 @@
   }
 }(this, function () {
   var pixelsPerStep = 100;
+  function preFetchImage(image, callback) {
+    var img = new Image();
+    img.onload = function () {
+      callback();
+    };
+    img.onerror = function () {
+      callback('Error loading ' + image);
+    };
+    img.src = 'images/game/' + image;
+    return img;
+  }
+  function preFetchImages(images, callback) {
+    var prefetch = {};
+    var count = 0;
+    function mayReply () {
+      if (count === 0) {
+        callback(null, prefetch);
+      }
+    }
+    function decreaseOrFail (err) {
+      if (err) {
+        callback(err);
+      } else {
+        count--;
+        mayReply();
+      }
+    }
+    for (var name in images) {
+      if (images.hasOwnProperty(name)) {
+        count++;
+        prefetch[name] = preFetchImage(images[name], decreaseOrFail);
+      }
+    }
+    mayReply();// In case there is no image at all
+  }
   function getRotationAngle(direction) {
     switch (direction) {
       case '+x':
@@ -24,15 +59,11 @@
   }
   function drawObject(ctx, image, x, y, direction, grid) {
     var half = Math.floor(pixelsPerStep / 2);
-    var img = new Image();
-    img.onload = function () {
-      ctx.save();
-      ctx.translate((x * pixelsPerStep) + half, (( grid - y - 1) * pixelsPerStep) + half);
-      ctx.rotate(getRotationAngle(direction));
-      ctx.drawImage(img, 0, 0, pixelsPerStep, pixelsPerStep);
-      ctx.restore();
-    };
-    img.src = 'images/game/' + image;
+    ctx.save();
+    ctx.translate((x * pixelsPerStep) + half, (( grid - y - 1) * pixelsPerStep) + half);
+    ctx.rotate(getRotationAngle(direction));
+    ctx.drawImage(image, 0, 0, pixelsPerStep, pixelsPerStep);
+    ctx.restore();
   }
   function drawGrid(ctx, grid) {
     ctx.save();
@@ -94,16 +125,22 @@
     canvas.setAttribute('width', (config.grid + 1) * pixelsPerStep);
     var ctx = canvas.getContext('2d');
     var idx = 0;
-    function iterate () {
-      if (idx < config.steps.length) {
-        displayStep(ctx, config.images, config.steps[idx], config.grid);
-        idx++;
-        setTimeout(iterate, 1000);
-      } else {
-        onfinish();
-      }
-    }
     drawGrid(ctx, config.grid);
-    iterate();
+    preFetchImages(config.images, function (err, images) {
+      function iterate () {
+        if (idx < config.steps.length) {
+          displayStep(ctx, images, config.steps[idx], config.grid);
+          idx++;
+          setTimeout(iterate, 1000);
+        } else {
+          onfinish();
+        }
+      }
+      if (err) {
+        onfinish(err);
+      } else {
+        iterate();
+      }
+    });
   };
 }));
