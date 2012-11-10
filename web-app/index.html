@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Interactive Groovy DSL</title>
+    <meta name="description" content="ask me anything." />
+    <meta name="author" content="Corinne Krych" />
+
+</head>
+
+<body style="background-color:black; color:white">
+
+     <div id="editor" style="display:inline-block;width:1000px;height:300px;font-size: 20px;">turn left
+move forward, 10
+//move(forward).by(10).steps
+//move forward by 10 steps</div>
+     <div style="display:inline-block;position:relative;top:300px;left:900px;width:10px;font-size: 20px;">
+        <button id="runButton" name="Run">Run</button>
+    </div>
+    <div style="display:inline-block;position:relative;top:310px;left:15px;width:10000px;font-size: 20px;" id="output">
+
+        <div class="surveystart" id="displayQuestion"></div>
+        <input style="display:none" class="surveystart" id="answer"></input>
+        <button style="display:none" class="surveystart" id="submitButton" name="Run">Next</button>
+    </div>
+
+
+    <script src="js/jquery-1.7.2.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/ace-uncompressed-noconflict.js"></script>
+
+</body>
+</html>
+
