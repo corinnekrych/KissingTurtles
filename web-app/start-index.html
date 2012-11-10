@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css"/>
     <link rel="stylesheet" href="css/jquery/validationEngine.jquery.css" type="text/css"/>
-    <link rel="stylesheet" href="css/jquery/mobiscroll-2.1.custom.min.css" type="text/css"/>
     <script src="http://code.jquery.com/jquery-1.8.2.js"></script>
     <script src="js/jquery/jquery.validationEngine.js"></script>
     <script src="js/jquery/jquery.validationEngine-en.js"></script>
@@ -31,7 +30,7 @@
 
     <script src="js/kissingturtles/manager-bootstrap.js"></script>
     <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
-    <script src="js/jquery/mobiscroll-2.1.custom.min.js"></script>
+    <script src="js/ktMaze.js"></script>
 </head>
 
 <body>
@@ -155,9 +154,8 @@
 
         <h1>Game</h1>
     </div>
-
-    /// Here the canvas with the turtle
     <form id="form-run" name="form-run">
+        <canvas id="canvas" width=300 height=300 style='width:300px;height:300px'></canvas>
         <ul data-role="listview" data-inset="true">
             <li data-role="fieldcontain">
                 <label for="input-move-name">What's your move ?</label>

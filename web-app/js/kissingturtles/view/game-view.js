@@ -34,9 +34,30 @@ kissingturtles.view.gameview = function (model, elements) {
         } else if (data.item.message) {
             showGeneralMessage(data, event);
         } else {
-            renderElement(data.item);
-            $('#list-games').listview('refresh');
-    	    
+            ktMaze(document.getElementById('canvas'), {
+                images: {
+                    flankin: 'turtle.png',
+                    emily: 'turtle.png',
+                    tree1: 'tree.png'
+                },
+                steps: [{
+                    flankin: { x: 3, y: 1, direction: '+x' },
+                    emily: { x: 6, y: 6, direction: '-y' },
+                    tree1: { x: 14, y: 14 }
+                }, {
+                    flankin: { x: 4, y: 1, direction: '+x' }
+                }, {
+                    flankin: { x: 5, y: 1, direction: '+x' }
+                }, {
+                    flankin: { x: 6, y: 1, direction: '+x' }
+                }, {
+                    flankin: { x: 7, y: 1, direction: '+x' }
+                }],
+                grid: 15,
+                stepDuration: 1000
+            }, function () {
+                console.log('done');
+            })
 		}
     });
 
@@ -127,7 +148,7 @@ kissingturtles.view.gameview = function (model, elements) {
                 game: JSON.stringify(obj)
             };
             that.createButtonClicked.notify(newElement, event);
-            createElement();
+            showElement();
         }
     });
 
@@ -139,22 +160,6 @@ kissingturtles.view.gameview = function (model, elements) {
         resetForm("form-update-game");
         var element = that.model.items[id];
  
-        $('select[data-gorm-relation="many-to-one"][name="user1"]').val(element.user1.id);
-        $('select[data-gorm-relation="many-to-one"][name="user1"]').selectmenu('refresh');
- 
-        $('select[data-gorm-relation="many-to-one"][name="user2"]').val(element.user2.id);
-        $('select[data-gorm-relation="many-to-one"][name="user2"]').selectmenu('refresh');
- 
- 
-        $.each(element, function (name, value) {
-            var input = $('#input-game-' + name);
-            if (input.attr('type') == 'date') {
-                input.scroller('setDate', (value === "") ? "" : new Date(value), true);
-            } else {
-                input.val(value);
-            }
-        });
-        
         $("#delete-game").show();
     };
 
