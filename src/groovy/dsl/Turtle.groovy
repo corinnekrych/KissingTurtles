@@ -10,7 +10,7 @@ class Turtle {
     def steps = []
     def result = [:]
 
-    def Turtle(myName, myImage) {
+    Turtle(myName, myImage) {
         name = myName
         image = myImage
         steps = [new Position(0, 0, 0)]
@@ -25,26 +25,23 @@ class Turtle {
         } else if (dir == Direction.right) {
             newPosition = previousPosition.right()
         }
-        result['steps'].add(newPosition)
+        steps.add(newPosition)
         println "Franklin is turning $dir"
     }
 
-    Turtle move(Direction dir, int step) {
+    void move(Direction dir, int step) {
         Position previousPosition = steps[steps.size() - 1]
         Position newPosition = previousPosition.move(dir, step)
-        result['steps'].add(newPosition)
+        steps.add(newPosition)
         println "Franklin is moving $dir by $step steps"
     }
 
     void kiss() {
-        String pathSummary
-        result['steps'].eachWithIndex { it, index ->
-            pathSummary += "$index: {$it},"
+        String pathSummary= ''
+        steps.eachWithIndex { it, index ->
+            pathSummary += "$index: ${it.toString()},"
         }
-        println "Franklin has just stopped to kiss his true love. His position is: " pathSummary
-    }
-
-    def propertyMissing(String name) {
+        println "Franklin has just stopped to kiss his true love. His position is: $pathSummary"
     }
 }
 enum Direction {
