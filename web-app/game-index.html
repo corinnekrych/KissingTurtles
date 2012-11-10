@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Page</title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css"/>
+    <link rel="stylesheet" href="css/jquery/validationEngine.jquery.css" type="text/css"/>
+    <link rel="stylesheet" href="css/jquery/mobiscroll-2.1.custom.min.css" type="text/css"/>
+    <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+    <script src="js/jquery/jquery.validationEngine.js"></script>
+    <script src="js/jquery/jquery.validationEngine-en.js"></script>
+    
+
+    <script src="js/grails/mobile/event.js"></script>
+    <script src="js/grails/mobile/mvc/model.js"></script>
+    <script src="js/grails/mobile/mvc/controller.js"></script>
+    <script src="js/grails/mobile/mvc/view.js"></script>
+    <script src="js/grails/mobile/storage/store.js"></script>
+    <script src="js/grails/mobile/feed/online.js"></script>
+    <script src="js/grails/mobile/feed/offline.js"></script>
+    <script src="js/grails/mobile/feed/feed.js"></script>
+    <script src="js/grails/mobile/helper/toObject.js"></script>
+    <script src="js/grails/mobile/sync/syncmanager.js"></script>
+    <script src="js/grails/mobile/mvc/manager.js"></script>
+    <script src="js/kissingturtles/view/user-view.js"></script>
+    
+    <script src="js/kissingturtles/view/game-view.js"></script>
+    <script src="js/kissingturtles/configuration-bootstrap.js"></script>
+    <script src="js/kissingturtles/bootstrap/game-bootstrap.js"></script>
+    <script src="js/kissingturtles/bootstrap/user-bootstrap.js"></script>
+    <script src="js/kissingturtles/manager-bootstrap.js"></script>
+    <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+    <script src="js/jquery/mobiscroll-2.1.custom.min.js"></script>
+</head>
+
+<body>
+<section data-role="page" id="section-list-games">
+    <div data-role="header" data-position="fixed">
+        
+        <h1>Game</h1>
+        
+    </div>
+    
+        <div data-role="content" id="list-games-parent">
+            
+            <ul data-role="listview" data-inset="true" data-filter="true" id="list-games">
+            </ul>
+        </div>
+        
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="#section-show-game" data-transition="slide" data-role="button"
+                           data-icon="plus">Add</a></li>
+                </ul>
+            </div>
+        </div>
+</section>
+
+<section data-role="page" id="section-show-game">
+    <div data-role="header" id="show-game" data-position="fixed">
+        <a href="#section-list-games" data-transition="slide" data-icon="arrow-l">Cancel</a>
+
+        <h1>Game</h1>
+    </div>
+    <form id="form-update-game" name="form-update-game">
+        <ul data-role="listview" data-inset="true">
+            
+            <li data-role="fieldcontain">
+                
+                <label for="input-game-mazeDefinition">Maze Definition</label>
+                <input type="text" class="" name="mazeDefinition" id="input-game-mazeDefinition" value=""/>
+                
+            </li>
+            
+            <li data-role="fieldcontain">
+                
+                <div data-role="fieldcontain">
+                    <label for="select-game-user1" class="select">Choose a
+                        User</label>
+                    <select name="user1" data-gorm-relation="many-to-one"
+                            id="select-game-user1" data-native-menu="false">
+                        <option value="0"></option>
+                    </select>
+                </div>
+
+                
+            </li>
+            
+            <li data-role="fieldcontain">
+                
+                <div data-role="fieldcontain">
+                    <label for="select-game-user2" class="select">Choose a
+                        User</label>
+                    <select name="user2" data-gorm-relation="many-to-one"
+                            id="select-game-user2" data-native-menu="false">
+                        <option value="0"></option>
+                    </select>
+                </div>
+
+                
+            </li>
+            
+
+            
+        </ul>
+        
+        
+        <input type="hidden" name="id" id="input-game-id"/>
+        <input type="hidden" name="version" id="input-game-version"/>
+        <input type="hidden" name="class" id="input-game-class"/>
+    </form>
+    
+    <div data-role="footer" data-position="fixed">
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#section-list-games" data-transition="slide" data-role="button"
+                       data-icon="delete" id="delete-game">Delete</a></li>
+                <li><a href="#section-list-games" data-transition="slide" data-icon="save"
+                       id="submit-game">Save</a></li>
+            </ul>
+        </div>
+    </div>
+</section>
+</body>
+</html>
