@@ -8,6 +8,14 @@
   }
 }(this, function () {
   var pixelsPerStep = 100;
+  function drawObject(ctx, image, x, y, direction, grid) {
+    var half = Math.floor(pixelsPerStep / 2);
+    var img = new Image();
+    img.onload = function () {
+      ctx.drawImage(img, (x * pixelsPerStep) + half, (( grid - y - 1) * pixelsPerStep) + half, pixelsPerStep, pixelsPerStep);
+    };
+    img.src = 'images/game/' + image;
+  }
   function drawGrid(ctx, grid) {
     var start = Math.floor(pixelsPerStep / 2);
     var end = ((grid + 1) * pixelsPerStep) - start;
@@ -29,18 +37,53 @@
     ctx.stroke();
     ctx.closePath();
   }
+  function displayStep(ctx, images, step, grid) {
+    for (var obj in step) {
+      if (step.hasOwnProperty(obj)) {
+        drawObject(ctx, images[obj], step[obj].x, step[obj].y, step[obj].direction, grid);
+      }
+    }
+  }
   /* The public function, example:
    * ktMaze($('#canvas'), {
-   *   grid: 15
+   *   grid: 15,
+   *   images: {
+   *     flankin: 'turtle.png',
+   *     emily: 'turle.png',
+   *     tree1: 'tree.png'
+   *   },
+   *   steps: [{
+   *     // initial positions
+   *     flankin: { x: 1, y: 0, direction: '+x' },
+   *     emily: { x: 3, y: 4, direction: '-y' },
+   *     tree1: { x: 5, y: 6 }
+   *   }, {
+   *     // differences from previous step
+   *     flankin: { x: 2, y: 0, direction: '+x' }
+   *   }]
    * }, function () {
    *   console.log('Canvas display or animation finished');
    * });
+   *
+   * Notes:
+   * # positions are 0-indexed
+   * # y is the opposite of the US convention: 0 is bottom and grid size is top
    */
   return function (canvas, config, onfinish) {
     canvas.setAttribute('height', (config.grid + 1) * pixelsPerStep);
     canvas.setAttribute('width', (config.grid + 1) * pixelsPerStep);
     var ctx = canvas.getContext('2d');
+    var idx = 0;
+    function iterate () {
+      if (idx < config.steps.length) {
+        displayStep(ctx, config.images, config.steps[idx], config.grid);
+        idx++;
+        setTimeout(iterate, 1000);
+      } else {
+        onfinish();
+      }
+    }
     drawGrid(ctx, config.grid);
-    setTimeout(onfinish, 0);
+    iterate();
   };
 }));
