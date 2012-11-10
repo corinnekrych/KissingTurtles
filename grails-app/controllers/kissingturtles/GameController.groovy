@@ -7,6 +7,7 @@ import groovy.json.JsonBuilder;
 
 import org.codehaus.groovy.grails.web.json.JSONObject;
 import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.stereotype.Service
 
 class GameController {
 
@@ -22,10 +23,11 @@ class GameController {
     }
 
     def save() {
-        def jsonObject = JSON.parse(params.game)
-
-        Game gameInstance = new Game(jsonObject)
-
+        JSONObject jsonObject = JSON.parse(params.game)
+        String mazeDefinition = "";//MazeService.createMaze();
+        Game gameInstance = new Game()
+        gameInstance.user1 = User.findById(jsonObject.entrySet().iterator().next().value)
+        gameInstance.mazeDefinition = mazeDefinition
 
         if (!gameInstance.save(flush: true)) {
             ValidationErrors validationErrors = gameInstance.errors

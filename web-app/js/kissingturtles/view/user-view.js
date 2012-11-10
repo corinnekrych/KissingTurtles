@@ -27,8 +27,8 @@ kissingturtles.view.userview = function (model, elements) {
         } else {
             event.stopPropagation();
             event.preventDefault();
-            sessionStorage.setItem("UserId", data.item.id);
-            sessionStorage.setItem("UserName", data.item.name);
+            sessionStorage.setItem("KissingTurtles.UserId", data.item.id);
+            sessionStorage.setItem("KissingTurtles.UserName", data.item.name);
             $.mobile.changePage($("#section-list-games"));
         }
     });
@@ -106,7 +106,7 @@ kissingturtles.view.userview = function (model, elements) {
 
         that.editButtonClicked.notify();
 
-        var id = sessionStorage.getItem("UserId");
+        var id = sessionStorage.getItem("KissingTurtles.UserId");
 
         if (id) {
             showElement(id);
@@ -173,7 +173,6 @@ kissingturtles.view.userview = function (model, elements) {
         if (element.offlineAction !== 'DELETED') {
             var a = $('<a>').attr({ href: '#section-show-user'});
             a.attr({id : 'user' + element.id + '-in-list'});
-            a.attr({onClick : 'sessionStorage.showuserId=' + element.id});
             a.attr({'data-transition': 'fade' });
             a.text(getText(element));
             if (element.offlineStatus === "NOT-SYNC") {

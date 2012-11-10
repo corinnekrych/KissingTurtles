@@ -73,7 +73,7 @@ kissingturtles.view.gameview = function (model, elements) {
     // user interface actions
     
     that.elements.list.live('pageinit', function (e) {
-        var id = sessionStorage.getItem("UserId");
+        var id = sessionStorage.getItem("KissingTurtles.UserId");
         if (id) {
             that.listButtonClicked.notify();
         } else {
@@ -112,11 +112,9 @@ kissingturtles.view.gameview = function (model, elements) {
         that.onlineEvent.notify();
     });
 
-    that.elements.add.live('pageshow', function (e) {
+    that.elements.add.live('pageshow', function (event) {
         $('#form-update-game').validationEngine('hide');
         $("#form-update-game").validationEngine();
-
-        //that.editButtonClicked.notify();
 
         var id = sessionStorage.getItem("showgameId");
 
@@ -124,14 +122,17 @@ kissingturtles.view.gameview = function (model, elements) {
             sessionStorage.removeItem("showgameId");
             showElement(id);
         } else {
+            var obj = {user1: sessionStorage.getItem("KissingTurtles.UserId")};
+            var newElement = {
+                game: JSON.stringify(obj)
+            };
+            that.createButtonClicked.notify(newElement, event);
             createElement();
         }
     });
 
     var createElement = function () {
-        resetForm("form-update-game");
-        
-        $("#delete-game").hide();
+
     };
 
     var showElement = function (id) {
@@ -255,15 +256,7 @@ kissingturtles.view.gameview = function (model, elements) {
     };
 
     var getText = function (data) {
-        var textDisplay = '';
-        $.each(data, function (name, value) {
-            if (name !== 'class' && name !== 'id' && name !== 'offlineAction' && name !== 'offlineStatus' && name !== 'status' && name !== 'version') {
-                if (typeof value !== 'object') {   // do not display relation in list view
-                    textDisplay += value + " - ";
-                }
-            }
-        });
-        return textDisplay.substring(0, textDisplay.length - 2);
+        return 'Play with ' + data.user1;
     };
 
     return that;
