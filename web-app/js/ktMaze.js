@@ -121,15 +121,25 @@
    * # y is the opposite of the US convention: 0 is bottom and grid size is top
    */
   return function (canvas, config, onfinish) {
-    canvas.setAttribute('height', (config.grid + 1) * pixelsPerStep);
-    canvas.setAttribute('width', (config.grid + 1) * pixelsPerStep);
+    var pixels = (config.grid + 1) * pixelsPerStep;
+    canvas.setAttribute('height', pixels);
+    canvas.setAttribute('width', pixels);
     var ctx = canvas.getContext('2d');
     var idx = 0;
     drawGrid(ctx, config.grid);
     preFetchImages(config.images, function (err, images) {
+      var currentObjects = {};
       function iterate () {
         if (idx < config.steps.length) {
-          displayStep(ctx, images, config.steps[idx], config.grid);
+          ctx.clearRect(0, 0, pixels, pixels);
+          drawGrid(ctx, config.grid);
+          var step = config.steps[idx];
+          for (var obj in step) {
+            if (step.hasOwnProperty(obj)) {
+              currentObjects[obj] = step[obj];
+            }
+          }
+          displayStep(ctx, images, currentObjects, config.grid);
           idx++;
           setTimeout(iterate, 1000);
         } else {
