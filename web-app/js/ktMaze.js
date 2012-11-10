@@ -8,12 +8,28 @@
   }
 }(this, function () {
   var pixelsPerStep = 100;
+  function getRotationAngle(direction) {
+    switch (direction) {
+      case '+x':
+        return 0;
+      case '-x':
+        return Math.PI;
+      case '+y':
+        return Math.PI / 2;
+      case '-y':
+        return 3 * Math.PI / 2;
+      default:
+        return 0;
+    }
+  }
   function drawObject(ctx, image, x, y, direction, grid) {
     var half = Math.floor(pixelsPerStep / 2);
     var img = new Image();
     img.onload = function () {
       ctx.save();
-      ctx.drawImage(img, (x * pixelsPerStep) + half, (( grid - y - 1) * pixelsPerStep) + half, pixelsPerStep, pixelsPerStep);
+      ctx.translate((x * pixelsPerStep) + half, (( grid - y - 1) * pixelsPerStep) + half);
+      ctx.rotate(getRotationAngle(direction));
+      ctx.drawImage(img, 0, 0, pixelsPerStep, pixelsPerStep);
       ctx.restore();
     };
     img.src = 'images/game/' + image;
