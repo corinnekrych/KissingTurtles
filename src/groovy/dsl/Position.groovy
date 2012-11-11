@@ -62,6 +62,17 @@ class Position {
         newDirection
     }
 
+    Position random(int gridSize) {
+        def random = new Random()
+        def randomX = random.nextInt(gridSize)
+        def randomY = random.nextInt(gridSize)
+        x = randomX
+        y = randomY
+        rotation = 90
+        direction = '+x'
+        this
+    }
+
     String toString() {
         "x: $x, y: $y, rotation: $rotation, direction: $direction"
     }
@@ -71,5 +82,12 @@ class Position {
         y = moveY
         rotation = rot
         direction = dir
+    }
+
+    def Position() {
+        x = 0
+        y = 0
+        rotation = 90
+        direction = '+x'
     }
 }

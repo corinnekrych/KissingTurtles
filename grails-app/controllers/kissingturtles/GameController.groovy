@@ -3,13 +3,13 @@ package kissingturtles
 
 import grails.converters.JSON
 import grails.validation.ValidationErrors
-import groovy.json.JsonBuilder;
 
 import org.codehaus.groovy.grails.web.json.JSONObject;
 import org.springframework.dao.DataIntegrityViolationException
-import org.springframework.stereotype.Service
+
 import dsl.DslScript
 import dsl.Turtle
+import dsl.Position
 
 class GameController {
 
@@ -17,9 +17,14 @@ class GameController {
 
     def run() {
         println "in the inputs" + params
+
+        def game = Game.findById(params.gameId)
+        Position franklinInitialPosition = new Position(game.fX, game.fY, game.fRot, game.fDir)
+        Position treeInitialPosition = new Position(game.tX, game.tY, game.tRot, game.tDir)
+
         def scriptInstance = new DslScript(params)
         def script = scriptInstance.content
-        def turtle = new Turtle("franklin", "image")
+        def turtle = new Turtle("franklin", "image", franklinInitialPosition)
 
         def binding = new Binding([
                 turtle: turtle,
@@ -33,9 +38,34 @@ class GameController {
         ])
         def shell = new GroovyShell(binding)
         shell.evaluate(script)
-        def json = binding.getVariable('turtle').result as JSON
-        println json
-        render json
+        def result = binding.getVariable('turtle').result //as JSON
+
+        def builder = new groovy.json.JsonBuilder()
+
+        def array = []
+        result.steps.each(){
+            def obj = new LinkedHashMap()
+            def tempFrank = it as JSON
+            obj.franklin = tempFrank['target']
+            def tempTree = treeInitialPosition as JSON
+            obj.tree1 = tempTree['target']
+            array.add(obj)
+        }
+
+        def root = builder.configuration {
+            images {
+                franklin 'turtle.png'
+                emily 'turtle.png'
+                tree1 'tree.png'
+            }
+            steps array
+            grid 15
+            stepDuration 1000
+        }
+        def conf = builder.toString()
+
+        println conf
+        render conf
     }
 
     def index() {
@@ -45,14 +75,62 @@ class GameController {
     def list() {
         render Game.list([fetch: [user1: 'eager', user2: 'eager']]) as JSON
     }
-
+//    that.randomEmilyX=Math.floor(Math.random()*15);
+//    that.randomEmilyY=Math.floor(Math.random()*15);
+//    ktMaze(document.getElementById('canvas'), {
+//        images: {
+//            franklin: 'turtle.png',
+//            emily: 'turtle.png',
+//            tree1: 'tree.png'
+//        },
+//        //winningAnimation: { x: that.randomEmilyX, y: that.randomEmilyY },
+//        steps: [{
+//            franklin: { x: 0, y: 0, direction: '+x' },
+//            emily: { x: that.randomEmilyX, y: that.randomEmilyY, direction: '-y' },
+//            tree1: { x: 14, y: 14 }
+//        }],
+//        grid: 15,
+//        stepDuration: 1000
+//    }
     def save() {
         JSONObject jsonObject = JSON.parse(params.game)
-        String mazeDefinition = "";//MazeService.createMaze();
+        String mazeDefinition = "";
+        //MazeService.createMaze();
+        Position franklinPosition = new Position().random(15)
+        Position treePosition = new Position().random(15)
+        def builder = new groovy.json.JsonBuilder()
+
+        def obj = new LinkedHashMap()
+        def tempFrank = franklinPosition as JSON
+        obj.franklin = tempFrank['target']
+        def tempTree = treePosition as JSON
+        obj.tree1 = tempTree['target']
+        def array = [obj]
+        def root = builder.configuration {
+            images {
+                franklin 'turtle.png'
+                emily 'turtle.png'
+                tree1 'tree.png'
+            }
+            steps array
+            grid 15
+            stepDuration 1000
+        }
+        def conf = builder.toString()
+        mazeDefinition = conf
+        //end integration with maze
         Game gameInstance = new Game()
         gameInstance.user1 = User.findById(jsonObject.entrySet().iterator().next().value)
         gameInstance.mazeDefinition = mazeDefinition
-
+        // save initial position
+        gameInstance.fX = franklinPosition.x
+        gameInstance.fY = franklinPosition.y
+        gameInstance.fRot = franklinPosition.rotation
+        gameInstance.fDir = franklinPosition.direction
+        gameInstance.tX = treePosition.x
+        gameInstance.tY = treePosition.y
+        gameInstance.tRot = treePosition.rotation
+        gameInstance.tDir = treePosition.direction
         if (!gameInstance.save(flush: true)) {
             ValidationErrors validationErrors = gameInstance.errors
             render validationErrors as JSON
