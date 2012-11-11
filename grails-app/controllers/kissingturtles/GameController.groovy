@@ -155,29 +155,30 @@ class GameController {
     }
 
     def update() {
-        def jsonObject = JSON.parse(params.game)
-
-        Game gameReceived = new Game(jsonObject)
-
+        JSONObject jsonObject = JSON.parse(params.game)
         def gameInstance = Game.get(jsonObject.id)
         if (!gameInstance) {
             flash.message = message(code: 'default.not.found.message', args: [message(code: 'game.label', default: 'Game'), params.id])
             render flash as JSON
         }
 
-        if (jsonObject.version) {
-            def version = jsonObject.version.toLong()
-            if (gameInstance.version > version) {
-                gameInstance.errors.rejectValue("version", "default.optimistic.locking.failure",
-                        [message(code: 'game.label', default: 'Game')] as Object[],
-                        "Another user has updated this Game while you were editing")
-                ValidationErrors validationErrors = gameInstance.errors
-                render validationErrors as JSON
-                return
-            }
+        if (gameInstance.user2 != null)  {
+            gameInstance.errors.rejectValue("version", "default.optimistic.locking.failure",
+                    [message(code: 'game.label', default: 'Game')] as Object[],
+                    "Another user has already taken this Game while you were trying to get into it")
+            ValidationErrors validationErrors = gameInstance.errors
+            render validationErrors as JSON
         }
 
-        gameInstance.properties = gameReceived.properties
+        if (!jsonObject.containsKey("user2")) {
+            gameInstance.errors.rejectValue("version", "default.optimistic.locking.failure",
+                    [message(code: 'game.label', default: 'Game')] as Object[],
+                    "I don't know who you are !!!")
+            ValidationErrors validationErrors = gameInstance.errors
+            render validationErrors as JSON
+        }
+
+        gameInstance.user2 = User.findById(jsonObject.get("user2").id)
 
         if (!gameInstance.save(flush: true)) {
             ValidationErrors validationErrors = gameInstance.errors
