@@ -139,7 +139,7 @@ kissingturtles.view.gameview = function (model, elements) {
                 emily: 'turtle.png',
                 tree1: 'tree.png'
             },
-            //winningAnimation: { x: that.randomEmilyX, y: that.randomEmilyY },
+            winningAnimation: data.configuration.winningAnimation,
             steps: data.configuration.steps,
             grid: 15,
             stepDuration: 1000

@@ -38,7 +38,7 @@ class GameController {
         ])
         def shell = new GroovyShell(binding)
         shell.evaluate(script)
-        def result = binding.getVariable('turtle').result //as JSON
+        def result = binding.getVariable('turtle').result
 
         def builder = new groovy.json.JsonBuilder()
 
@@ -52,18 +52,26 @@ class GameController {
             array.add(obj)
         }
 
+        def last = array.last()
+        boolean win = false
+        if ((last.franklin.x == treeInitialPosition.x) && (last.franklin.y == treeInitialPosition.y)) {
+            win = true
+        }
+
         def root = builder.configuration {
             images {
                 franklin 'turtle.png'
                 emily 'turtle.png'
                 tree1 'tree.png'
             }
+            (win)? winningAnimation {x treeInitialPosition.x
+            y treeInitialPosition.y}:""
             steps array
             grid 15
             stepDuration 1000
         }
-        def conf = builder.toString()
 
+        def conf = builder.toString()
         println conf
         render conf
     }
@@ -75,8 +83,7 @@ class GameController {
     def list() {
         render Game.list([fetch: [user1: 'eager', user2: 'eager']]) as JSON
     }
-//    that.randomEmilyX=Math.floor(Math.random()*15);
-//    that.randomEmilyY=Math.floor(Math.random()*15);
+
 //    ktMaze(document.getElementById('canvas'), {
 //        images: {
 //            franklin: 'turtle.png',
