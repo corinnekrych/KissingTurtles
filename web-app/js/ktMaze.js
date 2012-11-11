@@ -90,7 +90,14 @@
     ctx.restore();
   }
   function drawMovingObject(ctx, image, from, to, grid, progress) {
-    drawObject(ctx, image, to.x, to.y, getRotationAngle(to.direction), grid);
+    drawObject(
+        ctx,
+        image,
+        from.x + ((to.x - from.x) * progress),
+        from.y + ((to.y - from.y) * progress),
+        getRotationAngle(to.direction),
+        grid
+      );
   }
   function drawGrid(ctx, grid) {
     ctx.save();
