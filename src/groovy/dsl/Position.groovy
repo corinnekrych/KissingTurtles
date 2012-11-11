@@ -20,7 +20,18 @@ class Position {
         }
 
         def newDirection = whichDirection(newRotation)
-        new Position(x, y + step, newRotation, newDirection)
+        def newPosition
+        if (((newRotation % 360) == 0) || ((newRotation % 360) == -360)) {
+            println "y+step = " + y+step
+            newPosition = new Position(x, y + step, newRotation, newDirection);
+        } else if (((newRotation % 360) == 90) || ((newRotation % 360) == -270)) {
+            newPosition = new Position(x + step, y, newRotation, newDirection);
+        } else if (((newRotation % 360) == 180) || ((newRotation % 360) == -180)) {
+            newPosition = new Position(x, y - step, newRotation, newDirection);
+        } else if (((newRotation % 360) == 270) || ((newRotation % 360) == -90)) {
+            newPosition = new Position(x - step, y, newRotation, newDirection);
+        }
+        newPosition
     }
 
     Position left() {
