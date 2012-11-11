@@ -70,9 +70,9 @@
   function drawObject(ctx, image, x, y, direction, grid) {
     var half = Math.floor(pixelsPerStep / 2);
     ctx.save();
-    ctx.translate((x * pixelsPerStep) + half, (( grid - y - 1) * pixelsPerStep) + half);
+    ctx.translate((x + 1) * pixelsPerStep, ( grid - y) * pixelsPerStep);
     ctx.rotate(getRotationAngle(direction));
-    ctx.drawImage(image, 0, 0, pixelsPerStep, pixelsPerStep);
+    ctx.drawImage(image, -half, -half, pixelsPerStep, pixelsPerStep);
     ctx.restore();
   }
   function drawGrid(ctx, grid) {
