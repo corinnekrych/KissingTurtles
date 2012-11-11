@@ -172,7 +172,7 @@
       if (err) {
         onfinish(err);
       } else {
-        iterate();
+        iterate(Date.now());
       }
     });
   };
