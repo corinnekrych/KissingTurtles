@@ -34,6 +34,7 @@ class GameController {
         def shell = new GroovyShell(binding)
         shell.evaluate(script)
         def json = binding.getVariable('turtle').result as JSON
+        println json
         render json
     }
 
