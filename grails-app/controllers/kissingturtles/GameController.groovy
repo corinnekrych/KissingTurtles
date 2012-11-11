@@ -1,7 +1,7 @@
 package kissingturtles
 
 
-import grails.converters.deep.JSON
+import grails.converters.JSON
 import grails.validation.ValidationErrors
 import groovy.json.JsonBuilder;
 
@@ -33,7 +33,7 @@ class GameController {
         ])
         def shell = new GroovyShell(binding)
         shell.evaluate(script)
-        def json = binding.turtle.result as JSON
+        def json = binding.getVariable('turtle').result as JSON
         render json
     }
 

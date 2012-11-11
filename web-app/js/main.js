@@ -28,7 +28,7 @@ window.onload = function() {
 }
 
 function submitCreateForm(title, input, output) {
-	var url = "http://localhost:8080/KissingTurtles/dslScript/run?=";
+	var url = "http://localhost:8080/KissingTurtles/game/run?=";
 	$.post(url, {
 		title:"myScript", content:input
 	},function (data) {
