@@ -67,6 +67,20 @@
         return 0;
     }
   }
+  function nextDir(direction) {
+    switch (direction) {
+      case '+x':
+        return '-y';
+      case '-x':
+        return '+y';
+      case '+y':
+        return '+x';
+      case '-y':
+        return '-x';
+      default:
+        return '+x';
+    }
+  }
   function drawObject(ctx, image, x, y, direction, grid) {
     var half = Math.floor(pixelsPerStep / 2);
     ctx.save();
@@ -109,6 +123,7 @@
    * ktMaze($('#canvas'), {
    *   grid: 15,
    *   stepDuration: 1000,
+   *   winningAnimation: { x: 4, y: 3 },// optional: only if there is an animation
    *   images: {
    *     flankin: 'turtle.png',
    *     emily: 'turle.png',
@@ -137,6 +152,24 @@
     canvas.setAttribute('width', pixels);
     var ctx = canvas.getContext('2d');
     drawGrid(ctx, config.grid);
+    if (config.winningAnimation) {
+      config.images.winningHeart1 = 'heart.png';
+      config.images.winningHeart2 = 'heart.png';
+      config.images.winningHeart3 = 'heart.png';
+      config.images.winningHeart4 = 'heart.png';
+      var dirs = ['+x', '-x', '+y', '-y'];
+      for (var i = 0; i < config.grid + 2; i++) {
+        config.steps.push({
+          winningHeart1: { x: config.winningAnimation.x + i, y: config.winningAnimation.y, direction: dirs[0] },
+          winningHeart2: { x: config.winningAnimation.x - i, y: config.winningAnimation.y, direction: dirs[1] },
+          winningHeart3: { x: config.winningAnimation.x, y: config.winningAnimation.y + i, direction: dirs[2] },
+          winningHeart4: { x: config.winningAnimation.x, y: config.winningAnimation.y - i, direction: dirs[3] }
+        });
+        for (var j = 0; j < dirs.length; j++) {
+          dirs[j] = nextDir(dirs[j]);
+        }
+      }
+    }
     preFetchImages(config.images, function (err, images) {
       var fixedObjects = {};
       var endStep = Date.now() + config.stepDuration;
