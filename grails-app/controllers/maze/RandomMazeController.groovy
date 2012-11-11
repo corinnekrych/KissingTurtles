@@ -7,10 +7,10 @@ import java.util.Random
 
 class RandomMazeController {
 
-    def index() {
+    def index(int length) {
 		
 		//generate a maze
-		int length = 15		
+		//int length = 15		
 		def maze = randomMaze(length)
 		
 		//a basic view to see the result
@@ -28,10 +28,10 @@ class RandomMazeController {
 		render('</div>')
 	}
 	
-	def json() {	
+	def json(int length) {	
 		
 		//generate a maze
-		int length = 15
+		//int length = 15
 		def maze = randomMaze(length)
 		
 		render('<div>')
@@ -70,7 +70,7 @@ class RandomMazeController {
 				
 				if (xCor % 2){ //x is even
 					if(yCor % 2){ //y is even, x is even
-						t.valid = false
+						 t.valid = false
 					}else{//y is odd, x is even
 						
 						if(randomNo==0) t.valid = false
@@ -79,7 +79,7 @@ class RandomMazeController {
 					if(yCor % 2){ //y is even, x is odd
 						if(randomNo==1) t.valid = false
 					}else{//y is odd, x is odd
-					
+						
 					}
 				}
 				
