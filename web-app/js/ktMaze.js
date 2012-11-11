@@ -89,6 +89,9 @@
     ctx.drawImage(image, -half, -half, pixelsPerStep, pixelsPerStep);
     ctx.restore();
   }
+  function drawMovingObject(ctx, image, from, to, grid, progress) {
+    drawObject(ctx, image, to.x, to.y, to.direction, grid);
+  }
   function drawGrid(ctx, grid) {
     ctx.save();
     var start = Math.floor(pixelsPerStep / 2);
@@ -116,6 +119,13 @@
     for (var obj in step) {
       if (step.hasOwnProperty(obj)) {
         drawObject(ctx, images[obj], step[obj].x, step[obj].y, step[obj].direction, grid);
+      }
+    }
+  }
+  function displayAnimatedStep(ctx, images, animatedFrom, animatedTo, grid, progress) {
+    for (var obj in animatedTo) {
+      if (animatedTo.hasOwnProperty(obj)) {
+        drawMovingObject(ctx, images[obj], animatedFrom[obj], animatedTo[obj], grid, progress);
       }
     }
   }
@@ -222,7 +232,7 @@
         ctx.clearRect(0, 0, pixels, pixels);
         drawGrid(ctx, config.grid);
         displayStep(ctx, images, fixedObjects, config.grid);
-        displayStep(ctx, images, animatedObjectsTo, config.grid);
+        displayAnimatedStep(ctx, images, animatedObjectsFrom, animatedObjectsTo, config.grid, 1 - ((endStep - timestamp) / config.stepDuration));
         requestAnimationFrame(iterate);
       }
       if (err) {
