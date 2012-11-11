@@ -2,14 +2,14 @@
 <html>
 <head>
     <title>Kissing Turtle</title>
-    
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css"/>
     <link rel="stylesheet" href="css/jquery/validationEngine.jquery.css" type="text/css"/>
     <script src="http://code.jquery.com/jquery-1.8.2.js"></script>
     <script src="js/jquery/jquery.validationEngine.js"></script>
     <script src="js/jquery/jquery.validationEngine-en.js"></script>
-    
+
 
     <script src="js/grails/mobile/event.js"></script>
     <script src="js/grails/mobile/mvc/model.js"></script>
@@ -38,9 +38,10 @@
             margin: 0 auto;
         }
 
-        .center-wrapper{
+        .center-wrapper {
             text-align: center;
         }
+
         .center-wrapper * {
             margin: 0 auto;
         }
@@ -79,10 +80,9 @@
         <h1>Kissing Turtle</h1>
     </div>
     <div data-role="footer" data-position="fixed">
-            <h4>Grails48 - The World's Hackathon</h4>
+        <h4>Grails48 - The World's Hackathon</h4>
     </div>
 </section>
-
 
 
 <section data-role="page" id="section-list-users">
@@ -116,24 +116,23 @@
     </div>
     <form id="form-update-user" name="form-update-user">
         <ul data-role="listview" data-inset="true">
-            
+
             <li data-role="fieldcontain">
-                
+
                 <label for="input-user-name">What's your name ?</label>
                 <input type="text" class="validate[required]" name="name" id="input-user-name" value=""/>
-                
-            </li>
-            
 
-            
+            </li>
+
+
         </ul>
-        
-        
+
+
         <input type="hidden" name="id" id="input-user-id"/>
         <input type="hidden" name="version" id="input-user-version"/>
         <input type="hidden" name="class" id="input-user-class"/>
     </form>
-    
+
     <div data-role="footer" data-position="fixed">
         <div data-role="navbar">
             <ul>
@@ -164,7 +163,7 @@
         <div data-role="navbar">
             <ul>
                 <a href="#section-show-game" data-transition="slide" data-role="button"
-                       data-icon="plus">Create your own game</a>
+                   data-icon="plus">Create your own game</a>
             </ul>
         </div>
     </div>
@@ -177,19 +176,20 @@
         <h1>Game</h1>
     </div>
 
-        <canvas id="canvas" width="300" height="300" style='width:300px;height:300px'></canvas>
-        <ul data-role="listview" data-inset="true">
-            <li data-role="fieldcontain">
-                <label for="input-move-name">What's your move ?</label>
-                <textarea class="validate[required]" name="name" id="input-move-name"></textarea>
-            </li>
-        </ul>
 
-        <input type="hidden" name="id" id="input-game-id"/>
-        <input type="hidden" name="user-id" id="input-user1-move"/>
-        <input type="hidden" name="version" id="input-game-version"/>
-        <input type="hidden" name="class" id="input-game-class"/>
-        <button data-transition="slide" data-icon="save" id="submit-game">Execute</button>
+    <canvas id="canvas" width="300" height="300" style='width:300px;height:300px'></canvas>
+    <ul data-role="listview" data-inset="true">
+        <li data-role="fieldcontain">
+            <label for="input-move-name">What's your move ?</label>
+            <textarea class="validate[required]" name="name" id="input-move-name"></textarea>
+        </li>
+    </ul>
+
+    <input type="hidden" name="id" id="input-game-id"/>
+    <input type="hidden" name="user-id" id="input-user1-move"/>
+    <input type="hidden" name="version" id="input-game-version"/>
+    <input type="hidden" name="class" id="input-game-class"/>
+    <button data-transition="slide" data-icon="save" id="submit-game">Execute</button>
 
 
     <div data-role="footer" data-position="fixed">

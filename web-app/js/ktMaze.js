@@ -60,20 +60,54 @@
       case '-x':
         return Math.PI;
       case '+y':
-        return Math.PI / 2;
-      case '-y':
         return 3 * Math.PI / 2;
+      case '-y':
+        return Math.PI / 2;
       default:
         return 0;
     }
   }
-  function drawObject(ctx, image, x, y, direction, grid) {
+  function nextDir(direction) {
+    switch (direction) {
+      case '+x':
+        return '-y';
+      case '-x':
+        return '+y';
+      case '+y':
+        return '+x';
+      case '-y':
+        return '-x';
+      default:
+        return '+x';
+    }
+  }
+  function drawObject(ctx, image, x, y, rotation, grid) {
     var half = Math.floor(pixelsPerStep / 2);
     ctx.save();
-    ctx.translate((x * pixelsPerStep) + half, (( grid - y - 1) * pixelsPerStep) + half);
-    ctx.rotate(getRotationAngle(direction));
-    ctx.drawImage(image, 0, 0, pixelsPerStep, pixelsPerStep);
+    ctx.translate((x + 1) * pixelsPerStep, ( grid - y) * pixelsPerStep);
+    ctx.rotate(rotation);
+    ctx.drawImage(image, -half, -half, pixelsPerStep, pixelsPerStep);
     ctx.restore();
+  }
+  function computeProgress(from, to, progress) {
+    return from + (to - from) * progress;
+  }
+  function drawMovingObject(ctx, image, from, to, grid, progress) {
+    var fromAngle = getRotationAngle(from.direction);
+    var toAngle = getRotationAngle(to.direction);
+    if (fromAngle - toAngle > Math.PI) {
+      toAngle += Math.PI * 2;
+    } else if (toAngle - fromAngle > Math.PI) {
+      fromAngle += Math.PI * 2;
+    }
+    drawObject(
+        ctx,
+        image,
+        computeProgress(from.x, to.x, progress),
+        computeProgress(from.y, to.y, progress),
+        computeProgress(fromAngle, toAngle, progress),
+        grid
+      );
   }
   function drawGrid(ctx, grid) {
     ctx.save();
@@ -101,7 +135,14 @@
   function displayStep(ctx, images, step, grid) {
     for (var obj in step) {
       if (step.hasOwnProperty(obj)) {
-        drawObject(ctx, images[obj], step[obj].x, step[obj].y, step[obj].direction, grid);
+        drawObject(ctx, images[obj], step[obj].x, step[obj].y, getRotationAngle(step[obj].direction), grid);
+      }
+    }
+  }
+  function displayAnimatedStep(ctx, images, animatedFrom, animatedTo, grid, progress) {
+    for (var obj in animatedTo) {
+      if (animatedTo.hasOwnProperty(obj)) {
+        drawMovingObject(ctx, images[obj], animatedFrom[obj], animatedTo[obj], grid, progress);
       }
     }
   }
@@ -109,6 +150,7 @@
    * ktMaze($('#canvas'), {
    *   grid: 15,
    *   stepDuration: 1000,
+   *   winningAnimation: { x: 4, y: 3 },// optional: only if there is an animation
    *   images: {
    *     flankin: 'turtle.png',
    *     emily: 'turle.png',
@@ -137,11 +179,42 @@
     canvas.setAttribute('width', pixels);
     var ctx = canvas.getContext('2d');
     drawGrid(ctx, config.grid);
+    if (config.winningAnimation) {
+      config.images.winningHeart1 = 'heart.png';
+      config.images.winningHeart2 = 'heart.png';
+      config.images.winningHeart3 = 'heart.png';
+      config.images.winningHeart4 = 'heart.png';
+      var dirs = ['+x', '-x', '+y', '-y'];
+      var speed = 3;
+      var max = Math.ceil((Math.max(
+          Math.max(config.grid - config.winningAnimation.x, config.winningAnimation.x),
+          Math.max(config.grid - config.winningAnimation.y, config.winningAnimation.y)
+        ) / speed) + 2);
+      for (var i = 0; i < max; i++) {
+        config.steps.push({
+          winningHeart1: { x: config.winningAnimation.x + (i * speed), y: config.winningAnimation.y, direction: dirs[0] },
+          winningHeart2: { x: config.winningAnimation.x - (i * speed), y: config.winningAnimation.y, direction: dirs[1] },
+          winningHeart3: { x: config.winningAnimation.x, y: config.winningAnimation.y + (i * speed), direction: dirs[2] },
+          winningHeart4: { x: config.winningAnimation.x, y: config.winningAnimation.y - (i * speed), direction: dirs[3] }
+        });
+        for (var j = 0; j < dirs.length; j++) {
+          dirs[j] = nextDir(dirs[j]);
+        }
+      }
+    }
     preFetchImages(config.images, function (err, images) {
+      var name;
       var fixedObjects = {};
+      var animatedObjectsFrom = {};
+      var animatedObjectsTo = {};
       var endStep = Date.now() + config.stepDuration;
       var idx = 0;
-      var currentStep = config.steps[0];
+      // Fix objects from first step
+      for (name in config.steps[0]) {
+        if (config.steps[0].hasOwnProperty(name)) {
+          fixedObjects[name] = config.steps[0][name];
+        }
+      }
       function iterate (timestamp) {
         var name;
         if (timestamp > endStep) {
@@ -151,28 +224,39 @@
             onfinish();
             return;
           }
-          for (name in currentStep) {
-            if (currentStep.hasOwnProperty(name)) {
-              fixedObjects[name] = currentStep[name];
+          // Fix objects that were animated
+          for (name in animatedObjectsTo) {
+            if (animatedObjectsTo.hasOwnProperty(name)) {
+              fixedObjects[name] = animatedObjectsTo[name];
             }
           }
-          currentStep = config.steps[idx];
-          for (name in currentStep) {
-            if (currentStep.hasOwnProperty(name)) {
-              delete fixedObjects[name];
+          animatedObjectsTo = {};
+          animatedObjectsFrom = {};
+          // Find animated and fixed objects at next step
+          for (name in config.steps[idx]) {
+            if (config.steps[idx].hasOwnProperty(name)) {
+              if (fixedObjects[name]) {
+                // Object is now animated
+                animatedObjectsTo[name] = config.steps[idx][name];
+                animatedObjectsFrom[name] = fixedObjects[name];
+                delete fixedObjects[name];
+              } else {
+                // Object just appeared
+                fixedObjects[name] = config.steps[idx][name];
+              }
             }
           }
         }
         ctx.clearRect(0, 0, pixels, pixels);
         drawGrid(ctx, config.grid);
         displayStep(ctx, images, fixedObjects, config.grid);
-        displayStep(ctx, images, currentStep, config.grid);
+        displayAnimatedStep(ctx, images, animatedObjectsFrom, animatedObjectsTo, config.grid, 1 - ((endStep - timestamp) / config.stepDuration));
         requestAnimationFrame(iterate);
       }
       if (err) {
         onfinish(err);
       } else {
-        iterate();
+        iterate(Date.now());
       }
     });
   };

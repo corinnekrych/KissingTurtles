@@ -41,18 +41,22 @@ kissingturtles.view.gameview = function (model, elements) {
                     tree1: 'tree.png'
                 },
                 steps: [{
-                    flankin: { x: 3, y: 1, direction: '+x' },
+                    flankin: { x: 0, y: 0, direction: '+x' },
                     emily: { x: 6, y: 6, direction: '-y' },
                     tree1: { x: 14, y: 14 }
-                }, {
-                    flankin: { x: 4, y: 1, direction: '+x' }
-                }, {
-                    flankin: { x: 5, y: 1, direction: '+x' }
-                }, {
-                    flankin: { x: 6, y: 1, direction: '+x' }
-                }, {
-                    flankin: { x: 7, y: 1, direction: '+x' }
-                }],
+                },
+                    {
+                        flankin: { x: 0, y: 2, direction: '+x' },
+                        tree1: { x: 14, y: 14 }
+                    },
+                    {
+                        flankin: { x: 1, y: 2, direction: '+x' },
+                        tree1: { x: 14, y: 14 }
+                    },
+                    {
+                        flankin: { x: 1, y: 2, direction: '-x' },
+                        tree1: { x: 14, y: 14 }
+                    }],
                 grid: 15,
                 stepDuration: 1000
             }, function () {
@@ -102,23 +106,6 @@ kissingturtles.view.gameview = function (model, elements) {
         }
     });
 
-    that.elements.save.live("click tap", function (event) {
-        $("#form-update-game").validationEngine('hide');
-        if($("#form-update-game").validationEngine('validate')) {
-            var obj = grails.mobile.helper.toObject($("#form-update-game").find("input, select"));
-            var newElement = {
-                game: JSON.stringify(obj)
-            };
-            if (obj.id === "") {
-                that.createButtonClicked.notify(newElement, event);
-            } else {
-                that.updateButtonClicked.notify(newElement, event);
-            }
-        } else {
-            event.stopPropagation();
-            event.preventDefault();
-        }
-    });
 
     that.elements.remove.live("click tap", function (event) {
         that.deleteButtonClicked.notify({ id: $('#input-game-id').val() }, event);
@@ -132,6 +119,56 @@ kissingturtles.view.gameview = function (model, elements) {
     addEventListener('online', function(e) {
         that.onlineEvent.notify();
     });
+
+    that.elements.execute.live("click tap", function(event) {
+        var dslInput = $('#input-move-name').val();
+        that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput});
+    });
+
+//    steps: [{
+//        franklin: { x: 3, y: 1, direction: '+x' },
+//        emily: { x: 6, y: 6, direction: '-y' },
+//        tree1: { x: 14, y: 14 }
+//    }, {
+//        franklin: { x: 4, y: 1, direction: '+x' }
+//    }, {
+//        franklin: { x: 5, y: 1, direction: '+x' }
+//    }, {
+//        franklin: { x: 6, y: 1, direction: '+x' }
+//    }, {
+//        franklin: { x: 7, y: 1, direction: '+x' }
+//    }],
+
+// From server side:
+// {
+// "name":"franklin",
+// "image":"image",
+// "steps":[{
+// "class":"dsl.Position","direction":"+y","rotation":0,"x":0,"y":0
+// },{
+// "class":"dsl.Position","direction":"-x","rotation":-90,"x":0,"y":10
+// }]}
+    that.refreshMazeWithMove = function(data) {
+        // a bit of conversion for now, to discuss if we can simplify
+        var steps = []
+        $.each(data.steps, function(k, v) {
+           var obj = {};
+            obj[data.name] = data.steps[k];
+            steps.push(obj);
+        });
+        ktMaze(document.getElementById('canvas'), {
+            images: {
+                franklin: 'turtle.png',
+                emily: 'turtle.png',
+                tree1: 'tree.png'
+            },
+            steps: steps,
+            grid: 15,
+            stepDuration: 1000
+        }, function () {
+            console.log('done');
+        })
+    };
 
     that.elements.add.live('pageshow', function (event) {
         $('#form-update-game').validationEngine('hide');

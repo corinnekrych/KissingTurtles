@@ -4,10 +4,10 @@ class Position {
     int x
     int y
     int rotation
+    String direction
 
     Position move(Direction dir, int step) {
         def newRotation = rotation
-        def newPosition = new Position(x, y, rotation)
         if (dir.equals(Direction.backward)) {
             newRotation = (rotation + 180) % 360
             println "Back"
@@ -19,35 +19,57 @@ class Position {
             newRotation = (rotation + 90) % 360
         }
 
+        def newDirection = whichDirection(newRotation)
+        def newPosition
         if (((newRotation % 360) == 0) || ((newRotation % 360) == -360)) {
-            newPosition = new Position(x, y + step, newRotation);
+            println "y+step = " + y+step
+            newPosition = new Position(x, y + step, newRotation, newDirection);
         } else if (((newRotation % 360) == 90) || ((newRotation % 360) == -270)) {
-            newPosition = new Position(x + step, y, newRotation);
+            newPosition = new Position(x + step, y, newRotation, newDirection);
         } else if (((newRotation % 360) == 180) || ((newRotation % 360) == -180)) {
-            newPosition = new Position(x, y - step, newRotation);
+            newPosition = new Position(x, y - step, newRotation, newDirection);
         } else if (((newRotation % 360) == 270) || ((newRotation % 360) == -90)) {
-            newPosition = new Position(x - step, y, newRotation);
+            newPosition = new Position(x - step, y, newRotation, newDirection);
         }
         newPosition
     }
 
     Position left() {
         println "left"
-        new Position(x, y, rotation - 90);
+        def newRotation = rotation - 90;
+        def newDirection = whichDirection(newRotation)
+        new Position(x, y, newRotation, newDirection);
     }
 
     Position right() {
         println "right"
-        new Position(x, y, rotation + 90);
+        def newRotation = rotation + 90;
+        def newDirection = whichDirection(newRotation)
+        new Position(x, y, newRotation, newDirection);
+    }
+
+    String whichDirection(newRotation) {
+        def newDirection
+        if (((newRotation % 360) == 0) || ((newRotation % 360) == -360)) {
+            newDirection = '+y';
+        } else if (((newRotation % 360) == 90) || ((newRotation % 360) == -270)) {
+            newDirection = '+x';
+        } else if (((newRotation % 360) == 180) || ((newRotation % 360) == -180)) {
+            newDirection = '-y';
+        } else if (((newRotation % 360) == 270) || ((newRotation % 360) == -90)) {
+            newDirection = '-x';
+        }
+        newDirection
     }
 
     String toString() {
-        "x: $x, y: $y, rotation: $rotation"
+        "x: $x, y: $y, rotation: $rotation, direction: $direction"
     }
 
-    def Position(moveX, moveY, rot) {
+    def Position(moveX, moveY, rot, dir) {
         x = moveX
         y = moveY
         rotation = rot
+        direction = dir
     }
 }

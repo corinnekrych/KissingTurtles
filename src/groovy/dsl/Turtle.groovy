@@ -13,7 +13,7 @@ class Turtle {
     Turtle(myName, myImage) {
         name = myName
         image = myImage
-        steps = [new Position(0, 0, 0)]
+        steps = [new Position(0, 0, 90, '+x')]
         result = ['name': name, 'image': image, 'steps': steps]
     }
 

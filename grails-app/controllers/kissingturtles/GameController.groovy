@@ -1,17 +1,42 @@
 package kissingturtles
 
 
-import grails.converters.deep.JSON
+import grails.converters.JSON
 import grails.validation.ValidationErrors
 import groovy.json.JsonBuilder;
 
 import org.codehaus.groovy.grails.web.json.JSONObject;
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
+import dsl.DslScript
+import dsl.Turtle
 
 class GameController {
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
+
+    def run() {
+        println "in the inputs" + params
+        def scriptInstance = new DslScript(params)
+        def script = scriptInstance.content
+        def turtle = new Turtle("franklin", "image")
+
+        def binding = new Binding([
+                turtle: turtle,
+                left: dsl.Direction.left,
+                right: dsl.Direction.right,
+                backward: dsl.Direction.backward,
+                forward: dsl.Direction.forward,
+                turn: turtle.&turn,
+                move: turtle.&move,
+                kiss:  turtle.&kiss
+        ])
+        def shell = new GroovyShell(binding)
+        shell.evaluate(script)
+        def json = binding.getVariable('turtle').result as JSON
+        println json
+        render json
+    }
 
     def index() {
         redirect(action: "list", params: params)

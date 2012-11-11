@@ -27,6 +27,10 @@ grails.mobile.feed.offline = function (store) {
         listed(list);
     };
 
+    that.execute = function () {
+        // do nothing
+    };
+
     that.createItem = function (data, created) {
         for (var k in data) {
             data = data[k]; // remove formatting done in view needed by controller {domain: {id: "", ...}}

@@ -22,6 +22,11 @@ grails.mobile.feed.online = function (url, store) {
     var that = {};
     var store = store;
 
+    that.execute = function (data, executed) {
+        send(data, "run", "POST", function(data) {
+            executed(data);
+        })
+    };
     that.listItems = function (listed) {
         send(null, "list", "GET", function (data) {
             listed(data);
