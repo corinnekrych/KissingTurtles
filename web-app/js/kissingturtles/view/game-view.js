@@ -41,18 +41,22 @@ kissingturtles.view.gameview = function (model, elements) {
                     tree1: 'tree.png'
                 },
                 steps: [{
-                    flankin: { x: 3, y: 1, direction: '+x' },
+                    flankin: { x: 0, y: 0, direction: '+x' },
                     emily: { x: 6, y: 6, direction: '-y' },
                     tree1: { x: 14, y: 14 }
-                }, {
-                    flankin: { x: 4, y: 1, direction: '+x' }
-                }, {
-                    flankin: { x: 5, y: 1, direction: '+x' }
-                }, {
-                    flankin: { x: 6, y: 1, direction: '+x' }
-                }, {
-                    flankin: { x: 7, y: 1, direction: '+x' }
-                }],
+                },
+                    {
+                        flankin: { x: 0, y: 2, direction: '+x' },
+                        tree1: { x: 14, y: 14 }
+                    },
+                    {
+                        flankin: { x: 1, y: 2, direction: '+x' },
+                        tree1: { x: 14, y: 14 }
+                    },
+                    {
+                        flankin: { x: 1, y: 2, direction: '-x' },
+                        tree1: { x: 14, y: 14 }
+                    }],
                 grid: 15,
                 stepDuration: 1000
             }, function () {
