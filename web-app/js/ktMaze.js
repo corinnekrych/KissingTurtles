@@ -60,9 +60,9 @@
       case '-x':
         return Math.PI;
       case '+y':
-        return Math.PI / 2;
-      case '-y':
         return 3 * Math.PI / 2;
+      case '-y':
+        return Math.PI / 2;
       default:
         return 0;
     }
