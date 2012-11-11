@@ -1,6 +1,7 @@
 package maze
 
 import grails.converters.JSON
+import java.util.Random
 
 
 
@@ -51,7 +52,9 @@ class RandomMazeController {
 				Tile t = new Tile()
 				t.x = xCor
 				t.y = yCor
-			
+				
+				Random random = new Random()
+				int randomNo = random.nextInt(4)
 				//crate a maze by making some tiles valid
 				
 				
@@ -62,12 +65,22 @@ class RandomMazeController {
 					t.valid = true
 				}
 				
-				//some middle tiles
-				if (xCor % 2 && yCor % 2) {
-					t.valid = false
+				
+				//some middle tiles			
+				
+				if (xCor % 2){ //x is even
+					if(yCor % 2){ //y is even, x is even
+						t.valid = false
+					}else{//y is odd, x is even
+						
+						if(randomNo==0) t.valid = false
+					}
+				}else{ //x is odd
+					if(yCor % 2){ //y is even, x is odd
+						if(randomNo==1) t.valid = false
+					}else{//y is odd, x is odd
 					
-					//randomly invalid an adjacent tile
-					
+					}
 				}
 				
 				
