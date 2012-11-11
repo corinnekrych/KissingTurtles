@@ -81,16 +81,16 @@
         return '+x';
     }
   }
-  function drawObject(ctx, image, x, y, direction, grid) {
+  function drawObject(ctx, image, x, y, rotation, grid) {
     var half = Math.floor(pixelsPerStep / 2);
     ctx.save();
     ctx.translate((x + 1) * pixelsPerStep, ( grid - y) * pixelsPerStep);
-    ctx.rotate(getRotationAngle(direction));
+    ctx.rotate(rotation);
     ctx.drawImage(image, -half, -half, pixelsPerStep, pixelsPerStep);
     ctx.restore();
   }
   function drawMovingObject(ctx, image, from, to, grid, progress) {
-    drawObject(ctx, image, to.x, to.y, to.direction, grid);
+    drawObject(ctx, image, to.x, to.y, getRotationAngle(to.direction), grid);
   }
   function drawGrid(ctx, grid) {
     ctx.save();
@@ -118,7 +118,7 @@
   function displayStep(ctx, images, step, grid) {
     for (var obj in step) {
       if (step.hasOwnProperty(obj)) {
-        drawObject(ctx, images[obj], step[obj].x, step[obj].y, step[obj].direction, grid);
+        drawObject(ctx, images[obj], step[obj].x, step[obj].y, getRotationAngle(step[obj].direction), grid);
       }
     }
   }
