@@ -175,10 +175,18 @@
       }
     }
     preFetchImages(config.images, function (err, images) {
+      var name;
       var fixedObjects = {};
+      var animatedObjectsFrom = {};
+      var animatedObjectsTo = {};
       var endStep = Date.now() + config.stepDuration;
       var idx = 0;
-      var currentStep = config.steps[0];
+      // Fix objects from first step
+      for (name in config.steps[0]) {
+        if (config.steps[0].hasOwnProperty(name)) {
+          fixedObjects[name] = config.steps[0][name];
+        }
+      }
       function iterate (timestamp) {
         var name;
         if (timestamp > endStep) {
@@ -188,22 +196,33 @@
             onfinish();
             return;
           }
-          for (name in currentStep) {
-            if (currentStep.hasOwnProperty(name)) {
-              fixedObjects[name] = currentStep[name];
+          // Fix objects that were animated
+          for (name in animatedObjectsTo) {
+            if (animatedObjectsTo.hasOwnProperty(name)) {
+              fixedObjects[name] = animatedObjectsTo[name];
             }
           }
-          currentStep = config.steps[idx];
-          for (name in currentStep) {
-            if (currentStep.hasOwnProperty(name)) {
-              delete fixedObjects[name];
+          animatedObjectsTo = {};
+          animatedObjectsFrom = {};
+          // Find animated and fixed objects at next step
+          for (name in config.steps[idx]) {
+            if (config.steps[idx].hasOwnProperty(name)) {
+              if (fixedObjects[name]) {
+                // Object is now animated
+                animatedObjectsTo[name] = config.steps[idx][name];
+                animatedObjectsFrom[name] = fixedObjects[name];
+                delete fixedObjects[name];
+              } else {
+                // Object just appeared
+                fixedObjects[name] = config.steps[idx][name];
+              }
             }
           }
         }
         ctx.clearRect(0, 0, pixels, pixels);
         drawGrid(ctx, config.grid);
         displayStep(ctx, images, fixedObjects, config.grid);
-        displayStep(ctx, images, currentStep, config.grid);
+        displayStep(ctx, images, animatedObjectsTo, config.grid);
         requestAnimationFrame(iterate);
       }
       if (err) {
