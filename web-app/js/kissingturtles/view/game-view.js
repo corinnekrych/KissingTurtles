@@ -93,7 +93,7 @@ kissingturtles.view.gameview = function (model, elements) {
 
     // user interface actions
     
-    that.elements.list.live('pageinit', function (e) {
+    that.elements.list.live('pageinit pageshow', function (e) {
         var id = sessionStorage.getItem("KissingTurtles.UserId");
         if (id) {
             that.listButtonClicked.notify();
@@ -141,6 +141,12 @@ kissingturtles.view.gameview = function (model, elements) {
 
         if (id) {
             sessionStorage.removeItem("showgameId");
+            var game = that.model.items[id]
+            game.user2 = { id: sessionStorage.getItem("KissingTurtles.UserId") };
+            var newElement = {
+                game: JSON.stringify(game)
+            };
+            that.updateButtonClicked.notify(newElement, event);
             showElement(id);
         } else {
             var obj = {user1: sessionStorage.getItem("KissingTurtles.UserId")};
@@ -159,7 +165,7 @@ kissingturtles.view.gameview = function (model, elements) {
     var showElement = function (id) {
         resetForm("form-update-game");
         var element = that.model.items[id];
- 
+
         $("#delete-game").show();
     };
 
@@ -187,7 +193,9 @@ kissingturtles.view.gameview = function (model, elements) {
         for (key in items) {
             var game = items[key];
             if (game.user1.id != sessionStorage.getItem("KissingTurtles.UserId")) {
-                renderElement(items[key]);
+                if (!game.user2) {
+                    renderElement(items[key]);
+                }
             }
         }
         $('#list-games').listview('refresh');
