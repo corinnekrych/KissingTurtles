@@ -7,10 +7,8 @@ kissingturtles.view = kissingturtles.view || {};
 kissingturtles.view.gameview = function (model, elements) {
 
     var that = grails.mobile.mvc.view(model, elements);
-    
-    // Register events
 
-    
+    // Register events
     that.model.listedDependentItems.attach(function (data) {
         if (data.relationType === 'many-to-one') {
             renderDependentList(data.dependentName, data.items);
@@ -34,34 +32,37 @@ kissingturtles.view.gameview = function (model, elements) {
         } else if (data.item.message) {
             showGeneralMessage(data, event);
         } else {
-            ktMaze(document.getElementById('canvas'), {
-                images: {
-                    flankin: 'turtle.png',
-                    emily: 'turtle.png',
-                    tree1: 'tree.png'
-                },
-                steps: [{
-                    flankin: { x: 0, y: 0, direction: '+x' },
-                    emily: { x: 6, y: 6, direction: '-y' },
-                    tree1: { x: 14, y: 14 }
-                },
-                    {
-                        flankin: { x: 0, y: 2, direction: '+x' },
-                        tree1: { x: 14, y: 14 }
-                    },
-                    {
-                        flankin: { x: 1, y: 2, direction: '+x' },
-                        tree1: { x: 14, y: 14 }
-                    },
-                    {
-                        flankin: { x: 1, y: 2, direction: '-x' },
-                        tree1: { x: 14, y: 14 }
-                    }],
-                grid: 15,
-                stepDuration: 1000
-            }, function () {
+            var confAsString = data.item.mazeDefinition;
+            sessionStorage.setItem("showgameId", data.item.id);
+            var conf = JSON.parse(confAsString);
+            ktMaze(document.getElementById('canvas'), conf['configuration'], function () {
                 console.log('done');
-            })
+            });
+
+//            that.randomEmilyX=Math.floor(Math.random()*15);
+//            that.randomEmilyY=Math.floor(Math.random()*15);
+//            ktMaze(document.getElementById('canvas'), {
+//                images: {
+//                    franklin: 'turtle.png',
+//                    emily: 'turtle.png',
+//                    tree1: 'tree.png'
+//                },
+//                //winningAnimation: { x: that.randomEmilyX, y: that.randomEmilyY },
+//                steps: [{
+//                    franklin: { x: 0, y: 0, direction: '+x' },
+//                    emily: { x: that.randomEmilyX, y: that.randomEmilyY, direction: '-y' },
+//                    tree1: { x: 14, y: 14 }
+//                },
+//                {
+//                    franklin: { x: 0, y: 0, direction: '+x' },
+//                    emily: { x: that.randomEmilyX, y: that.randomEmilyY, direction: '-y' },
+//                    tree1: { x: 14, y: 14 }
+//                }],
+//                grid: 15,
+//                stepDuration: 1000
+//            }, function () {
+//                console.log('done');
+//            })
 		}
     });
 
@@ -122,47 +123,24 @@ kissingturtles.view.gameview = function (model, elements) {
 
     that.elements.execute.live("click tap", function(event) {
         var dslInput = $('#input-move-name').val();
-        that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput});
+        var gameId = sessionStorage.getItem("showgameId");
+        that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId});
     });
 
-//    steps: [{
-//        franklin: { x: 3, y: 1, direction: '+x' },
-//        emily: { x: 6, y: 6, direction: '-y' },
-//        tree1: { x: 14, y: 14 }
-//    }, {
-//        franklin: { x: 4, y: 1, direction: '+x' }
-//    }, {
-//        franklin: { x: 5, y: 1, direction: '+x' }
-//    }, {
-//        franklin: { x: 6, y: 1, direction: '+x' }
-//    }, {
-//        franklin: { x: 7, y: 1, direction: '+x' }
-//    }],
-
-// From server side:
-// {
-// "name":"franklin",
-// "image":"image",
-// "steps":[{
-// "class":"dsl.Position","direction":"+y","rotation":0,"x":0,"y":0
-// },{
-// "class":"dsl.Position","direction":"-x","rotation":-90,"x":0,"y":10
-// }]}
+    //----------------------------------------------------------------------------------------
+    //    DISPLAY MAZE AFTER EXECUTE
+    //----------------------------------------------------------------------------------------
     that.refreshMazeWithMove = function(data) {
-        // a bit of conversion for now, to discuss if we can simplify
-        var steps = []
-        $.each(data.steps, function(k, v) {
-           var obj = {};
-            obj[data.name] = data.steps[k];
-            steps.push(obj);
-        });
+
+
         ktMaze(document.getElementById('canvas'), {
             images: {
                 franklin: 'turtle.png',
                 emily: 'turtle.png',
                 tree1: 'tree.png'
             },
-            steps: steps,
+            winningAnimation: data.configuration.winningAnimation,
+            steps: data.configuration.steps,
             grid: 15,
             stepDuration: 1000
         }, function () {
@@ -177,13 +155,13 @@ kissingturtles.view.gameview = function (model, elements) {
         var id = sessionStorage.getItem("showgameId");
 
         if (id) {
-            sessionStorage.removeItem("showgameId");
             var game = that.model.items[id]
             game.user2 = { id: sessionStorage.getItem("KissingTurtles.UserId") };
             var newElement = {
                 game: JSON.stringify(game)
             };
             that.updateButtonClicked.notify(newElement, event);
+
             showElement(id);
         } else {
             var obj = {user1: sessionStorage.getItem("KissingTurtles.UserId")};

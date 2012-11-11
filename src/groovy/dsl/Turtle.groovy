@@ -10,10 +10,10 @@ class Turtle {
     def steps = []
     def result = [:]
 
-    Turtle(myName, myImage) {
+    Turtle(myName, myImage, Position start) {
         name = myName
         image = myImage
-        steps = [new Position(0, 0, 90, '+x')]
+        steps = [start]
         result = ['name': name, 'image': image, 'steps': steps]
     }
 

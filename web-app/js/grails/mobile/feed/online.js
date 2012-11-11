@@ -75,7 +75,7 @@ grails.mobile.feed.online = function (url, store) {
                 successCallback(data, action, dataToSend);
             },
             error: function (xhr) {
-                alert(xhr.responseText);
+                alert("Ooops something went wrong");
             }
         };
     };
