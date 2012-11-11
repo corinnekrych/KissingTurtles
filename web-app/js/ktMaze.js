@@ -185,16 +185,17 @@
       config.images.winningHeart3 = 'heart.png';
       config.images.winningHeart4 = 'heart.png';
       var dirs = ['+x', '-x', '+y', '-y'];
-      var max = Math.max(
+      var speed = 3;
+      var max = Math.ceil((Math.max(
           Math.max(config.grid - config.winningAnimation.x, config.winningAnimation.x),
           Math.max(config.grid - config.winningAnimation.y, config.winningAnimation.y)
-        ) + 2;
+        ) / speed) + 2);
       for (var i = 0; i < max; i++) {
         config.steps.push({
-          winningHeart1: { x: config.winningAnimation.x + i, y: config.winningAnimation.y, direction: dirs[0] },
-          winningHeart2: { x: config.winningAnimation.x - i, y: config.winningAnimation.y, direction: dirs[1] },
-          winningHeart3: { x: config.winningAnimation.x, y: config.winningAnimation.y + i, direction: dirs[2] },
-          winningHeart4: { x: config.winningAnimation.x, y: config.winningAnimation.y - i, direction: dirs[3] }
+          winningHeart1: { x: config.winningAnimation.x + (i * speed), y: config.winningAnimation.y, direction: dirs[0] },
+          winningHeart2: { x: config.winningAnimation.x - (i * speed), y: config.winningAnimation.y, direction: dirs[1] },
+          winningHeart3: { x: config.winningAnimation.x, y: config.winningAnimation.y + (i * speed), direction: dirs[2] },
+          winningHeart4: { x: config.winningAnimation.x, y: config.winningAnimation.y - (i * speed), direction: dirs[3] }
         });
         for (var j = 0; j < dirs.length; j++) {
           dirs[j] = nextDir(dirs[j]);
