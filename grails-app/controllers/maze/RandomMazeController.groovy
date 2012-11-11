@@ -92,8 +92,10 @@ class RandomMazeController {
 				if(yCor<len-2&&yCor>len-6){
 					if (xCor==len) t.valid = true
 				}
-
 				
+				//make the first corner start form x0,y0 not x1,y1
+				t.x--
+				t.y--
 				tiles.add(t)
 			}
 		}
