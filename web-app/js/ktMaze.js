@@ -89,13 +89,23 @@
     ctx.drawImage(image, -half, -half, pixelsPerStep, pixelsPerStep);
     ctx.restore();
   }
+  function computeProgress(from, to, progress) {
+    return from + (to - from) * progress;
+  }
   function drawMovingObject(ctx, image, from, to, grid, progress) {
+    var fromAngle = getRotationAngle(from.direction);
+    var toAngle = getRotationAngle(to.direction);
+    if (fromAngle - toAngle > Math.PI) {
+      toAngle += Math.PI * 2;
+    } else if (toAngle - fromAngle > Math.PI) {
+      fromAngle += Math.PI * 2;
+    }
     drawObject(
         ctx,
         image,
-        from.x + ((to.x - from.x) * progress),
-        from.y + ((to.y - from.y) * progress),
-        getRotationAngle(to.direction),
+        computeProgress(from.x, to.x, progress),
+        computeProgress(from.y, to.y, progress),
+        computeProgress(fromAngle, toAngle, progress),
         grid
       );
   }
