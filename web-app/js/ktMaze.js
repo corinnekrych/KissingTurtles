@@ -158,7 +158,11 @@
       config.images.winningHeart3 = 'heart.png';
       config.images.winningHeart4 = 'heart.png';
       var dirs = ['+x', '-x', '+y', '-y'];
-      for (var i = 0; i < config.grid + 2; i++) {
+      var max = Math.max(
+          Math.max(config.grid - config.winningAnimation.x, config.winningAnimation.x),
+          Math.max(config.grid - config.winningAnimation.y, config.winningAnimation.y)
+        ) + 2;
+      for (var i = 0; i < max; i++) {
         config.steps.push({
           winningHeart1: { x: config.winningAnimation.x + i, y: config.winningAnimation.y, direction: dirs[0] },
           winningHeart2: { x: config.winningAnimation.x - i, y: config.winningAnimation.y, direction: dirs[1] },
