@@ -1,3 +1,11 @@
+Grails48 is over
+================
+Here is the links of our submission
+
+http://kissingturtles.cloudfoundry.com/start-index.html
+
+http://www.youtube.com/watch?v=jvVeWHvmG2I&feature=player_embedded
+
 General Idea
 ============
 
