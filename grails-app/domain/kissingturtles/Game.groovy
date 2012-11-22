@@ -22,6 +22,7 @@ class Game {
 //    Position emily
 
     static constraints = {
+        user1 nullable: true
         user2 nullable: true
         mazeDefinition nullable: true, maxSize: 5000
 //        franklin nullable: true

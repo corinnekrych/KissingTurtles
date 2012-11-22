@@ -127,7 +127,7 @@ class GameController {
         mazeDefinition = conf
         //end integration with maze
         Game gameInstance = new Game()
-        gameInstance.user1 = User.findById(jsonObject.entrySet().iterator().next().value)
+        //gameInstance.user1 = User.findById(jsonObject.entrySet().iterator().next().value)
         gameInstance.mazeDefinition = mazeDefinition
         // save initial position
         gameInstance.fX = franklinPosition.x

@@ -67,19 +67,12 @@
     turn left (or) turn right</textarea>
         </div>
         <div>
+            <a href="" id="single-player" data-role="button" data-inline="true">Single Player</a>
             <a href="#section-list-games" data-role="button" data-inline="true">Play a Game</a>
             <a href="#section-settings" data-role="button" data-inline="true">Settings</a>
         </div>
         <div data-theme="a" class="center-wrapper" data-content-theme="a">
-            <textarea readonly>"Kissing Turtles", a Mobile Game to learn programming for kids. Internally, goal was to show how easy was to write DSL with Groovy (Partly done no sandboxing and simple move, turn)
-use the JQuery mobile HTML5 scaffolding(3.musket33rs) to show single page instead of GSP and mobile version
-use the CORS plugin for phone gap as this is a mobile app
-use the Event push plugin or integrate Vertx for multi user game (Not done)
-Maze Generation in Groovy
-
-For the Game: http://kissingturtles.cloudfoundry.com/start-index.html
-For the maze generation: http://kissingturtles.cloudfoundry.com/randomMaze/index?length=15  (Not integrated yet)
-            </textarea>
+            <textarea readonly>"Kissing Turtles", a Mobile Game to learn programming for kids.</textarea>
         </div>
     </div>
 
@@ -90,11 +83,18 @@ For the maze generation: http://kissingturtles.cloudfoundry.com/randomMaze/index
 
 <section data-role="page" id="section-settings">
     <div data-role="header" data-position="fixed">
-
+        <a href="#start-game" data-transition="slide" data-icon="arrow-l">Cancel</a>
         <h1>Kissing Turtle</h1>
     </div>
+    <label for="slider-1">Grid size:</label>
+    <input type="range" name="slider-1" id="slider-1" value="10" min="0" max="20" />
     <div data-role="footer" data-position="fixed">
-        <h4>Grails48 - The World's Hackathon</h4>
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#start-game" id="save-settings" data-transition="slide" data-role="button"
+                       data-icon="plus">Save</a></li>
+            </ul>
+        </div>
     </div>
 </section>
 
@@ -124,8 +124,7 @@ For the maze generation: http://kissingturtles.cloudfoundry.com/randomMaze/index
 
 <section data-role="page" id="section-show-user">
     <div data-role="header" id="show-user" data-position="fixed">
-        <a href="#section-list-users" data-transition="slide" data-icon="arrow-l">Cancel</a>
-
+        <a href="#start-game" data-transition="slide" data-icon="arrow-l">Cancel</a>
         <h1>Who are you?</h1>
     </div>
     <form id="form-update-user" name="form-update-user">
@@ -185,7 +184,7 @@ For the maze generation: http://kissingturtles.cloudfoundry.com/randomMaze/index
 
 <section data-role="page" id="section-show-game">
     <div data-role="header" id="show-game" data-position="fixed">
-        <a href="#section-list-games" data-transition="slide" data-icon="arrow-l">Cancel</a>
+        <a href="#start-game" data-transition="slide" data-icon="arrow-l">Cancel</a>
 
         <h1>Game</h1>
     </div>
