@@ -1,8 +1,15 @@
+Grails48 is over
+================
+Here is the links of our submission
+
+http://kissingturtles.cloudfoundry.com/start-index.html
+
+http://www.youtube.com/watch?v=jvVeWHvmG2I&feature=player_embedded
+
 General Idea
 ============
 
-1. DSL to move the turtle/robot is written in Groovy, get inspired by
-http://groovy.codeplex.com/wikipage?title=Guillaume%20Laforge%27s%20%22Mars%20Rover%22%20tutorial%20on%20Groovy%20DSL%27s
+1. DSL to move the turtle/robot is written in Groovy
 
 2. Grails for Server side Controller part that will do shell.evaluate and return position value for the turtle. 
 See code done for DSL presentation Sebi and I did at GR8Conf 
