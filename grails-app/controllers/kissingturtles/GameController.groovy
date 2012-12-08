@@ -100,31 +100,31 @@ class GameController {
 //        stepDuration: 1000
 //    }
     def save() {
+        def size = 15;
         JSONObject jsonObject = JSON.parse(params.game)
-        String mazeDefinition = "";
-        //MazeService.createMaze();
         Position franklinPosition = new Position().random(15)
         Position treePosition = new Position().random(15)
         def builder = new groovy.json.JsonBuilder()
 
-        def obj = new LinkedHashMap()
-        def tempFrank = franklinPosition as JSON
-        obj.franklin = tempFrank['target']
-        def tempTree = treePosition as JSON
-        obj.tree1 = tempTree['target']
-        def array = [obj]
-        def root = builder.configuration {
-            images {
-                franklin 'turtle.png'
-                emily 'turtle.png'
-                tree1 'tree.png'
-            }
-            steps array
-            grid 15
-            stepDuration 1000
+        def obj = [
+            franklin: (franklinPosition as JSON)['target'],
+            tree1: (treePosition as JSON)['target']
+        ]
+        def images = [
+            franklin: 'turtle.png',
+            tree1: 'tree.png'
+        ]
+        new maze.RandomMazeGenerator().depthFirstMaze2(15).eachWithIndex { item, idx ->
+            images['wall' + idx] = 'wall.png'
+            obj['wall' + idx] = [x: item.x, y: item.y]
         }
-        def conf = builder.toString()
-        mazeDefinition = conf
+        def root = [
+            images: images,
+            steps: [obj],
+            grid: size,
+            stepDuration: 1000
+        ]
+        String mazeDefinition = (root as JSON).toString()
         //end integration with maze
         Game gameInstance = new Game()
         //gameInstance.user1 = User.findById(jsonObject.entrySet().iterator().next().value)
