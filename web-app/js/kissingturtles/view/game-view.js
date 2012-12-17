@@ -21,7 +21,7 @@ kissingturtles.view.gameview = function (model, elements) {
             var confAsString = data.item.mazeDefinition;
             sessionStorage.setItem("showgameId", data.item.id);
             var conf = JSON.parse(confAsString);
-            ktMaze(document.getElementById('canvas'), conf['configuration'], function () {
+            ktMaze(document.getElementById('canvas'), conf, function () {
                 console.log('done');
             });
 		}
@@ -73,7 +73,7 @@ kissingturtles.view.gameview = function (model, elements) {
         })
     };
 
-    that.elements.add.live('pageshow', function (event) {
+    $('#section-show-game').live('pageshow', function (event) {
         $('#form-update-game').validationEngine('hide');
         $("#form-update-game").validationEngine();
 
