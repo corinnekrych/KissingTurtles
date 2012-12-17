@@ -36,6 +36,13 @@ class Turtle {
         println "Franklin is moving $dir by $step steps"
     }
 
+    void moveForward(int step) {
+        Position previousPosition = steps[steps.size() - 1]
+        Position newPosition = previousPosition.move(Direction.forward, step)
+        steps.add(newPosition)
+        println "Franklin is moving forward by $step steps"
+    }
+
     void kiss() {
         String pathSummary= ''
         steps.eachWithIndex { it, index ->
