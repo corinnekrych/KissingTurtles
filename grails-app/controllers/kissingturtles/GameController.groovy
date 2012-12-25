@@ -19,8 +19,8 @@ class GameController {
         println "in the inputs" + params
 
         def game = Game.findById(params.gameId)
-        Position franklinInitialPosition = new Position(game.fX, game.fY, game.fRot, game.fDir)
-        Position treeInitialPosition = new Position(game.tX, game.tY, game.tRot, game.tDir)
+        Position franklinInitialPosition = new Position(game.franklinX, game.franklinY, game.franklinRot, game.franklinDir)
+        Position treeInitialPosition = new Position(game.treeX, game.treeY, game.treeRot, game.treeDir)
 
         def scriptInstance = new DslScript(params)
         def script = scriptInstance.content
@@ -92,21 +92,13 @@ class GameController {
         render Game.list([fetch: [user1: 'eager', user2: 'eager']]) as JSON
     }
 
-//    ktMaze(document.getElementById('canvas'), {
-//        images: {
-//            franklin: 'turtle.png',
-//            emily: 'turtle.png',
-//            tree1: 'tree.png'
-//        },
-//        //winningAnimation: { x: that.randomEmilyX, y: that.randomEmilyY },
-//        steps: [{
-//            franklin: { x: 0, y: 0, direction: '+x' },
-//            emily: { x: that.randomEmilyX, y: that.randomEmilyY, direction: '-y' },
-//            tree1: { x: 14, y: 14 }
-//        }],
-//        grid: 15,
-//        stepDuration: 1000
+//    @Listener(namespace='browser')
+//    def initMultiPlayer() {
+//        JSONObject gameObject = JSON.parse(params.multi)
+//
+//        //event('savedTodo', data)
 //    }
+
     def save() {
         def size = 15;
         JSONObject jsonObject = JSON.parse(params.game)
@@ -135,63 +127,96 @@ class GameController {
         String mazeDefinition = (root as JSON).toString()
         //end integration with maze
         Game gameInstance = new Game()
-        //gameInstance.user1 = User.findById(jsonObject.entrySet().iterator().next().value)
+        gameInstance.user1 = jsonObject.entrySet().iterator().next().value
         gameInstance.mazeDefinition = mazeDefinition
         // save initial position
-        gameInstance.fX = franklinPosition.x
-        gameInstance.fY = franklinPosition.y
-        gameInstance.fRot = franklinPosition.rotation
-        gameInstance.fDir = franklinPosition.direction
-        gameInstance.tX = treePosition.x
-        gameInstance.tY = treePosition.y
-        gameInstance.tRot = treePosition.rotation
-        gameInstance.tDir = treePosition.direction
+        gameInstance.franklinX = franklinPosition.x
+        gameInstance.franklinY = franklinPosition.y
+        gameInstance.franklinRot = franklinPosition.rotation
+        gameInstance.franklinDir = franklinPosition.direction
+        gameInstance.treeX = treePosition.x
+        gameInstance.treeY = treePosition.y
+        gameInstance.treeRot = treePosition.rotation
+        gameInstance.treeDir = treePosition.direction
         if (!gameInstance.save(flush: true)) {
             ValidationErrors validationErrors = gameInstance.errors
             render validationErrors as JSON
         }
+        // notify when first turtle create a new game
+        event topic: "creategame", data: gameInstance
         render gameInstance as JSON
     }
 
-    def show() {
-        def gameInstance = Game.get(params.id)
-        if (!gameInstance) {
-            flash.message = message(code: 'default.not.found.message', args: [message(code: 'game.label', default: 'Game'), params.id])
-            render flash as JSON
-        }
-        render GameInstance as JSON
-    }
+//    def show() {
+//        def gameInstance = Game.get(params.id)
+//        if (!gameInstance) {
+//            flash.message = message(code: 'default.not.found.message', args: [message(code: 'game.label', default: 'Game'), params.id])
+//            render flash as JSON
+//        }
+//        render GameInstance as JSON
+//    }
 
     def update() {
         JSONObject jsonObject = JSON.parse(params.game)
-        def gameInstance = Game.get(jsonObject.id)
+        def gameInstance = Game.get(jsonObject.gameId)
+
+        Position franklinInitialPosition = new Position(gameInstance.franklinX, gameInstance.franklinY, gameInstance.franklinRot, gameInstance.franklinDir)
+        Position treeInitialPosition = new Position(gameInstance.treeX, gameInstance.treeY, gameInstance.treeRot, gameInstance.treeDir)
+        Position emilyInitialPosition = new Position().random(15)
+        // save initial position
+        gameInstance.emilyX = emilyInitialPosition.x
+        gameInstance.emilyY = emilyInitialPosition.y
+        gameInstance.emilyRot = emilyInitialPosition.rotation
+        gameInstance.emilyDir = emilyInitialPosition.direction
+
+        JSONObject json = JSON.parse(gameInstance.mazeDefinition)
+        def images = json["images"]
+        images["emily"] = 'turtle2.png'
+
+        def size = 15;
+
+        def obj = [
+                franklin: (franklinInitialPosition as JSON)['target'],
+                emily: (emilyInitialPosition as JSON)['target'],
+                tree1: (treeInitialPosition as JSON)['target']
+        ]
+        def root = [
+                images: images,
+                steps: [obj],
+                grid: size,
+                stepDuration: 1000
+        ]
+        gameInstance.mazeDefinition = (root as JSON).toString()
         if (!gameInstance) {
             flash.message = message(code: 'default.not.found.message', args: [message(code: 'game.label', default: 'Game'), params.id])
             render flash as JSON
         }
 
-        if (gameInstance.user2 != null)  {
-            gameInstance.errors.rejectValue("version", "default.optimistic.locking.failure",
-                    [message(code: 'game.label', default: 'Game')] as Object[],
-                    "Another user has already taken this Game while you were trying to get into it")
-            ValidationErrors validationErrors = gameInstance.errors
-            render validationErrors as JSON
-        }
+//        if (gameInstance.user2 != null)  {
+//            gameInstance.errors.rejectValue("version", "default.optimistic.locking.failure",
+//                    [message(code: 'game.label', default: 'Game')] as Object[],
+//                    "Another user has already taken this Game while you were trying to get into it")
+//            ValidationErrors validationErrors = gameInstance.errors
+//            render validationErrors as JSON
+//        }
+//
+//        if (!jsonObject.containsKey("user2")) {
+//            gameInstance.errors.rejectValue("version", "default.optimistic.locking.failure",
+//                    [message(code: 'game.label', default: 'Game')] as Object[],
+//                    "I don't know who you are !!!")
+//            ValidationErrors validationErrors = gameInstance.errors
+//            render validationErrors as JSON
+//        }
 
-        if (!jsonObject.containsKey("user2")) {
-            gameInstance.errors.rejectValue("version", "default.optimistic.locking.failure",
-                    [message(code: 'game.label', default: 'Game')] as Object[],
-                    "I don't know who you are !!!")
-            ValidationErrors validationErrors = gameInstance.errors
-            render validationErrors as JSON
-        }
-
-        gameInstance.user2 = User.findById(jsonObject.get("user2").id)
+        gameInstance.user2 = jsonObject.get("user2")
 
         if (!gameInstance.save(flush: true)) {
             ValidationErrors validationErrors = gameInstance.errors
             render validationErrors as JSON
         }
+
+        // notify when second turtle enter the game
+        event topic: "updategame", data: gameInstance
         render gameInstance as JSON
     }
 

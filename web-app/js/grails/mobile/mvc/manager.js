@@ -23,6 +23,7 @@ grails.mobile.mvc = grails.mobile.mvc || {};
 
 grails.mobile.mvc.manager = function (configuration) {
     var that = {};
+    var grailsEvents = new grails.Events('/' + configuration.applicationName, {transport: 'sse'});
 
     var baseURL = configuration.baseURL;
     var namespace = configuration.namespace;
@@ -69,12 +70,14 @@ grails.mobile.mvc.manager = function (configuration) {
         var controller = grails.mobile.mvc.controller(feed, model, view);
 
         var sync = grails.mobile.sync.syncmanager(baseURL + this.name + '/', domainName, controller, store, model);
+        var push = grails.mobile.push.pushmanager(grailsEvents, domainName, store, model);
 
         domainsObjects[domainName] = {
             model:model,
             view:view,
             controller:controller,
-            sync:sync
+            sync:sync,
+            push: push
         };
     });
 

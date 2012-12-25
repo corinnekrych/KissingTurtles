@@ -15,18 +15,6 @@
                     'add': $('#section-show-game'),
                     'remove': $("#delete-game")
                 }
-                
-                , hasOneRelations: [
-                
-                {type: "user", name: "user1"}
-                
-                ,
-                
-                
-                {type: "user", name: "user2"}
-                
-                 ] 
 
-                
             });
 }());

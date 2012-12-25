@@ -10,6 +10,8 @@
     <script src="js/jquery/jquery.validationEngine.js"></script>
     <script src="js/jquery/jquery.validationEngine-en.js"></script>
 
+    <script src="js/grailsEvents.js"></script>
+    <script src="js/jquery.atmosphere.js"></script>
 
     <script src="js/grails/mobile/event.js"></script>
     <script src="js/grails/mobile/mvc/model.js"></script>
@@ -21,12 +23,11 @@
     <script src="js/grails/mobile/feed/feed.js"></script>
     <script src="js/grails/mobile/helper/toObject.js"></script>
     <script src="js/grails/mobile/sync/syncmanager.js"></script>
+    <script src="js/grails/mobile/push/pushmanager.js"></script>
     <script src="js/grails/mobile/mvc/manager.js"></script>
-    <script src="js/kissingturtles/view/user-view.js"></script>
     <script src="js/kissingturtles/view/game-view.js"></script>
     <script src="js/kissingturtles/configuration-bootstrap.js"></script>
     <script src="js/kissingturtles/bootstrap/game-bootstrap.js"></script>
-    <script src="js/kissingturtles/bootstrap/user-bootstrap.js"></script>
 
     <script src="js/kissingturtles/manager-bootstrap.js"></script>
     <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
@@ -67,8 +68,8 @@
     turn left (or) turn right</textarea>
         </div>
         <div>
-            <a href="" id="single-player" data-role="button" data-inline="true">Single Player</a>
-            <a href="#section-list-games" data-role="button" data-inline="true">Play a Game</a>
+            <a href="" id="single-player" data-role="button" data-inline="true">Play alone</a>
+            <a href="#section-list-games" data-role="button" data-inline="true">Play together</a>
             <a href="#section-settings" data-role="button" data-inline="true">Settings</a>
         </div>
         <div data-theme="a" class="center-wrapper" data-content-theme="a">
@@ -98,36 +99,11 @@
     </div>
 </section>
 
-
-<section data-role="page" id="section-list-users">
-    <div data-role="header" data-position="fixed">
-
-        <h1>User</h1>
-
-    </div>
-
-    <div data-role="content" id="list-users-parent">
-
-        <ul data-role="listview" data-inset="true" data-filter="true" id="list-users">
-        </ul>
-    </div>
-
-    <div data-role="footer" data-position="fixed">
-        <div data-role="navbar">
-            <ul>
-                <li><a href="#section-show-user" data-transition="slide" data-role="button"
-                       data-icon="plus">Add</a></li>
-            </ul>
-        </div>
-    </div>
-</section>
-
 <section data-role="page" id="section-show-user">
     <div data-role="header" id="show-user" data-position="fixed">
         <a href="#start-game" data-transition="slide" data-icon="arrow-l">Cancel</a>
         <h1>Who are you?</h1>
     </div>
-    <form id="form-update-user" name="form-update-user">
         <ul data-role="listview" data-inset="true">
 
             <li data-role="fieldcontain">
@@ -140,18 +116,10 @@
 
         </ul>
 
-
-        <input type="hidden" name="id" id="input-user-id"/>
-        <input type="hidden" name="version" id="input-user-version"/>
-        <input type="hidden" name="class" id="input-user-class"/>
-    </form>
-
     <div data-role="footer" data-position="fixed">
         <div data-role="navbar">
             <ul>
-                <li><a href="#section-list-users" data-transition="slide" data-role="button"
-                       data-icon="delete" id="delete-user">Delete</a></li>
-                <li><a href="#section-list-users" data-transition="slide" data-icon="save"
+                <li><a href="" data-role="button" data-transition="slide" data-icon="save"
                        id="submit-user">Save</a></li>
             </ul>
         </div>
@@ -175,8 +143,8 @@
     <div data-role="footer" data-position="fixed">
         <div data-role="navbar">
             <ul>
-                <a href="#section-show-game" data-transition="slide" data-role="button"
-                   data-icon="plus">Create your own game</a>
+                <a href="" data-transition="slide" data-role="button"
+                   data-icon="plus" id="create-game">Create your own game</a>
             </ul>
         </div>
     </div>

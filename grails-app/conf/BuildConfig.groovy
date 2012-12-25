@@ -42,13 +42,13 @@ grails.project.dependency.resolution = {
         runtime ":jquery:1.8.2"
         runtime ":cors:1.0.3"
 
-        // Uncomment these (or add new ones) to enable additional resources capabilities
-        //runtime ":zipped-resources:1.0"
-        //runtime ":cached-resources:1.0"
-        //runtime ":yui-minify-resources:0.1.4"
+
 
         build ":tomcat:$grailsVersion"
 
         runtime ":database-migration:1.1"
+
+        compile ":platform-core:1.0.M3"
+        compile ":events-push:1.0.M3"
     }
 }
