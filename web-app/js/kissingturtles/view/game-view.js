@@ -181,15 +181,16 @@ kissingturtles.view.gameview = function (model, elements) {
             var a = $('<a>').attr({ href: '#section-show-game'});
             a.attr({id : 'game' + element.id + '-in-list'});
             a.attr({'data-game-id' : element.id});
-            //a.attr({onClick : 'localStorage.showgameId=' + element.id});
             a.attr({'data-transition': 'fade' });
             a.text(getText(element));
-            if (element.offlineStatus === "NOT-SYNC") {
-                $("#list-games").append($('<li data-theme="e">').append(a));
-            } else {
-                $("#list-games").append($('<li>').append(a));
+            // filter, display only game created by other
+            if (element.user1 != localStorage.getItem("KissingTurtles.UserId") && element.user2 == null) {
+                if (element.offlineStatus === "NOT-SYNC") {
+                    $("#list-games").append($('<li data-theme="e">').append(a));
+                } else {
+                    $("#list-games").append($('<li>').append(a));
+                }
             }
-            
         }
     };
 
