@@ -1,11 +1,4 @@
 
-//// Register for server side event push
-//window.grailsEvents = new grails.Events('/KissingTurtles', {transport: 'sse'});
-//grailsEvents.on("newGame", function(game) {
-//    alert("newGame created with " + game.user1);
-//});
-
-
 var kissingturtles = kissingturtles || {};
 kissingturtles.view = kissingturtles.view || {};
 
@@ -36,7 +29,11 @@ kissingturtles.view.gameview = function (model, elements) {
                 });
             }
             renderElement(data.item);
+            showElement(data.item);
             $("#list-games").listview('refresh');
+            if (!data.item.NOTIFIED) {
+              $.mobile.changePage($("#section-show-game"));
+            }
 		}
     });
 
@@ -48,7 +45,7 @@ kissingturtles.view.gameview = function (model, elements) {
             alert("Ooops something wrong happens");
         } else {
             var confAsString = data.item.mazeDefinition;
-            localStorage.setItem("showgameId", data.item.id);
+            //localStorage.setItem("showgameId", data.item.id);
             var conf = JSON.parse(confAsString);
 //            if (!data.item.NOTIFIED) {
                 that.currentMaze = conf;
@@ -90,8 +87,8 @@ kissingturtles.view.gameview = function (model, elements) {
 
     $("#submit-game").live("click tap", function(event) {
         var dslInput = $('#input-move-name').val();
-        var gameId = localStorage.getItem("showgameId");
-        that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId});
+        var gameId = $("#input-game-id").val();
+        that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId, user: localStorage.getItem("KissingTurtles.UserId")});
     });
 
     $('a[id ^= "game"]').live('click tap', function (event) {
@@ -114,8 +111,8 @@ kissingturtles.view.gameview = function (model, elements) {
                 game: JSON.stringify(obj)
         };
         that.createButtonClicked.notify(newElement, event);
-        showElement();
-        $.mobile.changePage($("#section-show-game"));
+        //showElement();
+
     });
 
     //----------------------------------------------------------------------------------------
@@ -139,10 +136,15 @@ kissingturtles.view.gameview = function (model, elements) {
         })
     };
 
-    var showElement = function (id) {
+    var showElement = function (element) {
         resetForm("form-update-game");
-        var element = that.model.items[id];
+        if (element) {
+            $.each(element, function(name, value) {
+                var input = $("#input-game-" + name);
+                input.val(value);
 
+            });
+        }
         $("#delete-game").show();
     };
 

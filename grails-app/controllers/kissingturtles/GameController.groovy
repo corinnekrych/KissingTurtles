@@ -19,12 +19,19 @@ class GameController {
         println "in the inputs" + params
 
         def game = Game.findById(params.gameId)
+
         Position franklinInitialPosition = new Position(game.franklinX, game.franklinY, game.franklinRot, game.franklinDir)
+        Position emilyInitialPosition = new Position(game.emilyX, game.emilyY, game.emilyRot, game.emilyDir)
         Position treeInitialPosition = new Position(game.treeX, game.treeY, game.treeRot, game.treeDir)
 
         def scriptInstance = new DslScript(params)
         def script = scriptInstance.content
-        def turtle = new Turtle("franklin", "image", franklinInitialPosition)
+        def turtle
+        if (game.user1 == params.user) {
+            turtle = new Turtle("franklin", "image", franklinInitialPosition)
+        } else if ((game.user2 == params.user)) {
+            turtle = new Turtle("emily", "image", emilyInitialPosition)
+        }
 
         def binding = new Binding([
                 turtle: turtle,
@@ -53,8 +60,16 @@ class GameController {
         def array = []
         result.steps.each(){
             def obj = new LinkedHashMap()
-            def tempFrank = it as JSON
-            obj.franklin = tempFrank['target']
+            def temp = it as JSON
+            if (turtle.name == "franklin") {
+                obj.franklin = temp['target']
+                def tempEmily = emilyInitialPosition as JSON
+                obj.emily = tempEmily['target']
+            } else if (turtle.name == "emily") {
+                obj.emily = temp['target']
+                def tempFranklin = franklinInitialPosition as JSON
+                obj.franklin = tempFranklin['target']
+            }
             def tempTree = treeInitialPosition as JSON
             obj.tree1 = tempTree['target']
             array.add(obj)
@@ -69,7 +84,7 @@ class GameController {
         def root = builder.configuration {
             images {
                 franklin 'turtle.png'
-                emily 'turtle.png'
+                emily 'turtle2.png'
                 tree1 'tree.png'
             }
             (win)? winningAnimation {x treeInitialPosition.x
@@ -80,6 +95,9 @@ class GameController {
         }
 
         def conf = builder.toString()
+
+        // notify when turtle moves
+        event topic: "executegame", data: conf
         println conf
         render conf
     }
@@ -191,22 +209,6 @@ class GameController {
             flash.message = message(code: 'default.not.found.message', args: [message(code: 'game.label', default: 'Game'), params.id])
             render flash as JSON
         }
-
-//        if (gameInstance.user2 != null)  {
-//            gameInstance.errors.rejectValue("version", "default.optimistic.locking.failure",
-//                    [message(code: 'game.label', default: 'Game')] as Object[],
-//                    "Another user has already taken this Game while you were trying to get into it")
-//            ValidationErrors validationErrors = gameInstance.errors
-//            render validationErrors as JSON
-//        }
-//
-//        if (!jsonObject.containsKey("user2")) {
-//            gameInstance.errors.rejectValue("version", "default.optimistic.locking.failure",
-//                    [message(code: 'game.label', default: 'Game')] as Object[],
-//                    "I don't know who you are !!!")
-//            ValidationErrors validationErrors = gameInstance.errors
-//            render validationErrors as JSON
-//        }
 
         gameInstance.user2 = jsonObject.get("user2")
 
