@@ -57,7 +57,15 @@ kissingturtles.view.gameview = function (model, elements) {
             }
             updateElement(data.item);
             $("#list-games").listview('refresh');
+            //showElement();
+            if (!data.item.NOTIFIED) {
+              $.mobile.changePage($("#section-show-game"));
+            }
         }
+    });
+
+    that.model.executed.attach(function (data, event) {
+        that.refreshMazeWithMove(data);
     });
 
     // user interface actions
@@ -100,8 +108,7 @@ kissingturtles.view.gameview = function (model, elements) {
             };
             that.updateButtonClicked.notify(newElement, event);
         }
-        showElement();
-        $.mobile.changePage($("#section-show-game"));
+
     });
 
 
@@ -119,16 +126,16 @@ kissingturtles.view.gameview = function (model, elements) {
     //    DISPLAY MAZE AFTER EXECUTE
     //----------------------------------------------------------------------------------------
     that.refreshMazeWithMove = function(data) {
-
+        var myGameObject = JSON.parse(data.item);
 
         ktMaze(document.getElementById('canvas'), {
             images: {
                 franklin: 'turtle.png',
-                emily: 'turtle.png',
+                emily: 'turtle2.png',
                 tree1: 'tree.png'
             },
-            winningAnimation: data.configuration.winningAnimation,
-            steps: data.configuration.steps,
+            winningAnimation: myGameObject.configuration.winningAnimation,
+            steps: myGameObject.configuration.steps,
             grid: 15,
             stepDuration: 1000
         }, function () {

@@ -96,6 +96,21 @@ class GameController {
 
         def conf = builder.toString()
 
+
+        // save current position
+        game.franklinX = last.franklin.x
+        game.franklinY = last.franklin.y
+        game.franklinRot = last.franklin.rotation
+        game.franklinDir = last.franklin.direction
+        game.emilyX = last.emily.x
+        game.emilyY = last.emily.y
+        game.emilyRot = last.emily.rotation
+        game.emilyDir = last.emily.direction
+        if (!game.save(flush: true)) {
+            ValidationErrors validationErrors = game.errors
+            render validationErrors as JSON
+        }
+
         // notify when turtle moves
         event topic: "executegame", data: conf
         println conf
@@ -110,12 +125,6 @@ class GameController {
         render Game.list([fetch: [user1: 'eager', user2: 'eager']]) as JSON
     }
 
-//    @Listener(namespace='browser')
-//    def initMultiPlayer() {
-//        JSONObject gameObject = JSON.parse(params.multi)
-//
-//        //event('savedTodo', data)
-//    }
 
     def save() {
         def size = 15;
@@ -164,15 +173,6 @@ class GameController {
         event topic: "creategame", data: gameInstance
         render gameInstance as JSON
     }
-
-//    def show() {
-//        def gameInstance = Game.get(params.id)
-//        if (!gameInstance) {
-//            flash.message = message(code: 'default.not.found.message', args: [message(code: 'game.label', default: 'Game'), params.id])
-//            render flash as JSON
-//        }
-//        render GameInstance as JSON
-//    }
 
     def update() {
         JSONObject jsonObject = JSON.parse(params.game)
