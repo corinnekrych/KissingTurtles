@@ -186,6 +186,9 @@
       iterate();
     };
 
+    // Draw initial frame
+    draw({}, {}, 1);
+
     /**
      * Animation function.
      *
