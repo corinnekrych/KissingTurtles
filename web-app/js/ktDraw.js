@@ -158,9 +158,11 @@
       var frame = next[0].frame;
       var from = {};
       var to = {};
+      var needAnimation = false;
       for (var name in frame) {
         if (frame.hasOwnProperty(name)) {
           if (current[name]) {
+            needAnimation = true;
             from[name] = current[name];
             to[name] = frame[name];
             delete current[name];
@@ -171,15 +173,20 @@
       }
       var end = Date.now() + config.stepDuration;
       var iterate = function (timestamp) {
-        if (timestamp > end) {
+        if ((!needAnimation) || (timestamp > end)) {
           draw(from, to, 1);
           setTimeout(callback, 0);
+          for (var t in to) {
+            if (to.hasOwnProperty(t)) {
+              current[t] = to[t];
+            }
+          }
           next = next.slice(1);
           if (next.length > 0) {
             setTimeout(animate, 0);
           }
         } else {
-          draw(from, to, (end - timestamp) / config.stepDuration);
+          draw(from, to, 1 - ((end - timestamp) / config.stepDuration));
           requestAnimationFrame(iterate);
         }
       };
