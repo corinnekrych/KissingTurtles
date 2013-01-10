@@ -204,12 +204,14 @@
      * @param frame the frame to draw (only differences from the previous frame are to be included).
      * @param cb callback called once animation is over.
      */
-    return function (frame, callback) {
+    var oneMoreStep = function (frame, callback) {
       //TODO clone frame
       next.push({ callback: callback, frame: frame });
       if (next.length === 1) {
         animate();
       }
+      return oneMoreStep;
     };
+    return oneMoreStep;
   };
 }));
