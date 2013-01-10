@@ -56,7 +56,7 @@
    *   stepDuration: 1000,
    *   images: {
    *     flankin: 'turtle.png',
-   *     emily: 'turle.png',
+   *     emily: 'turtle.png',
    *     tree1: 'tree.png'
    *   }
    * }
@@ -82,7 +82,7 @@
       for (var name in config.images) {
         if (config.images.hasOwnProperty(name)) {
           i[name] = new Image();
-          i[name].src = 'images/game/' + image;
+          i[name].src = 'images/game/' + config.images[name];
         }
       }
       return i;
@@ -118,7 +118,7 @@
       ctx.save();
       ctx.translate((x + 1) * wstep, (config.grid - y) * hstep);
       ctx.rotate(rotation);
-      ctx.drawImage(images[name], -half, -half, wstep, wste);
+      ctx.drawImage(images[name], -half, -half, wstep, wstep);
       ctx.restore();
     };
     var draw = function (from, to, progress) {
