@@ -5,6 +5,7 @@
 //   window.ktDraw(document.getElementById('canvas'), {
 //     grid: 15,
 //     gridLineWidth: 5,
+//     animationSpeed: 3,
 //     stepDuration: 1000,
 //     images: {
 //       flankin: 'turtle.png',
@@ -82,6 +83,7 @@
    * {
    *   grid: 15,
    *   gridLineWidth: 5,
+   *   animationSpeed: 3,
    *   stepDuration: 1000,
    *   images: {
    *     flankin: 'turtle.png',
@@ -106,16 +108,16 @@
     var current = initial;//TODO clone
 
     // Launch images loading in parallel
-    var images = (function () {
-      var i = {};
-      for (var name in config.images) {
-        if (config.images.hasOwnProperty(name)) {
-          i[name] = new Image();
-          i[name].src = 'images/game/' + config.images[name];
+    var images = {};
+    var fetchImages = function (imgs) {
+      for (var name in imgs) {
+        if (imgs.hasOwnProperty(name)) {
+          images[name] = new Image();
+          images[name].src = 'images/game/' + imgs[name];
         }
       }
-      return i;
-    })();
+    };
+    fetchImages(config.images);
 
     // Drawing
     var clean = function () {
@@ -250,6 +252,43 @@
       }
       return oneMoreStep;
     };
+    /**
+     * Winning animation
+     *
+     * @param x x position to start the animation at.
+     * @param y y position to start the animation at.
+     */
+    oneMoreStep.win = function (x, y, callback) {
+      var dist;
+      fetchImages({
+        'winningHeart1': 'heart.png',
+        'winningHeart2': 'heart.png',
+        'winningHeart3': 'heart.png',
+        'winningHeart4': 'heart.png'
+      });
+      var dirs = ['+x', '-x', '+y', '-y'];
+      var max = Math.ceil((Math.max(Math.max(config.grid - x, x), Math.max(config.grid - y, y)) / config.animationSpeed) + 2);
+      for (var i = 0; i < max - 1; i++) {
+        dist = i * config.animationSpeed;
+        oneMoreStep({
+          winningHeart1: { x: x + dist, y: y       , direction: dirs[0] },
+          winningHeart2: { x: x - dist, y: y       , direction: dirs[1] },
+          winningHeart3: { x: x       , y: y + dist, direction: dirs[2] },
+          winningHeart4: { x: x       , y: y - dist, direction: dirs[3] }
+        });
+        for (var j = 0; j < dirs.length; j++) {
+          dirs[j] = nextDir(dirs[j]);
+        }
+      }
+      dist = (max - 1) * config.animationSpeed;
+      oneMoreStep({
+        winningHeart1: { x: x + dist, y: y       , direction: dirs[0] },
+        winningHeart2: { x: x - dist, y: y       , direction: dirs[1] },
+        winningHeart3: { x: x       , y: y + dist, direction: dirs[2] },
+        winningHeart4: { x: x       , y: y - dist, direction: dirs[3] }
+      }, callback);
+    };
+
     return oneMoreStep;
   };
 }));
