@@ -202,7 +202,9 @@
       var iterate = function (timestamp) {
         if ((!needAnimation) || (timestamp > end)) {
           draw(from, to, 1);
-          setTimeout(callback, 0);
+          if (callback) {
+            setTimeout(callback, 0);
+          }
           for (var t in to) {
             if (to.hasOwnProperty(t)) {
               current[t] = to[t];
