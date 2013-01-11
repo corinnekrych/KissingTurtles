@@ -4,6 +4,7 @@
 // window.onload = function () {
 //   window.ktDraw(document.getElementById('canvas'), {
 //     grid: 15,
+//     gridLineWidth: 5,
 //     stepDuration: 1000,
 //     images: {
 //       flankin: 'turtle.png',
@@ -80,6 +81,7 @@
    * Example configuration: <pre><code>
    * {
    *   grid: 15,
+   *   gridLineWidth: 5,
    *   stepDuration: 1000,
    *   images: {
    *     flankin: 'turtle.png',
@@ -124,7 +126,7 @@
       var wstart = Math.floor(wstep / 2);
       var hstart = Math.floor(hstep / 2);
       // Styling
-      ctx.lineWidth = 5;
+      ctx.lineWidth = config.gridLineWidth;
       ctx.lineCap = 'round';
       ctx.strokeStyle = 'rgba(162, 141, 199, 0.8)';
       ctx.beginPath();
