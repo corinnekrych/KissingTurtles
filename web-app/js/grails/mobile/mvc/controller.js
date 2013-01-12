@@ -31,11 +31,8 @@ grails.mobile.mvc.controller = function (feed, model, view) {
     // Register events
     view.executeButtonClicked.attach(function (item, context) {
         execute(item, context);
-        //feed.execute(data, executed);
     });
-//    var executed = function (data) {
-//        //view.refreshMazeWithMove(data);
-//    };
+
     var execute = function (data, context) {
         var executed = function (data) {
             return that.model.execute(data, context);

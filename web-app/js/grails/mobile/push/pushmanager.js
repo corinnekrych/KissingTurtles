@@ -34,7 +34,7 @@ grails.mobile.push.pushmanager = function (grailsEvents, domainName, store, mode
 
     grailsEvents.on('update' + domainName , function (data) {
         var retrievedData = store.read(data.id);
-        if (retrievedData && retrievedData.version <= data.version) {
+        if (retrievedData && retrievedData.version < data.version) {
             data.NOTIFIED = true;
             store.store(data);
             model.updateItem(data);
@@ -51,9 +51,10 @@ grails.mobile.push.pushmanager = function (grailsEvents, domainName, store, mode
 
     grailsEvents.on('execute' + domainName , function (data) {
         //if (!store.read(data.id)) {
-            data.NOTIFIED = true;
+            var dataParsed = JSON.parse(data);
+            //dataParsed.NOTIFIED = true;
             //store.store(data);
-            model.execute(data);
+            model.execute(dataParsed);
         //}
     });
 

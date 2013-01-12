@@ -63,22 +63,34 @@ class GameController {
             def temp = it as JSON
             if (turtle.name == "franklin") {
                 obj.franklin = temp['target']
-                def tempEmily = emilyInitialPosition as JSON
-                obj.emily = tempEmily['target']
+                //def tempEmily = emilyInitialPosition as JSON
+                //obj.emily = tempEmily['target']
             } else if (turtle.name == "emily") {
                 obj.emily = temp['target']
-                def tempFranklin = franklinInitialPosition as JSON
-                obj.franklin = tempFranklin['target']
+                //def tempFranklin = franklinInitialPosition as JSON
+                //obj.franklin = tempFranklin['target']
             }
-            def tempTree = treeInitialPosition as JSON
-            obj.tree1 = tempTree['target']
             array.add(obj)
         }
 
         def last = array.last()
         boolean win = false
-        if ((last.franklin.x == treeInitialPosition.x) && (last.franklin.y == treeInitialPosition.y)) {
-            win = true
+        if (turtle.name == "franklin") {
+            if ((last.franklin.x == treeInitialPosition.x) && (last.franklin.y == treeInitialPosition.y)) {
+                win = true
+            }
+            game.franklinX = last.franklin.x
+            game.franklinY = last.franklin.y
+            game.franklinRot = last.franklin.rotation
+            game.franklinDir = last.franklin.direction
+        } else if (turtle.name == "emily") {
+            if ((last.emily.x == treeInitialPosition.x) && (last.emily.y == treeInitialPosition.y)) {
+                win = true
+            }
+            game.emilyX = last.emily.x
+            game.emilyY = last.emily.y
+            game.emilyRot = last.emily.rotation
+            game.emilyDir = last.emily.direction
         }
 
         def root = builder.configuration {
@@ -92,20 +104,13 @@ class GameController {
             steps array
             grid 15
             stepDuration 1000
+            player turtle.name
         }
 
         def conf = builder.toString()
 
 
         // save current position
-        game.franklinX = last.franklin.x
-        game.franklinY = last.franklin.y
-        game.franklinRot = last.franklin.rotation
-        game.franklinDir = last.franklin.direction
-        game.emilyX = last.emily.x
-        game.emilyY = last.emily.y
-        game.emilyRot = last.emily.rotation
-        game.emilyDir = last.emily.direction
         if (!game.save(flush: true)) {
             ValidationErrors validationErrors = game.errors
             render validationErrors as JSON
@@ -139,12 +144,13 @@ class GameController {
         ]
         def images = [
             franklin: 'turtle.png',
+            emily: 'turtle2.png',
             tree1: 'tree.png'
         ]
-        new maze.RandomMazeGenerator().depthFirstMaze2(15).eachWithIndex { item, idx ->
-            images['wall' + idx] = 'wall.png'
-            obj['wall' + idx] = [x: item.x, y: item.y]
-        }
+//        new maze.RandomMazeGenerator().depthFirstMaze2(15).eachWithIndex { item, idx ->
+//            images['wall' + idx] = 'wall.png'
+//            obj['wall' + idx] = [x: item.x, y: item.y]
+//        }
         def root = [
             images: images,
             steps: [obj],

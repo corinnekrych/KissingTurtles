@@ -32,7 +32,37 @@
     <script src="js/kissingturtles/manager-bootstrap.js"></script>
     <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
     <script src="js/ktMaze.js"></script>
+    <script src="js/ktDraw.js"></script>
+    <!--script>
+        window.onload = function () {
+            window.ktDraw(document.getElementById('canvas2'), {
+                        grid:15,
+                        stepDuration:1000,
+                        images:{
+                            franklin:'turtle.png',
+                            emily:'turtle.png',
+                            tree1:'tree.png'
+                        }
+                    },
 
+                    {   emily:{ x:2, y:1, direction:'+x' },
+                        franklin:{ x:1, y:0, direction:'+x' }
+                    })({
+                franklin:{ x:2, y:0, direction:'+x' }
+
+            })({
+                //emily:{ x:2, y:1, direction:'+x' },
+                franklin:{ x:3, y:1, direction:'+x' }
+            })({
+                //emily:{ x:2, y:1, direction:'+y' },
+                franklin:{ x:4, y:1, direction:'+x' }
+            })({
+                        //emily:{ x:2, y:2, direction:'+y' },
+                        franklin:{ x:5, y:1, direction:'+x' }
+                    }
+            );
+        };
+     </script-->
     <style>
         #canvas {
             display: block;
@@ -58,6 +88,7 @@
     </div>
 
     <div class="center-wrapper" data-role="content" id="start-presentation">
+        <!--<canvas id="canvas2" width="300" height="300" style='width:300px;height:300px'></canvas>-->
         <div>
             <img src="images/game/turtle_cool.png"/>
         </div>

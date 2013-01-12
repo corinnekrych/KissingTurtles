@@ -20,17 +20,16 @@ kissingturtles.view.gameview = function (model, elements) {
         } else {
             var confAsString = data.item.mazeDefinition;
             var conf = JSON.parse(confAsString);
+
             if (!data.item.NOTIFIED) {
                that.currentMaze = conf;
-            }
-            if (that.currentMaze != null) {
-                ktMaze(document.getElementById('canvas'), that.currentMaze, function () {
-                    console.log('done');
-                });
+               that.draw = ktDraw(document.getElementById('canvas'), conf, that.currentMaze.steps[0]);
+                that.player = "franklin";
             }
             renderElement(data.item);
             showElement(data.item);
             $("#list-games").listview('refresh');
+
             if (!data.item.NOTIFIED) {
               $.mobile.changePage($("#section-show-game"));
             }
@@ -45,19 +44,20 @@ kissingturtles.view.gameview = function (model, elements) {
             alert("Ooops something wrong happens");
         } else {
             var confAsString = data.item.mazeDefinition;
-            //localStorage.setItem("showgameId", data.item.id);
+
             var conf = JSON.parse(confAsString);
-//            if (!data.item.NOTIFIED) {
-                that.currentMaze = conf;
-//            }
-            if (that.currentMaze != null) {
-                ktMaze(document.getElementById('canvas'), that.currentMaze, function () {
-                    console.log('done');
-                });
+            that.currentMaze = conf;
+            if (!data.item.NOTIFIED) {
+                // For Emily game, initialize canvas
+                that.draw = ktDraw(document.getElementById('canvas'), conf, that.currentMaze.steps[0]);
+                that.player = "emily";
+            } else {
+                // For Franklin game
+                that.draw({emily: that.currentMaze.steps[0].emily});
             }
             updateElement(data.item);
             $("#list-games").listview('refresh');
-            //showElement();
+
             if (!data.item.NOTIFIED) {
               $.mobile.changePage($("#section-show-game"));
             }
@@ -65,7 +65,12 @@ kissingturtles.view.gameview = function (model, elements) {
     });
 
     that.model.executed.attach(function (data, event) {
-        that.refreshMazeWithMove(data);
+        if (!data.item.NOTIFIED || that.player != data.item.configuration.player) {
+            var myGameObject = data.item;
+            $.each(myGameObject.configuration.steps, function(key, value) {
+                that.draw(value);
+            });
+        }
     });
 
     // user interface actions
@@ -126,9 +131,9 @@ kissingturtles.view.gameview = function (model, elements) {
     //    DISPLAY MAZE AFTER EXECUTE
     //----------------------------------------------------------------------------------------
     that.refreshMazeWithMove = function(data) {
-        var myGameObject = JSON.parse(data.item);
-
-        ktMaze(document.getElementById('canvas'), {
+        var myGameObject = data.item;//JSON.parse(data.item);
+        $.each(myGameObject.configuration.steps, function(key, value) {
+        ktDraw(document.getElementById('canvas'), {
             images: {
                 franklin: 'turtle.png',
                 emily: 'turtle2.png',
@@ -138,10 +143,9 @@ kissingturtles.view.gameview = function (model, elements) {
             steps: myGameObject.configuration.steps,
             grid: 15,
             stepDuration: 1000
-        }, function () {
-            console.log('done');
-        })
-    };
+        }, value);
+    });
+    }
 
     var showElement = function (element) {
         resetForm("form-update-game");

@@ -8,38 +8,40 @@ class Turtle {
     def name
     def image
     def steps = []
+    def currentPosition
     def result = [:]
 
     Turtle(myName, myImage, Position start) {
         name = myName
         image = myImage
-        steps = [start]
+        steps = []
+        currentPosition = start
         result = ['name': name, 'image': image, 'steps': steps]
     }
 
     void turn(Direction dir) {
-        Position previousPosition = steps[steps.size() - 1]
         Position newPosition
         if (dir == Direction.left) {
-            newPosition = previousPosition.left()
+            newPosition = currentPosition.left()
         } else if (dir == Direction.right) {
-            newPosition = previousPosition.right()
+            newPosition = currentPosition.right()
         }
         steps.add(newPosition)
+        currentPosition = newPosition
         println "Franklin is turning $dir"
     }
 
     void move(Direction dir, int step) {
-        Position previousPosition = steps[steps.size() - 1]
-        Position newPosition = previousPosition.move(dir, step)
+        Position newPosition = currentPosition.move(dir, step)
         steps.add(newPosition)
+        currentPosition = newPosition
         println "Franklin is moving $dir by $step steps"
     }
 
     void moveForward(int step) {
-        Position previousPosition = steps[steps.size() - 1]
-        Position newPosition = previousPosition.move(Direction.forward, step)
+        Position newPosition = currentPosition.move(Direction.forward, step)
         steps.add(newPosition)
+        currentPosition = newPosition
         println "Franklin is moving forward by $step steps"
     }
 
