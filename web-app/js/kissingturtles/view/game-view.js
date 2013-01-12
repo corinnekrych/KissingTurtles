@@ -12,6 +12,9 @@ kissingturtles.view.gameview = function (model, elements) {
         renderList();
     });
 
+    //----------------------------------------------------------------------------------------
+    //   Callback after first player create a new game. First player will play as Franklin.
+    //----------------------------------------------------------------------------------------
     that.model.createdItem.attach(function (data, event) {
         if (data.item.errors) {
             alert("Ooops something wrong happens");
@@ -24,7 +27,8 @@ kissingturtles.view.gameview = function (model, elements) {
             if (!data.item.NOTIFIED) {
                that.currentMaze = conf;
                that.draw = ktDraw(document.getElementById('canvas'), conf, that.currentMaze.steps[0]);
-                that.player = "franklin";
+               that.player = "franklin";
+               that.gameId = data.item.id;
             }
             renderElement(data.item);
             showElement(data.item);
@@ -36,44 +40,56 @@ kissingturtles.view.gameview = function (model, elements) {
 		}
     });
 
-
+    //----------------------------------------------------------------------------------------
+    //   Callback after joining the game
+    //----------------------------------------------------------------------------------------
     that.model.updatedItem.attach(function (data, event) {
+        // Display error for third fellow. Only 2 players game.
         if (data.item.errors) {
             alert("Ooops something wrong happens");
         } else if (data.item.message) {
-            alert("Ooops something wrong happens");
+            alert("Ooops something wrong happens" +  data.item.message);
+            event.stopPropagation();
         } else {
+            // In case of Emily or Franklin we go here
             var confAsString = data.item.mazeDefinition;
-
             var conf = JSON.parse(confAsString);
             that.currentMaze = conf;
+            updateElement(data.item);
             if (!data.item.NOTIFIED) {
                 // For Emily game, initialize canvas
                 that.draw = ktDraw(document.getElementById('canvas'), conf, that.currentMaze.steps[0]);
                 that.player = "emily";
-            } else {
+                that.gameId = data.item.id;
+                $.mobile.changePage($("#section-show-game"));
+            } else if (that.player == "franklin" && that.gameId == data.item.id) {
                 // For Franklin game
                 that.draw({emily: that.currentMaze.steps[0].emily});
-            }
-            updateElement(data.item);
-            $("#list-games").listview('refresh');
-
-            if (!data.item.NOTIFIED) {
-              $.mobile.changePage($("#section-show-game"));
+            } else {
+                $("#list-games").listview('refresh');
             }
         }
     });
 
+    //----------------------------------------------------------------------------------------
+    //    Callback to display the maze after execute method
+    //----------------------------------------------------------------------------------------
     that.model.executed.attach(function (data, event) {
-        if (!data.item.NOTIFIED || that.player != data.item.configuration.player) {
-            var myGameObject = data.item;
-            $.each(myGameObject.configuration.steps, function(key, value) {
-                that.draw(value);
-            });
+        // only for my game
+        if (that.gameId == data.item.configuration.id) {
+            // refresh me if it's not myself pls
+            if (!data.item.NOTIFIED || that.player != data.item.configuration.player) {
+                var myGameObject = data.item;
+                $.each(myGameObject.configuration.steps, function(key, value) {
+                    that.draw(value);
+                });
+            }
         }
     });
 
-    // user interface actions
+    //----------------------------------------------------------------------------------------
+    //   Click on Play together brings you here
+    //----------------------------------------------------------------------------------------
     $('#section-list-games').live('pageinit pageshow', function (e) {
         var id = localStorage.getItem("KissingTurtles.UserId");
         if (id) {
@@ -83,27 +99,42 @@ kissingturtles.view.gameview = function (model, elements) {
         }
     });
 
+    //----------------------------------------------------------------------------------------
+    //   Click on 'Play alone' brings you here
+    //----------------------------------------------------------------------------------------
     $('#single-player').live("click tap", function(event) {
         $.mobile.changePage($("#section-show-game"));
     });
 
-    $('#save-settings').live("click tap", function(event) {
-        //$.mobile.changePage($("#section-show-game"));
-        alert("boo!");
+    //----------------------------------------------------------------------------------------
+    //   Click on 'Reset name' in settings page brings you here.
+    //   To clear your name from your browser localStorage.
+    //----------------------------------------------------------------------------------------
+    $('#reset-name').live("click tap", function(event) {
+        localStorage.clear();
     });
 
+    //----------------------------------------------------------------------------------------
+    //   Click on Save on user page. Your name is asked only once.
+    //----------------------------------------------------------------------------------------
     $("#submit-user").live("click tap", function(event) {
         var name = $('#input-user-name').val();
         localStorage.setItem("KissingTurtles.UserId", name);
         $.mobile.changePage($("#section-list-games"));
     });
 
+    //----------------------------------------------------------------------------------------
+    //   Click on Execute my DSL script brings you here
+    //----------------------------------------------------------------------------------------
     $("#submit-game").live("click tap", function(event) {
         var dslInput = $('#input-move-name').val();
-        var gameId = $("#input-game-id").val();
+        var gameId = that.gameId;
         that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId, user: localStorage.getItem("KissingTurtles.UserId")});
     });
 
+    //----------------------------------------------------------------------------------------
+    //   Click on an element of the list to join the game. Second player is Emily.
+    //----------------------------------------------------------------------------------------
     $('a[id ^= "game"]').live('click tap', function (event) {
         var gameId = $(event.currentTarget).attr('data-game-id');
         if(gameId) {
@@ -116,44 +147,26 @@ kissingturtles.view.gameview = function (model, elements) {
 
     });
 
-
+    //----------------------------------------------------------------------------------------
+    //   Click on 'Create your own game' brings you here
+    //----------------------------------------------------------------------------------------
     $("#create-game").live('click tap', function (event) {
         var obj = {user1: localStorage.getItem("KissingTurtles.UserId")};
         var newElement = {
                 game: JSON.stringify(obj)
         };
         that.createButtonClicked.notify(newElement, event);
-        //showElement();
-
     });
 
     //----------------------------------------------------------------------------------------
-    //    DISPLAY MAZE AFTER EXECUTE
+    //   Rendering methods
     //----------------------------------------------------------------------------------------
-    that.refreshMazeWithMove = function(data) {
-        var myGameObject = data.item;//JSON.parse(data.item);
-        $.each(myGameObject.configuration.steps, function(key, value) {
-        ktDraw(document.getElementById('canvas'), {
-            images: {
-                franklin: 'turtle.png',
-                emily: 'turtle2.png',
-                tree1: 'tree.png'
-            },
-            winningAnimation: myGameObject.configuration.winningAnimation,
-            steps: myGameObject.configuration.steps,
-            grid: 15,
-            stepDuration: 1000
-        }, value);
-    });
-    }
-
     var showElement = function (element) {
         resetForm("form-update-game");
         if (element) {
             $.each(element, function(name, value) {
                 var input = $("#input-game-" + name);
                 input.val(value);
-
             });
         }
         $("#delete-game").show();
@@ -208,7 +221,12 @@ kissingturtles.view.gameview = function (model, elements) {
     };
 
     var updateElement = function (element) {
-        $('#game' + element.id + '-in-list').parents('li').replaceWith(createListItem(element));
+        // filter, display only game created by other
+        if (element.user1 != localStorage.getItem("KissingTurtles.UserId") && element.user2 == null) {
+          $('#game' + element.id + '-in-list').parents('li').replaceWith(createListItem(element));
+        } else {
+          $('#game' + element.id + '-in-list').parents('li').remove();
+        }
     };
 
     var createListItem = function (element) {

@@ -63,12 +63,8 @@ class GameController {
             def temp = it as JSON
             if (turtle.name == "franklin") {
                 obj.franklin = temp['target']
-                //def tempEmily = emilyInitialPosition as JSON
-                //obj.emily = tempEmily['target']
             } else if (turtle.name == "emily") {
                 obj.emily = temp['target']
-                //def tempFranklin = franklinInitialPosition as JSON
-                //obj.franklin = tempFranklin['target']
             }
             array.add(obj)
         }
@@ -105,6 +101,7 @@ class GameController {
             grid 15
             stepDuration 1000
             player turtle.name
+            id game.id
         }
 
         def conf = builder.toString()
@@ -216,6 +213,10 @@ class GameController {
             render flash as JSON
         }
 
+        if (gameInstance.user2) {
+            flash.message = message(code: 'default.game.already.started', args: [message(code: 'game.label', default: 'Game'), params.id])
+            render flash as JSON
+        }
         gameInstance.user2 = jsonObject.get("user2")
 
         if (!gameInstance.save(flush: true)) {
