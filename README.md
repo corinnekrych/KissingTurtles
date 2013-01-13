@@ -2,7 +2,7 @@ Grails48 is over
 ================
 Here is the links of our submission
 
-http://kissingturtles.cloudfoundry.com/start-index.html
+http://kissingturtles.cloudfoundry.com
 
 http://www.youtube.com/watch?v=jvVeWHvmG2I&feature=player_embedded
 
