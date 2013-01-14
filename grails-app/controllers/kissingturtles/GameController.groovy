@@ -1,5 +1,6 @@
 package kissingturtles
 
+import java.util.Random
 
 import grails.converters.JSON
 import grails.validation.ValidationErrors
@@ -14,6 +15,23 @@ import dsl.Position
 class GameController {
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
+
+    // A maze is simply a function that returns the list of wall positions
+    static mazes = [
+        { grid -> ((grid/4)..((3*grid)/4)).collect { new Position(it, grid/2, 90, '+x') } },// horizontal line
+        { grid -> ((grid/4)..((3*grid)/4)).collectMany { [new Position(it, grid/2, 90, '+x'), new Position(grid/2, it, 90, '+x')] } },// cross
+        { grid -> def r = new Random(); (0..grid).collect { new Position(r.nextInt(grid), r.nextInt(grid), 90, '+x') } },// random blocks
+        { grid -> def g = grid/5; (g..(2*g)).collectMany { [
+            new Position(g, g + it, 90, '+x'),
+            new Position(g + it, g, 90, '+x'),
+            new Position(grid - g, g + it, 90, '+x'),
+            new Position(grid - g - it, g, 90, '+x'),
+            new Position(g, grid - g - it, 90, '+x'),
+            new Position(g + it, grid -g, 90, '+x'),
+            new Position(grid - g, grid - g - it, 90, '+x'),
+            new Position(grid - g - it, grid - g, 90, '+x')
+        } }// 4 corners
+    ]
 
     def run() {
         println "in the inputs" + params
@@ -131,23 +149,27 @@ class GameController {
     def save() {
         def size = 15;
         JSONObject jsonObject = JSON.parse(params.game)
-        Position franklinPosition = new Position().random(15)
-        Position treePosition = new Position().random(15)
+        //TODO generate positions after wall generation and exclude wall places
+        Position franklinPosition = new Position().random(size)
+        Position treePosition = new Position().random(size)
         def builder = new groovy.json.JsonBuilder()
 
-        def obj = [
-            franklin: (franklinPosition as JSON)['target'],
-            tree1: (treePosition as JSON)['target']
-        ]
         def images = [
             franklin: 'turtle.png',
             emily: 'turtle2.png',
             tree1: 'tree.png'
         ]
-//        new maze.RandomMazeGenerator().depthFirstMaze2(15).eachWithIndex { item, idx ->
-//            images['wall' + idx] = 'wall.png'
-//            obj['wall' + idx] = [x: item.x, y: item.y]
-//        }
+        def obj = [
+            franklin: (franklinPosition as JSON)['target'],
+            tree1: (treePosition as JSON)['target']
+        ]
+        def walls = mazes[new Random().nextInt(mazes.size())](size)
+        walls.eachWithIndex { w, idx ->
+            def name = "wall${idx}"
+            images[name] = 'wall.png'
+            obj[name] = (w as JSON)['target']
+        }
+
         def root = [
             images: images,
             steps: [obj],
