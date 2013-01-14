@@ -103,8 +103,8 @@
     var width = canvas.width;
     var height = canvas.height;
     var next = [];
-    var wstep = Math.floor(width / (config.grid + 1));
-    var hstep = Math.floor(height / (config.grid + 1));
+    var wstep = width / (config.grid + 1);
+    var hstep = height / (config.grid + 1);
     var current = initial;//TODO clone
 
     // Launch images loading in parallel
