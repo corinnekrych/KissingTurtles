@@ -30,7 +30,7 @@ class GameController {
             new Position(g + it, grid -g, 90, '+x'),
             new Position(grid - g, grid - g - it, 90, '+x'),
             new Position(grid - g - it, grid - g, 90, '+x')
-        } }// 4 corners
+        ] } }// 4 corners
     ]
 
     def run() {
