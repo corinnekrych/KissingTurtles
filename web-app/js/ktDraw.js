@@ -109,11 +109,15 @@
 
     // Launch images loading in parallel
     var images = {};
+    var src = {};
     var fetchImages = function (imgs) {
       for (var name in imgs) {
         if (imgs.hasOwnProperty(name)) {
-          images[name] = new Image();
-          images[name].src = 'images/game/' + imgs[name];
+          if (!src[imgs[name]]) {
+            src[imgs[name]] = new Image();
+            src[imgs[name]].src = 'images/game/' + imgs[name];
+          }
+          images[name] = src[imgs[name]];
         }
       }
     };
