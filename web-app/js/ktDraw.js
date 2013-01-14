@@ -145,11 +145,10 @@
       ctx.restore();
     };
     var drawImage = function (name, x, y, rotation) {
-      var half = Math.floor(wstep / 2);
       ctx.save();
       ctx.translate((x + 1) * wstep, (config.grid - y) * hstep);
       ctx.rotate(rotation);
-      ctx.drawImage(images[name], -half, -half, wstep, wstep);
+      ctx.drawImage(images[name], -wstep/2, -hstep/2, wstep, hstep);
       ctx.restore();
     };
     var draw = function (from, to, progress) {
