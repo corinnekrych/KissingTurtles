@@ -18,8 +18,8 @@ class GameController {
 
     // A maze is simply a function that returns the list of wall positions
     static mazes = [
-        { grid -> ((grid/4)..((3*grid)/4)).collect { new Position(it, grid/2, 90, '+x') } },// horizontal line
-        { grid -> ((grid/4)..((3*grid)/4)).collectMany { [new Position(it, grid/2, 90, '+x'), new Position(grid/2, it, 90, '+x')] } },// cross
+        { grid -> ((grid/4)..(grid + 1 - grid/4)).collect { new Position(it, grid/2, 90, '+x') } },// horizontal line
+        { grid -> ((grid/4)..(grid + 1 - grid/4)).collectMany { [new Position(it, grid/2, 90, '+x'), new Position(grid/2, it, 90, '+x')] } },// cross
         { grid -> def r = new Random(); (0..grid).collect { new Position(r.nextInt(grid), r.nextInt(grid), 90, '+x') } },// random blocks
         { grid -> def g = grid/5; (0..g).collectMany { [
             new Position(g, g + it, 90, '+x'),
