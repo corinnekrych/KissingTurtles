@@ -41,7 +41,7 @@
     window.mozRequestAnimationFrame ||
     window.webkitRequestAnimationFrame ||
     window.msRequestAnimationFrame ||
-    function (cb) { return setTimeout(function () { cb(Date.now()); }, 1000/60); };
+    function (cb) { return setTimeout(cb, 1000/60); };
 
   // Drawing tools
   function getRotationAngle(direction) {
@@ -206,7 +206,8 @@
         }
       }
       var end = Date.now() + config.stepDuration;
-      var iterate = function (timestamp) {
+      var iterate = function () {
+        var timestamp = Date.now();
         if ((!needAnimation) || (timestamp > end)) {
           draw(from, to, 1);
           if (callback) {
