@@ -83,8 +83,10 @@ kissingturtles.view.gameview = function (model, elements) {
                 $.each(myGameObject.configuration.steps, function(key, value) {
                     that.draw(value);
                 });
-                // TO DO add winning call
-                // that.draw.win(data.item.configuration.winningAnimation.x, data.item.configuration.winningAnimation.y);
+                var win = data.item.configuration.winningAnimation;
+                if (win) {
+                    that.draw.win(win.x, win.y);
+                }
             }
         }
     });

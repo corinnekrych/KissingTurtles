@@ -5,7 +5,6 @@
 //   window.ktDraw(document.getElementById('canvas'), {
 //     grid: 15,
 //     gridLineWidth: 5,
-//     animationSpeed: 3,
 //     stepDuration: 1000,
 //     images: {
 //       flankin: 'turtle.png',
@@ -84,7 +83,6 @@
    * {
    *   grid: 15,
    *   gridLineWidth: 5,
-   *   animationSpeed: 3,
    *   stepDuration: 1000,
    *   images: {
    *     flankin: 'turtle.png',
@@ -332,6 +330,7 @@
      */
     oneMoreStep.win = function (x, y, callback) {
       var dist;
+      var speed = 3;
       fetchImages({
         'winningHeart1': 'heart.png',
         'winningHeart2': 'heart.png',
@@ -339,9 +338,9 @@
         'winningHeart4': 'heart.png'
       });
       var dirs = ['+x', '-x', '+y', '-y'];
-      var max = Math.ceil((Math.max(Math.max(config.grid - x, x), Math.max(config.grid - y, y)) / config.animationSpeed) + 2);
+      var max = Math.ceil((Math.max(Math.max(config.grid - x, x), Math.max(config.grid - y, y)) / speed) + 2);
       for (var i = 0; i < max - 1; i++) {
-        dist = i * config.animationSpeed;
+        dist = i * speed;
         oneMoreStep({
           winningHeart1: { x: x + dist, y: y       , direction: dirs[0] },
           winningHeart2: { x: x - dist, y: y       , direction: dirs[1] },
@@ -352,7 +351,7 @@
           dirs[j] = nextDir(dirs[j]);
         }
       }
-      dist = (max - 1) * config.animationSpeed;
+      dist = (max - 1) * 3;
       oneMoreStep({
         winningHeart1: { x: x + dist, y: y       , direction: dirs[0] },
         winningHeart2: { x: x - dist, y: y       , direction: dirs[1] },
