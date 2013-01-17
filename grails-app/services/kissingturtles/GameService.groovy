@@ -1,0 +1,112 @@
+package kissingturtles
+
+import grails.converters.JSON
+import dsl.Position
+import org.codehaus.groovy.grails.web.json.JSONObject
+
+class GameService {
+
+    def runFormatting(game, turtle, result) {
+        Position treeInitialPosition = new Position(game.treeX, game.treeY, game.treeRot, game.treeDir)
+
+        def builder = new groovy.json.JsonBuilder()
+
+        def array = []
+        result.steps.each(){
+            def obj = new LinkedHashMap()
+            def temp = it as JSON
+            if (turtle.name == "franklin") {
+                obj.franklin = temp['target']
+            } else if (turtle.name == "emily") {
+                obj.emily = temp['target']
+            }
+            array.add(obj)
+        }
+
+        def last = array.last()
+        boolean win = false
+        if (turtle.name == "franklin") {
+            if ((last.franklin.x == treeInitialPosition.x) && (last.franklin.y == treeInitialPosition.y)) {
+                win = true
+            }
+            game.franklinX = last.franklin.x
+            game.franklinY = last.franklin.y
+            game.franklinRot = last.franklin.rotation
+            game.franklinDir = last.franklin.direction
+        } else if (turtle.name == "emily") {
+            if ((last.emily.x == treeInitialPosition.x) && (last.emily.y == treeInitialPosition.y)) {
+                win = true
+            }
+            game.emilyX = last.emily.x
+            game.emilyY = last.emily.y
+            game.emilyRot = last.emily.rotation
+            game.emilyDir = last.emily.direction
+        }
+
+        def root = builder.configuration {
+            images {
+                franklin 'turtle.png'
+                emily 'turtle2.png'
+                tree1 'tree.png'
+            }
+            (win)? winningAnimation {x treeInitialPosition.x
+                y treeInitialPosition.y}:""
+            steps array
+            grid 15
+            stepDuration 1000
+            player turtle.name
+            id game.id
+        }
+
+        def conf = builder.toString()
+    }
+
+    def createFormatting(walls, franklinPosition, treePosition) {
+        //TODO generate positions after wall generation and exclude wall places
+        def builder = new groovy.json.JsonBuilder()
+
+        def images = [
+                franklin: 'turtle.png',
+                emily: 'turtle2.png',
+                tree1: 'tree.png'
+        ]
+        def obj = [
+                franklin: (franklinPosition as JSON)['target'],
+                tree1: (treePosition as JSON)['target']
+        ]
+
+        walls.eachWithIndex { w, idx ->
+            def name = "wall${idx}"
+            images[name] = 'wall.png'
+            obj[name] = (w as JSON)['target']
+        }
+
+        def root = [
+                images: images,
+                steps: [obj],
+                grid: 15,
+                stepDuration: 1000
+        ]
+        String mazeDefinition = (root as JSON).toString()
+    }
+
+    def updateFormatting(game, emilyPosition) {
+        Position franklinPosition = new Position(game.franklinX, game.franklinY, game.franklinRot, game.franklinDir)
+
+        JSONObject json = JSON.parse(game.mazeDefinition)
+        def images = json["images"]
+        images["emily"] = 'turtle2.png'
+        def obj = json['steps'][0]
+        obj['franklin'] = (franklinPosition as JSON)['target']
+        obj['emily'] = ( emilyPosition as JSON)['target']
+
+        def root = [
+                images: images,
+                steps: [obj],
+                grid: 15,
+                stepDuration: 1000
+        ]
+       (root as JSON).toString()
+
+    }
+}
