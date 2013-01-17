@@ -1,9 +1,9 @@
 package dsl
 
 class Position {
-    Integer x
-    Integer y
-    Integer rotation
+    int x
+    int y
+    int rotation
     String direction
 
     Position move(Integer step) {
