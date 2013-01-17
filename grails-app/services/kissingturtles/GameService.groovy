@@ -26,7 +26,7 @@ class GameService {
         def last = array.last()
         boolean win = false
         if (turtle.name == "franklin") {
-            if ((last.franklin.x == treeInitialPosition.x) && (last.franklin.y == treeInitialPosition.y)) {
+            if ((last.franklin.x == treeInitialPosition.x) && (last.franklin.y == treeInitialPosition.y) && (game.emilyX == treeInitialPosition.x) && (game.emilyY == treeInitialPosition.y)) {
                 win = true
             }
             game.franklinX = last.franklin.x
@@ -34,7 +34,7 @@ class GameService {
             game.franklinRot = last.franklin.rotation
             game.franklinDir = last.franklin.direction
         } else if (turtle.name == "emily") {
-            if ((last.emily.x == treeInitialPosition.x) && (last.emily.y == treeInitialPosition.y)) {
+            if ((last.emily.x == treeInitialPosition.x) && (last.emily.y == treeInitialPosition.y) && (game.franklinX == treeInitialPosition.x) && (game.franklinY == treeInitialPosition.y)) {
                 win = true
             }
             game.emilyX = last.emily.x
