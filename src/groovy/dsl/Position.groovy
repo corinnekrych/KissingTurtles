@@ -63,14 +63,20 @@ class Position {
         newDirection
     }
 
-    Position random(int gridSize) {
+    Position random(int gridSize, walls) {
         def random = new Random()
-        def randomX = random.nextInt(gridSize)
-        def randomY = random.nextInt(gridSize)
-        x = randomX
-        y = randomY
+        def randomX = random.nextInt(gridSize-2)
+        def randomY = random.nextInt(gridSize-2)
+        x = 1 + randomX
+        y = 1 + randomY
         rotation = 90
         direction = '+x'
+        def isOnWalls = walls.find() {
+            it.x == x && it.y == y
+        }
+        if (isOnWalls) {
+          random(gridSize, walls)
+        }
         this
     }
 

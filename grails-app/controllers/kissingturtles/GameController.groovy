@@ -88,8 +88,8 @@ class GameController {
         def walls = wallGeneratorService.getWalls(whichMaze)
 
         // generate position for Franklin and the meeting point
-        Position franklinPosition = new Position().random(size)
-        Position treePosition = new Position().random(size)
+        Position franklinPosition = new Position().random(size, walls)
+        Position treePosition = new Position().random(size, walls)
 
         // format into json like
         def mazeDefinition = gameService.createFormatting(walls, franklinPosition, treePosition)
@@ -120,8 +120,9 @@ class GameController {
         JSONObject jsonObject = JSON.parse(params.game)
         def gameInstance = Game.get(jsonObject.gameId)
 
-        // generate position for Emily
-        Position emilyPosition = new Position().random(15)
+        // generate position for Emily (anywhere except on the walls)
+        def walls = wallGeneratorService.getWalls(gameInstance.mazeTTT)
+        Position emilyPosition = new Position().random(15, walls)
         gameInstance.emilyX = emilyPosition.x
         gameInstance.emilyY = emilyPosition.y
         gameInstance.emilyRot = emilyPosition.rotation
