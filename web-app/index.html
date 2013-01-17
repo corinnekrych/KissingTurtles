@@ -80,7 +80,6 @@
             margin: 0 auto;
         }
 
-
     </style>
 
 </head>
@@ -99,10 +98,7 @@
             <img width="20%" src="images/game/pig.png"/>
         </div>
         <div data-theme="a" class="center-wrapper" data-content-theme="a">
-            <textarea readonly>Little Franklin is lost in the maze, help him find his true love. Possible Move
-    move forward, 10
-    turn left (or) turn right</textarea>
-        </div>
+            <textarea readonly>Franklin and Emily have a rendez-vous. Help them to meet at the love tree. Use up, down, left, right buttons or tell them: "move up b 2"</textarea></div>
         <div>
             <ul data-role="listview" data-inset="true">
             <li><a href="#section-list-games" data-role="button" data-inline="true">Play</a></li>
@@ -233,14 +229,21 @@
         <a href="#start-game" data-transition="slide" data-icon="arrow-l">Cancel</a>
 
         <h1>Game</h1>
+        <div style="float:right" data-role="controlgroup" data-type="horizontal" data-mini="true">
+            <a href="" id="left" data-role="button" data-icon="arrow-l" data-iconpos="notext">Left</a>
+            <a href="" id="up" data-role="button" data-icon="arrow-u" data-iconpos="notext">Up</a>
+            <a href="" id="down" data-role="button" data-icon="arrow-d" data-iconpos="notext">Down</a>
+            <a href="" id="right" data-role="button" data-icon="arrow-r" data-iconpos="notext">Right</a>
+            <a href="" id="dsl" data-role="button" data-icon="plus" data-iconpos="notext">DSL</a>
+        </div>
     </div>
 
 
-    <canvas id="canvas" width="300" height="300" style='width:300px;height:300px'></canvas>
-    <ul data-role="listview" data-inset="true">
-        <li data-role="fieldcontain">
-            <label for="input-move-name">What's your move ?</label>
-            <textarea class="validate[required]" name="name" id="input-move-name"></textarea>
+    <canvas id="canvas" width="500" height="500" style='width:500px;height:500px'></canvas>
+    <ul style="position:fixed;top:100px;right:15px;opacity: 0.6" data-role="listview" data-inset="true">
+        <li style="display: none" id="dsl-text" data-role="fieldcontain">
+            <textarea style="width:400px;height:400px"class="validate[required]" name="name" id="input-move-name"></textarea>
+            <button  data-transition="slide" data-icon="save" id="submit-game">Execute</button>
         </li>
     </ul>
 
@@ -248,7 +251,7 @@
     <input type="hidden" name="user-id" id="input-user1-move"/>
     <input type="hidden" name="version" id="input-game-version"/>
     <input type="hidden" name="class" id="input-game-class"/>
-    <button data-transition="slide" data-icon="save" id="submit-game">Execute</button>
+
 
 
     <div data-role="footer" data-position="fixed">

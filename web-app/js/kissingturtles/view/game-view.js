@@ -102,12 +102,10 @@ kissingturtles.view.gameview = function (model, elements) {
     });
 
     //----------------------------------------------------------------------------------------
-    //   Click on
+    //   Click on Settings:change images
     //----------------------------------------------------------------------------------------
-    $("#select-emily").live("change", function(event) {
-        //alert('eee');
+    $('#select-emily').live('change', function(event) {
         var value = $('#select-emily').val();
-        //alert(value);
         $('#emily-img').attr({src: "images/game/"+value+".png"}).refresh();
     });
 
@@ -116,6 +114,43 @@ kissingturtles.view.gameview = function (model, elements) {
         //alert(value);
         //$('#emily-img').attr({src: "images/game/"+value+".png"}).refresh();
     });
+
+    //----------------------------------------------------------------------------------------
+    //   Click on Navigation buttons header bar same as execute
+    //----------------------------------------------------------------------------------------
+    $("#left").live("click tap", function(event) {
+        var dslInput = "move left by 1";
+        var gameId = that.gameId;
+        that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId, user: localStorage.getItem("KissingTurtles.UserId")});
+    });
+
+    $("#right").live("click tap", function(event) {
+        var dslInput = "move right by 1";
+        var gameId = that.gameId;
+        that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId, user: localStorage.getItem("KissingTurtles.UserId")});
+    });
+
+    $("#up").live("click tap", function(event) {
+        var dslInput = "move up by 1";
+        var gameId = that.gameId;
+        that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId, user: localStorage.getItem("KissingTurtles.UserId")});
+    });
+
+    $("#down").live("click tap", function(event) {
+        var dslInput = "move down by 1";
+        var gameId = that.gameId;
+        that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId, user: localStorage.getItem("KissingTurtles.UserId")});
+    });
+
+    $("#dsl").live("click tap", function(event) {
+        if($('#dsl-text').css('display') == 'none'){
+            $('#dsl-text').show('slow');
+        } else {
+            $('#dsl-text').hide('slow');
+        }
+    });
+
+
     //----------------------------------------------------------------------------------------
     //   Click on 'Reset name' in settings page brings you here.
     //   To clear your name from your browser localStorage.

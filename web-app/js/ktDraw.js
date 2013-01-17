@@ -49,11 +49,11 @@
       case '+x':
         return 0;
       case '-x':
-        return Math.PI;
+        return 0;
       case '+y':
-        return 3 * Math.PI / 2;
+        return 0;
       case '-y':
-        return Math.PI / 2;
+        return 0;
       default:
         return 0;
     }
@@ -134,7 +134,7 @@
       // Styling
       ctx.lineWidth = config.gridLineWidth;
       ctx.lineCap = 'round';
-      ctx.strokeStyle = 'rgba(162, 141, 199, 0.8)';
+      ctx.strokeStyle = 'green';
       ctx.beginPath();
       for (var i = 1; i <= config.grid; i++) {
         // Horizontal
@@ -170,18 +170,18 @@
       for (name in from) {
         item = from[name];
         toitem = to[name];
-        fromAngle = getRotationAngle(item.direction);
-        toAngle = getRotationAngle(toitem.direction);
-        if (fromAngle - toAngle > Math.PI) {
-          toAngle += Math.PI * 2;
-        } else if (toAngle - fromAngle > Math.PI) {
-          fromAngle += Math.PI * 2;
-        }
+//        fromAngle = getRotationAngle(item.direction);
+//        toAngle = getRotationAngle(toitem.direction);
+//        if (fromAngle - toAngle > Math.PI) {
+//          toAngle += Math.PI * 2;
+//        } else if (toAngle - fromAngle > Math.PI) {
+//          fromAngle += Math.PI * 2;
+//        }
         drawImage(
           name,
           computeProgress(item.x, toitem.x, progress),
-          computeProgress(item.y, toitem.y, progress),
-          computeProgress(fromAngle, toAngle, progress)
+          computeProgress(item.y, toitem.y, progress)
+          //computeProgress(fromAngle, toAngle, progress)
         );
       }
     };

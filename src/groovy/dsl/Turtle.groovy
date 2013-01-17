@@ -19,42 +19,31 @@ class Turtle {
         result = ['name': name, 'image': image, 'steps': steps]
     }
 
-    void turn(Direction dir) {
+    Turtle move(Direction dir) {
         Position newPosition
         if (dir == Direction.left) {
             newPosition = currentPosition.left()
         } else if (dir == Direction.right) {
             newPosition = currentPosition.right()
+        } else if (dir == Direction.up) {
+            newPosition = currentPosition.up()
+        } else if (dir == Direction.down) {
+            newPosition = currentPosition.down()
         }
-        steps.add(newPosition)
         currentPosition = newPosition
-        println "Franklin is turning $dir"
+        this
     }
 
-    void move(Direction dir, int step) {
-        Position newPosition = currentPosition.move(dir, step)
+    void by(Integer step) {
+        Position newPosition = currentPosition.move(step)
         steps.add(newPosition)
         currentPosition = newPosition
-        println "Franklin is moving $dir by $step steps"
+        println "Franklin is moving ${currentPosition} by $step steps"
     }
 
-    void moveForward(int step) {
-        Position newPosition = currentPosition.move(Direction.forward, step)
-        steps.add(newPosition)
-        currentPosition = newPosition
-        println "Franklin is moving forward by $step steps"
-    }
-
-    void kiss() {
-        String pathSummary= ''
-        steps.eachWithIndex { it, index ->
-            pathSummary += "$index: ${it.toString()},"
-        }
-        println "Franklin has just stopped to kiss his true love. His position is: $pathSummary"
-    }
 }
 enum Direction {
-    left, right, forward, backward
+    left, right, up, down
 }
 
 

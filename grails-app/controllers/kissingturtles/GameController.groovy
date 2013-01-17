@@ -55,19 +55,10 @@ class GameController {
                 turtle: turtle,
                 left: dsl.Direction.left,
                 right: dsl.Direction.right,
-                backward: dsl.Direction.backward,
-                forward: dsl.Direction.forward,
-                turn: turtle.&turn,
+                down: dsl.Direction.down,
+                up: dsl.Direction.up,
                 move: turtle.&move,
-                kiss:  turtle.&kiss,
-                T: turtle.&turn,
-                L: dsl.Direction.left,
-                R: dsl.Direction.right,
-                G: turtle.&moveForward,
-                t: turtle.&turn,
-                l: dsl.Direction.left,
-                r: dsl.Direction.right,
-                g: turtle.&moveForward
+                by: turtle.&by
         ])
         def shell = new GroovyShell(binding)
         shell.evaluate(script)
