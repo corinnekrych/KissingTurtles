@@ -6,6 +6,7 @@ class Game {
     String user1
     String user2
     String mazeDefinition
+    def maze
 
     int franklinX
     int franklinY

@@ -83,12 +83,14 @@ kissingturtles.view.gameview = function (model, elements) {
                 $.each(myGameObject.configuration.steps, function(key, value) {
                     that.draw(value);
                 });
+                // TO DO add winning call
+                // that.draw.win(data.item.configuration.winningAnimation.x, data.item.configuration.winningAnimation.y);
             }
         }
     });
 
     //----------------------------------------------------------------------------------------
-    //   Click on Play together brings you here
+    //   Click on Play brings you here
     //----------------------------------------------------------------------------------------
     $('#section-list-games').live('pageinit pageshow', function (e) {
         var id = localStorage.getItem("KissingTurtles.UserId");
@@ -100,12 +102,20 @@ kissingturtles.view.gameview = function (model, elements) {
     });
 
     //----------------------------------------------------------------------------------------
-    //   Click on 'Play alone' brings you here
+    //   Click on
     //----------------------------------------------------------------------------------------
-    $('#single-player').live("click tap", function(event) {
-        $.mobile.changePage($("#section-show-game"));
+    $("#select-emily").live("change", function(event) {
+        //alert('eee');
+        var value = $('#select-emily').val();
+        //alert(value);
+        $('#emily-img').attr({src: "images/game/"+value+".png"}).refresh();
     });
 
+    $("#select-franklin").change(function(event, ui) {
+        var value = $('#select-franklin').val();
+        //alert(value);
+        //$('#emily-img').attr({src: "images/game/"+value+".png"}).refresh();
+    });
     //----------------------------------------------------------------------------------------
     //   Click on 'Reset name' in settings page brings you here.
     //   To clear your name from your browser localStorage.

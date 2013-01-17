@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Kissing Turtle</title>
+    <title>Kissing Turtles</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css"/>
     <link rel="stylesheet" href="css/jquery/validationEngine.jquery.css" type="text/css"/>
+    <!--<link rel="stylesheet" href="css/themes/turtle.min.css" />-->
+    <link rel="stylesheet" href="css/themes/turtle.min.css" />
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile.structure-1.2.0.min.css" />
+
     <script src="http://code.jquery.com/jquery-1.8.2.js"></script>
     <script src="js/jquery/jquery.validationEngine.js"></script>
     <script src="js/jquery/jquery.validationEngine-en.js"></script>
@@ -75,6 +79,8 @@
         .center-wrapper * {
             margin: 0 auto;
         }
+
+
     </style>
 
 </head>
@@ -83,27 +89,25 @@
 <section data-role="page" id="start-game">
     <div data-role="header" data-position="fixed">
 
-        <h1>Kissing Turtle</h1>
+        <h1>Kissing Turtles</h1>
     </div>
 
     <div class="center-wrapper" data-role="content" id="start-presentation">
         <!--<canvas id="canvas2" width="300" height="300" style='width:300px;height:300px'></canvas>-->
         <div>
-            <img src="images/game/turtle_cool.png"/>
+            <img width="20%" src="images/game/turtle.png"/>
+            <img width="20%" src="images/game/pig.png"/>
         </div>
         <div data-theme="a" class="center-wrapper" data-content-theme="a">
             <textarea readonly>Little Franklin is lost in the maze, help him find his true love. Possible Move
     move forward, 10
-    move backward, 5
     turn left (or) turn right</textarea>
         </div>
         <div>
-            <a href="" id="single-player" data-role="button" data-inline="true">Play alone</a>
-            <a href="#section-list-games" data-role="button" data-inline="true">Play together</a>
-            <a href="#section-settings" data-role="button" data-inline="true">Settings</a>
-        </div>
-        <div data-theme="a" class="center-wrapper" data-content-theme="a">
-            <textarea readonly>"Kissing Turtles", a Mobile Game to learn programming for kids.</textarea>
+            <ul data-role="listview" data-inset="true">
+            <li><a href="#section-list-games" data-role="button" data-inline="true">Play</a></li>
+            <li><a href="#section-settings" data-role="button" data-inline="true">Settings</a></li>
+            </ul>
         </div>
     </div>
 
@@ -115,11 +119,63 @@
 <section data-role="page" id="section-settings">
     <div data-role="header" data-position="fixed">
         <a href="#start-game" data-transition="slide" data-icon="arrow-l">Cancel</a>
-        <h1>Kissing Turtle</h1>
+        <h1>Kissing Turtles</h1>
     </div>
-    <a data-role="button" id="reset-name" href="">
-        Reset name
-    </a>
+
+
+
+    <form id="form-update-checkin" name="form-update-checkin">
+        <ul data-role="listview" data-inset="true">
+            <li data-role="fieldcontain">
+                <div data-role="fieldcontain"><a data-role="button" data-inset="true" id="reset-name" href="">Reset name</a></div>
+            </li>
+            <li data-role="fieldcontain">
+                <div  data-role="fieldcontain">
+                    <select name="franklin"
+                            id="select-franklin" data-native-menu="false">
+                        <option value="turtle">Franklin is a turtle</option>
+                        <option value="ant">Franklin is a ant</option>
+                        <option value="bat">Franklin is a bat</option>
+                        <option value="bear">Franklin is a bear</option>
+                        <option value="bee">Franklin is a bee</option>
+                        <option value="bird">Franklin is a bird</option>
+                        <option value="bull">Franklin is a bull</option>
+                        <option value="bulldog">Franklin is a bulldog</option>
+                        <option value="butterfly">Franklin is a butterfly</option>
+                        <option value="cat">Franklin is a cat</option>
+                        <option value="eagle">Franklin is a eagle</option>
+                    </select>
+                </div>
+                <img src="images/game/turtle.png" id="franklin-img" class="franklin"/>
+            </li>
+            <li data-role="fieldcontain">
+                <div data-role="fieldcontain">
+                    <select name="select-emily"
+                            id="select-emily" data-native-menu="false">
+                        <option value="cat">Emily is a cat</option>
+                        <option value="ant">Emily is a ant</option>
+                        <option value="bat">Emily is a bat</option>
+                        <option value="bear">Emily is a bear</option>
+                        <option value="bee">Emily is a bee</option>
+                        <option value="bird">Emily is a bird</option>
+                        <option value="bull">Emily is a bull</option>
+                        <option value="bulldog">Emily is a bulldog</option>
+                        <option value="butterfly">Emily is a butterfly</option>
+                        <option value="cat">Emily is a cat</option>
+                        <option value="eagle">Emily is a eagle</option>
+                    </select>
+                </div>
+                <img src="images/game/pig.png" class="emily" id="emily-img"/>
+            </li>
+        </ul>
+
+
+        <input type="hidden" name="id" id="input-checkin-id"/>
+        <input type="hidden" name="version" id="input-checkin-version"/>
+        <input type="hidden" name="class" id="input-checkin-class"/>
+    </form>
+
+
     <div data-role="footer" data-position="fixed">
         <div data-role="navbar">
         </div>
