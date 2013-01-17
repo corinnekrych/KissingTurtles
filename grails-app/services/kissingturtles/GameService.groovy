@@ -75,9 +75,11 @@ class GameService {
                 tree1: (treePosition as JSON)['target']
         ]
 
+        def flowerNumber = 8;
+        def rnd = new Random()
         walls.eachWithIndex { w, idx ->
             def name = "wall${idx}"
-            images[name] = 'wall.png'
+            images[name] = "flower${rnd.nextInt(flowerNumber) + 1}.png"
             obj[name] = (w as JSON)['target']
         }
 
