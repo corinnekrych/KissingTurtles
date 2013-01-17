@@ -105,17 +105,26 @@
     var next = [];
     var wstep = width / (config.grid + 1);
     var hstep = height / (config.grid + 1);
-    var current = initial;//TODO clone
+    var current = initial;
+    var paused = true;
 
     // Launch images loading in parallel
     var images = {};
     var src = {};
+    var fetchImage = function (file) {
+      src[file] = new Image();
+      src[file].onload = function () {
+        if (paused) {
+          draw({}, {}, 1);
+        }
+      };
+      src[file].src = 'images/game/' + file;
+    };
     var fetchImages = function (imgs) {
       for (var name in imgs) {
         if (imgs.hasOwnProperty(name)) {
           if (!src[imgs[name]]) {
-            src[imgs[name]] = new Image();
-            src[imgs[name]].src = 'images/game/' + imgs[name];
+            fetchImage(imgs[name]);
           }
           images[name] = src[imgs[name]];
         }
@@ -188,6 +197,7 @@
 
     // Animate from frame to frame
     var animate = function () {
+      paused = false;
       var callback = next[0].callback;
       var frame = next[0].frame;
       var from = {};
@@ -222,6 +232,7 @@
           if (next.length > 0) {
             setTimeout(animate, 0);
           }
+          paused = true;
         } else {
           draw(from, to, 1 - ((end - timestamp) / config.stepDuration));
           requestAnimationFrame(iterate);
@@ -249,7 +260,6 @@
      * @param cb callback called once animation is over.
      */
     var oneMoreStep = function (frame, callback) {
-      //TODO clone frame
       next.push({ callback: callback, frame: frame });
       if (next.length === 1) {
         animate();
