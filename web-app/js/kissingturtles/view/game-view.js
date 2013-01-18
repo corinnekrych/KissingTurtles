@@ -1,4 +1,3 @@
-
 var kissingturtles = kissingturtles || {};
 kissingturtles.view = kissingturtles.view || {};
 
@@ -99,12 +98,13 @@ kissingturtles.view.gameview = function (model, elements) {
             if (!data.item.NOTIFIED || that.player != data.item.configuration.player) {
                 var myGameObject = data.item;
                 $.each(myGameObject.configuration.steps, function(key, value) {
-                    that.draw(value);
+                    that.draw(value, function () {
+	                var win = myGameObject.configuration.winningAnimation;
+	                if (win) {
+	                    that.draw.win(win.x, win.y);
+	                }
+                    });
                 });
-                var win = data.item.configuration.winningAnimation;
-                if (win) {
-                    that.draw.win(win.x, win.y);
-                }
             }
         }
     });
