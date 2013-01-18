@@ -85,11 +85,11 @@
     var ctx = canvas.getContext('2d');
     var width = canvas.width;
     var height = canvas.height;
-    var next = [];
     var wstep = width / (config.grid + 1);
     var hstep = height / (config.grid + 1);
     var current = initial;
-    var paused = true;
+    var animations = {};
+    var paused = true;//TODO get rid by counting animations keys
 
     // Launch images loading in parallel
     var images = {};
@@ -98,7 +98,7 @@
       src[file] = new Image();
       src[file].onload = function () {
         if (paused) {
-          draw({}, {}, 1);
+          animate();
         }
       };
       src[file].src = 'images/game/' + file;
@@ -144,89 +144,52 @@
       ctx.save();
       ctx.translate((x + 1) * wstep, (config.grid - y) * hstep);
       ctx.rotate(rotation);
-// ASK Mathieu
-//      var imageName = localStorage.getItem("kissingturtles.settings." + name);
-//      if (imageName) {
-//          imageName += '.png';
-//      } else {
-//          imageName = images[name] ;
-//      }
-//      ctx.drawImage(imageName, -wstep/2, -hstep/2, wstep, hstep);
-        ctx.drawImage(images[name], -wstep/2, -hstep/2, wstep, hstep);
+      ctx.drawImage(images[name], -wstep/2, -hstep/2, wstep, hstep);
       ctx.restore();
-    };
-
-      var draw = function (from, to, progress) {
-      var item;
-      var name;
-      var toitem;
-      var fromAngle;
-      var toAngle;
-      clean();
-      drawGrid();
-      for (name in current) {
-        item = current[name];
-        drawImage(name, item.x, item.y);
-      }
-      for (name in from) {
-        item = from[name];
-        toitem = to[name];
-        drawImage(
-          name,
-          computeProgress(item.x, toitem.x, progress),
-          computeProgress(item.y, toitem.y, progress)
-        );
-      }
     };
 
     // Animate from frame to frame
     var animate = function () {
-      paused = false;
-      var callback = next[0].callback;
-      var frame = next[0].frame;
-      var from = {};
-      var to = {};
-      var needAnimation = false;
-      for (var name in frame) {
-        if (frame.hasOwnProperty(name)) {
-          if (current[name]) {
-            needAnimation = true;
-            from[name] = current[name];
-            to[name] = frame[name];
-            delete current[name];
+      var timestamp = Date.now();
+      var name;
+      var item;
+      var animation;
+      var animateMore = false;
+      clean();
+      drawGrid();
+      for (name in animations) {
+        if (animations.hasOwnProperty(name)) {
+          animation = animations[name];
+          if (animation.end < timestamp) {
+            current[name] = animation.to;
+            if (animation.cb) {
+              setTimeout(animation.cb, 0);
+            }
+            delete animations[name];
           } else {
-            current[name] = frame[name];
+            animateMore = true;
+            var progress = 1 - ((animation.end - timestamp) / config.stepDuration);
+            animation.currentx = computeProgress(animation.from.x, animation.to.x, progress);
+            animation.currenty = computeProgress(animation.from.y, animation.to.y, progress);
+            drawImage(name, animation.currentx, animation.currenty, 0);//Can handle rotation too
           }
         }
       }
-      var end = Date.now() + config.stepDuration;
-      var iterate = function () {
-        var timestamp = Date.now();
-        if ((!needAnimation) || (timestamp > end)) {
-          draw(from, to, 1);
-          if (callback) {
-            setTimeout(callback, 0);
-          }
-          for (var t in to) {
-            if (to.hasOwnProperty(t)) {
-              current[t] = to[t];
-            }
-          }
-          next = next.slice(1);
-          if (next.length > 0) {
-            setTimeout(animate, 0);
-          }
-          paused = true;
-        } else {
-          draw(from, to, 1 - ((end - timestamp) / config.stepDuration));
-          requestAnimationFrame(iterate);
+      for (name in current) {
+        if (current.hasOwnProperty(name)) {
+          item = current[name];
+          drawImage(name, item.x, item.y, 0);//Can handle rotation too
         }
-      };
-      iterate();
+      }
+      if (!animateMore) {
+        paused = true;
+      } else {
+        requestAnimationFrame(animate);
+      }
     };
 
     // Draw initial frame
-    draw({}, {}, 1);
+    animate();
 
     /**
      * Animation function.
@@ -244,8 +207,46 @@
      * @param cb callback called once animation is over.
      */
     var oneMoreStep = function (frame, callback) {
-      next.push({ callback: callback, frame: frame });
-      if (next.length === 1) {
+      var callNow = true;
+      for (var name in frame) {
+        if (frame.hasOwnProperty(name)) {
+          if (current.hasOwnProperty(name)) {
+            // Currently present but not animated
+            animations[name] = {
+              from: current[name],
+              to: frame[name],
+              currentx: current[name].x,
+              currenty: current[name].y,
+              end: Date.now() + config.stepDuration
+            };
+            if (callNow) {
+              animations[name].cb = callback;
+              callNow = false;
+            }
+            delete current[name];
+          } else if (animations.hasOwnProperty(name)) {
+            // Currently animated
+            animations[name] = {
+              from: { x: animations[name].currentx, y: animations[name].currenty },
+              to: frame[name],
+              currentx: animations[name].currentx,
+              currenty: animations[name].currenty,
+              end: Date.now() + config.stepDuration
+            };
+            if (callNow) {
+              animations[name].cb = callback;
+              callNow = false;
+            }
+          } else {
+            current[name] = frame[name];
+          }
+        }
+      }
+      if (callNow && callback) {
+        setTimeout(callback, 0);
+      }
+      if (!callNow) {
+        paused = false;
         animate();
       }
       return oneMoreStep;
@@ -267,25 +268,28 @@
       });
       var dirs = ['+x', '-x', '+y', '-y'];
       var max = Math.ceil((Math.max(Math.max(config.grid - x, x), Math.max(config.grid - y, y)) / speed) + 2);
-      for (var i = 0; i < max - 1; i++) {
-        dist = i * speed;
-        oneMoreStep({
-          winningHeart1: { x: x + dist, y: y       , direction: dirs[0] },
-          winningHeart2: { x: x - dist, y: y       , direction: dirs[1] },
-          winningHeart3: { x: x       , y: y + dist, direction: dirs[2] },
-          winningHeart4: { x: x       , y: y - dist, direction: dirs[3] }
-        });
-        for (var j = 0; j < dirs.length; j++) {
-          dirs[j] = nextDir(dirs[j]);
+      var i = 0;
+      var iteration = function () {
+        if (i < max) {
+          dist = i * speed;
+          oneMoreStep({
+            winningHeart1: { x: x + dist, y: y       , direction: dirs[0] },
+            winningHeart2: { x: x - dist, y: y       , direction: dirs[1] },
+            winningHeart3: { x: x       , y: y + dist, direction: dirs[2] },
+            winningHeart4: { x: x       , y: y - dist, direction: dirs[3] }
+          }, iteration);
+          for (var j = 0; j < dirs.length; j++) {
+            dirs[j] = nextDir(dirs[j]);
+          }
         }
-      }
-      dist = (max - 1) * 3;
-      oneMoreStep({
-        winningHeart1: { x: x + dist, y: y       , direction: dirs[0] },
-        winningHeart2: { x: x - dist, y: y       , direction: dirs[1] },
-        winningHeart3: { x: x       , y: y + dist, direction: dirs[2] },
-        winningHeart4: { x: x       , y: y - dist, direction: dirs[3] }
-      }, callback);
+        if (i == max) {
+          if (callback) {
+            setTimeout(callback, 0);
+          }
+        }
+        i++;
+      };
+      oneMoreStep({}, iteration);
     };
 
     return oneMoreStep;
