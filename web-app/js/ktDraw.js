@@ -42,22 +42,6 @@
     window.msRequestAnimationFrame ||
     function (cb) { return setTimeout(cb, 1000/60); };
 
-
-        // Drawing tools
-  function getRotationAngle(direction) {
-    switch (direction) {
-      case '+x':
-        return 0;
-      case '-x':
-        return 0;
-      case '+y':
-        return 0;
-      case '-y':
-        return 0;
-      default:
-        return 0;
-    }
-  }
   function nextDir(direction) {
     switch (direction) {
       case '+x':
@@ -171,58 +155,6 @@
         ctx.drawImage(images[name], -wstep/2, -hstep/2, wstep, hstep);
       ctx.restore();
     };
-    var roundRect = function roundRect(ctx, x, y, width, height, radius, fill) {
-          if (typeof radius === "undefined") {
-              radius = 5;
-          }
-          ctx.beginPath();
-          ctx.moveTo(x + radius, y);
-          ctx.lineTo(x + width - radius, y);
-          ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-          ctx.lineTo(x + width, y + height - radius);
-          ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-          ctx.lineTo(x + radius, y + height);
-          var arrow = 20;
-          ctx.lineTo(x + width/2 + arrow, y + height);
-          ctx.lineTo(x + width/2, y + height + arrow);
-          ctx.lineTo(x + width/2 - arrow, y + height);
-          ctx.lineTo(x + radius, y + height);
-          ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-          ctx.lineTo(x, y + radius);
-          ctx.quadraticCurveTo(x, y, x + radius, y);
-          ctx.closePath();
-          if (fill) {
-              ctx.fill();
-          }
-      };
-    var drawBubble = function (){
-          // Quadratric curves example
-          ctx.beginPath();
-          ctx.moveTo(75,25);
-          ctx.quadraticCurveTo(25,25,25,62.5);
-          ctx.quadraticCurveTo(25,100,50,100);
-          ctx.quadraticCurveTo(50,120,30,125);
-          ctx.quadraticCurveTo(60,120,65,100);
-          ctx.quadraticCurveTo(125,100,125,62.5);
-          ctx.quadraticCurveTo(125,25,75,25);
-          ctx.stroke();
-          ctx.closePath();
-      }
-
-     var roundedRect = function (ctx,x,y,width,height,radius){
-          ctx.beginPath();
-          ctx.moveTo(x,y+radius);
-          ctx.lineTo(x,y+height-radius);
-          ctx.quadraticCurveTo(x,y+height,x+radius,y+height);
-          ctx.lineTo(x+width-radius,y+height);
-          ctx.quadraticCurveTo(x+width,y+height,x+width,y+height-radius);
-          ctx.lineTo(x+width,y+radius);
-          ctx.quadraticCurveTo(x+width,y,x+width-radius,y);
-          ctx.lineTo(x+radius,y);
-          ctx.quadraticCurveTo(x,y,x,y+radius);
-          ctx.stroke();
-          ctx.fill();
-      }
 
       var draw = function (from, to, progress) {
       var item;
@@ -232,29 +164,17 @@
       var toAngle;
       clean();
       drawGrid();
-//          roundedRect(ctx,53,53,49,33,10);
-//          roundedRect(ctx,53,119,49,16,6);
-//          roundedRect(ctx,135,53,49,33,10);
-//          roundedRect(ctx,135,119,25,49,10);
       for (name in current) {
         item = current[name];
-        drawImage(name, item.x, item.y, getRotationAngle(item.direction));
+        drawImage(name, item.x, item.y);
       }
       for (name in from) {
         item = from[name];
         toitem = to[name];
-//        fromAngle = getRotationAngle(item.direction);
-//        toAngle = getRotationAngle(toitem.direction);
-//        if (fromAngle - toAngle > Math.PI) {
-//          toAngle += Math.PI * 2;
-//        } else if (toAngle - fromAngle > Math.PI) {
-//          fromAngle += Math.PI * 2;
-//        }
         drawImage(
           name,
           computeProgress(item.x, toitem.x, progress),
           computeProgress(item.y, toitem.y, progress)
-          //computeProgress(fromAngle, toAngle, progress)
         );
       }
     };
