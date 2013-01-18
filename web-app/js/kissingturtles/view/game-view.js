@@ -26,6 +26,13 @@ kissingturtles.view.gameview = function (model, elements) {
 
             if (!data.item.NOTIFIED) {
                that.currentMaze = conf;
+                // take local config to customize Franklin's picture
+               var franklinImageName = localStorage.getItem("kissingturtles.settings.franklin");
+                if (franklinImageName) {
+                    franklinImageName += '.png';
+                    conf.images['franklin'] = franklinImageName;
+                }
+
                that.draw = ktDraw(document.getElementById('canvas'), conf, that.currentMaze.steps[0]);
                that.player = "franklin";
                that.gameId = data.item.id;
@@ -58,6 +65,17 @@ kissingturtles.view.gameview = function (model, elements) {
             updateElement(data.item);
             if (!data.item.NOTIFIED) {
                 // For Emily game, initialize canvas
+                // take local config to customize Franklin's picture
+                var franklinImageName = localStorage.getItem("kissingturtles.settings.franklin");
+                if (franklinImageName) {
+                    franklinImageName += '.png';
+                    conf.images['franklin'] = franklinImageName;
+                }
+                var emilyImageName = localStorage.getItem("kissingturtles.settings.emily");
+                if (emilyImageName) {
+                    emilyImageName += '.png';
+                    conf.images['emily'] = emilyImageName;
+                }
                 that.draw = ktDraw(document.getElementById('canvas'), conf, that.currentMaze.steps[0]);
                 that.player = "emily";
                 that.gameId = data.item.id;
