@@ -108,13 +108,80 @@ kissingturtles.view.gameview = function (model, elements) {
     //----------------------------------------------------------------------------------------
     $('#select-emily').live('change', function(event) {
         var value = $('#select-emily').val();
-        $('#emily-img').attr({src: "images/game/"+value+".png"}).refresh();
+        localStorage.setItem("kissingturtles.settings.emily", value);
+        $('#emily-img').attr({src: "images/game/" + value + ".png"});
     });
 
-    $("#select-franklin").change(function(event, ui) {
+    $("#select-franklin").live('change', function(event) {
         var value = $('#select-franklin').val();
-        //alert(value);
-        //$('#emily-img').attr({src: "images/game/"+value+".png"}).refresh();
+        localStorage.setItem("kissingturtles.settings.franklin", value);
+        $('#franklin-img').attr({src: "images/game/" + value + ".png"});
+    });
+
+
+    //----------------------------------------------------------------------------------------
+    //   Click on Settings:'Reset settings' brings you here.
+    //   To clear your name from your browser localStorage.
+    //----------------------------------------------------------------------------------------
+    $('#reset-settings').live("click tap", function(event) {
+        localStorage.clear();
+        // defaults values for Franklin and Emily
+        localStorage.setItem("kissingturtles.settings.emily", "pig");
+        $('#emily-img').attr({src: "images/game/pig.png"});
+        //$('#select-emily').val('Emily is a pig');
+        localStorage.setItem("kissingturtles.settings.franklin", "turtle");
+        $('#franklin-img').attr({src: "images/game/turtle.png"});
+        //$('#select-franklin').val('Franklin is a turtle');
+    });
+
+    //----------------------------------------------------------------------------------------
+    //   Page init on Settings
+    //----------------------------------------------------------------------------------------
+    $('#section-settings').live("pageinit pageshow", function(event) {
+        // defaults values for Franklin and Emily
+        var emily = localStorage.getItem("kissingturtles.settings.emily");
+        if(!emily) {
+            emily = 'pig';
+        }
+        $('#emily-img').attr({src: "images/game/" + emily + ".png"});
+        var select  = $('#select-emily');
+        var options = null;
+        if(select.prop) {
+            options = select.prop('options');
+        }
+        else {
+            options = select.attr('options');
+        }
+        var selectedIndex = 0;
+        $.each(options, function (key, value) {
+            if (value.value == emily)  {
+                selectedIndex = key;
+            }
+        });
+        select.val(selectedIndex);
+        //select.selectmenu('refresh');
+
+        var franklin = localStorage.getItem("kissingturtles.settings.franklin");
+        if(!franklin) {
+            franklin = 'turtle';
+        }
+        $('#franklin-img').attr({src: "images/game/" + franklin + ".png"});
+        select  = $('#select-franklin');
+        options = null;
+        if(select.prop) {
+            options = select.prop('options');
+        }
+        else {
+            options = select.attr('options');
+        }
+        var selectedIndex = 0;
+        $.each(options, function (key, value) {
+            if (value.value == franklin)  {
+                selectedIndex = key;
+            }
+        });
+        select.val(selectedIndex);
+        //select.selectmenu('refresh');
     });
 
     //----------------------------------------------------------------------------------------
@@ -150,15 +217,6 @@ kissingturtles.view.gameview = function (model, elements) {
         } else {
             $('#dsl-text').hide('slow');
         }
-    });
-
-
-    //----------------------------------------------------------------------------------------
-    //   Click on 'Reset name' in settings page brings you here.
-    //   To clear your name from your browser localStorage.
-    //----------------------------------------------------------------------------------------
-    $('#reset-name').live("click tap", function(event) {
-        localStorage.clear();
     });
 
     //----------------------------------------------------------------------------------------

@@ -160,7 +160,15 @@
       ctx.save();
       ctx.translate((x + 1) * wstep, (config.grid - y) * hstep);
       ctx.rotate(rotation);
-      ctx.drawImage(images[name], -wstep/2, -hstep/2, wstep, hstep);
+// ASK Mathieu
+//      var imageName = localStorage.getItem("kissingturtles.settings." + name);
+//      if (imageName) {
+//          imageName += '.png';
+//      } else {
+//          imageName = images[name] ;
+//      }
+//      ctx.drawImage(imageName, -wstep/2, -hstep/2, wstep, hstep);
+        ctx.drawImage(images[name], -wstep/2, -hstep/2, wstep, hstep);
       ctx.restore();
     };
     var roundRect = function roundRect(ctx, x, y, width, height, radius, fill) {
