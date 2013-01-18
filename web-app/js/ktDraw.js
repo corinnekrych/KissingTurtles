@@ -240,10 +240,10 @@
           }
         }
       }
+      animate();
       if (caller) {
         caller.cb = callback;
         paused = false;
-        animate();
       } else if (callback) {
         setTimeout(callback, 0);
       }
