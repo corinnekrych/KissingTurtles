@@ -169,9 +169,9 @@
           } else {
             animateMore = true;
             var progress = 1 - ((animation.end - timestamp) / config.stepDuration);
-            animation.currentx = computeProgress(animation.from.x, animation.to.x, progress);
-            animation.currenty = computeProgress(animation.from.y, animation.to.y, progress);
-            drawImage(name, animation.currentx, animation.currenty, 0);//Can handle rotation too
+            var currentx = computeProgress(animation.from.x, animation.to.x, progress);
+            var currenty = computeProgress(animation.from.y, animation.to.y, progress);
+            drawImage(name, currentx, currenty, 0);//Can handle rotation too
           }
         }
       }
@@ -191,6 +191,17 @@
     // Draw initial frame
     animate();
 
+    var animateLater = function (name, to, callback) {
+      var oldcb = animations[name].cb;
+      var frame = {};
+      frame[name] = to;
+      animations[name].cb = function () {
+        if (oldcb) {
+          setTimeout(oldcb, 0);
+        }
+        oneMoreStep(frame, callback);
+      };
+    };
     /**
      * Animation function.
      *
@@ -207,7 +218,7 @@
      * @param cb callback called once animation is over.
      */
     var oneMoreStep = function (frame, callback) {
-      var callNow = true;
+      var caller = null;
       for (var name in frame) {
         if (frame.hasOwnProperty(name)) {
           if (current.hasOwnProperty(name)) {
@@ -215,39 +226,26 @@
             animations[name] = {
               from: current[name],
               to: frame[name],
-              currentx: current[name].x,
-              currenty: current[name].y,
               end: Date.now() + config.stepDuration
             };
-            if (callNow) {
-              animations[name].cb = callback;
-              callNow = false;
-            }
+            caller = animations[name];
             delete current[name];
           } else if (animations.hasOwnProperty(name)) {
-            // Currently animated
-            animations[name] = {
-              from: { x: animations[name].currentx, y: animations[name].currenty },
-              to: frame[name],
-              currentx: animations[name].currentx,
-              currenty: animations[name].currenty,
-              end: Date.now() + config.stepDuration
-            };
-            if (callNow) {
-              animations[name].cb = callback;
-              callNow = false;
-            }
+            // Currently animated: add the step once this one is finished
+            animateLater(name, frame[name], callback);
+            callback = null;
+            caller = {};
           } else {
             current[name] = frame[name];
           }
         }
       }
-      if (callNow && callback) {
-        setTimeout(callback, 0);
-      }
-      if (!callNow) {
+      if (caller) {
+        caller.cb = callback;
         paused = false;
         animate();
+      } else if (callback) {
+        setTimeout(callback, 0);
       }
       return oneMoreStep;
     };
