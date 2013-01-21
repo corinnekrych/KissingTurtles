@@ -36,36 +36,21 @@
     <script src="js/kissingturtles/manager-bootstrap.js"></script>
     <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
     <script src="js/ktDraw.js"></script>
-    <!--script>
-        window.onload = function () {
-            window.ktDraw(document.getElementById('canvas2'), {
-                        grid:15,
-                        stepDuration:1000,
-                        images:{
-                            franklin:'turtle.png',
-                            emily:'turtle.png',
-                            tree1:'tree.png'
-                        }
-                    },
+    <script>
+        function setCanvas() {
+            var canvasNode = document.getElementById('canvas');
 
-                    {   emily:{ x:2, y:1, direction:'+x' },
-                        franklin:{ x:1, y:0, direction:'+x' }
-                    })({
-                franklin:{ x:2, y:0, direction:'+x' }
+            var pw = window.innerWidth;
+            var ph = window.innerHeight;
 
-            })({
-                //emily:{ x:2, y:1, direction:'+x' },
-                franklin:{ x:3, y:1, direction:'+x' }
-            })({
-                //emily:{ x:2, y:1, direction:'+y' },
-                franklin:{ x:4, y:1, direction:'+x' }
-            })({
-                        //emily:{ x:2, y:2, direction:'+y' },
-                        franklin:{ x:5, y:1, direction:'+x' }
-                    }
-            );
-        };
-     </script-->
+            canvasNode.height = pw *0.8;
+            canvasNode.width = pw * 0.8;
+            canvasNode.style.top = (ph-canvasNode.height)/2 + "px";
+            canvasNode.style.left = (pw-canvasNode.width)/2 + "px";
+        }
+
+        //window.onresize = setCanvas;
+    </script>
 
 
     <style>
@@ -127,6 +112,7 @@
                     <select name="franklin"
                             id="select-franklin" data-native-menu="false">
                         <option value="turtle">Franklin is a turtle</option>
+                        <option value="alligator">Franklin is a alligator</option>
                         <option value="ant">Franklin is a ant</option>
                         <option value="bat">Franklin is a bat</option>
                         <option value="bear">Franklin is a bear</option>
@@ -136,7 +122,40 @@
                         <option value="bulldog">Franklin is a bulldog</option>
                         <option value="butterfly">Franklin is a butterfly</option>
                         <option value="cat">Franklin is a cat</option>
+                        <option value="chicken">Franklin is a chicken</option>
+                        <option value="cow">Franklin is a cow</option>
+                        <option value="crab">Franklin is a crab</option>
+                        <option value="crocodile">Franklin is a crocodile</option>
+                        <option value="deer">Franklin is a deer</option>
+                        <option value="dog">Franklin is a dog</option>
+                        <option value="donkey">Franklin is a donkey</option>
+                        <option value="duck">Franklin is a duck</option>
                         <option value="eagle">Franklin is a eagle</option>
+                        <option value="elephant">Franklin is a elephant</option>
+                        <option value="fish">Franklin is a fish</option>
+                        <option value="fox">Franklin is a fox</option>
+                        <option value="frog">Franklin is a frog</option>
+                        <option value="giraffe">Franklin is a giraffe</option>
+                        <option value="gorilla">Franklin is a gorilla</option>
+                        <option value="hippo">Franklin is a hippo</option>
+                        <option value="horse">Franklin is a horse</option>
+                        <option value="lion">Franklin is a lion</option>
+                        <option value="monkey">Franklin is a monkey</option>
+                        <option value="moose">Franklin is a moose</option>
+                        <option value="mouse">Franklin is a mouse</option>
+                        <option value="owl">Franklin is a owl</option>
+                        <option value="panda">Franklin is a panda</option>
+                        <option value="penguin">Franklin is a penguin</option>
+                        <option value="pig">Franklin is a pig</option>
+                        <option value="rabbit">Franklin is a rabbit</option>
+                        <option value="rhino">Franklin is a rhino</option>
+                        <option value="rooster">Franklin is a rooster</option>
+                        <option value="shark">Franklin is a shark</option>
+                        <option value="sheep">Franklin is a sheep</option>
+                        <option value="snake">Franklin is a snake</option>
+                        <option value="tiger">Franklin is a tiger</option>
+                        <option value="turkey">Franklin is a turkey</option>
+                        <option value="wolf">Franklin is a wolf</option>
                     </select>
                 </div>
                 <img src="images/game/turtle.png" id="franklin-img" class="franklin"/>
@@ -145,7 +164,7 @@
                 <div data-role="fieldcontain">
                     <select name="select-emily"
                             id="select-emily" data-native-menu="false">
-                        <option value="cat">Emily is a pig</option>
+                        <option value="pig">Emily is a pig</option>
                         <option value="ant">Emily is a ant</option>
                         <option value="bat">Emily is a bat</option>
                         <option value="bear">Emily is a bear</option>
@@ -155,7 +174,39 @@
                         <option value="bulldog">Emily is a bulldog</option>
                         <option value="butterfly">Emily is a butterfly</option>
                         <option value="cat">Emily is a cat</option>
+                        <option value="chicken">Emily is a chicken</option>
+                        <option value="cow">Emily is a cow</option>
+                        <option value="crab">Emily is a crab</option>
+                        <option value="crocodile">Emily is a crocodile</option>
+                        <option value="deer">Emily is a deer</option>
+                        <option value="dog">Emily is a dog</option>
+                        <option value="donkey">Emily is a donkey</option>
+                        <option value="duck">Emily is a duck</option>
                         <option value="eagle">Emily is a eagle</option>
+                        <option value="elephant">Emily is a elephant</option>
+                        <option value="fish">Emily is a fish</option>
+                        <option value="fox">Emily is a fox</option>
+                        <option value="frog">Emily is a frog</option>
+                        <option value="giraffe">Emily is a giraffe</option>
+                        <option value="gorilla">Emily is a gorilla</option>
+                        <option value="hippo">Emily is a hippo</option>
+                        <option value="horse">Emily is a horse</option>
+                        <option value="lion">Emily is a lion</option>
+                        <option value="monkey">Emily is a monkey</option>
+                        <option value="moose">Emily is a moose</option>
+                        <option value="mouse">Emily is a mouse</option>
+                        <option value="owl">Emily is a owl</option>
+                        <option value="panda">Emily is a panda</option>
+                        <option value="penguin">Emily is a penguin</option>
+                        <option value="rabbit">Emily is a rabbit</option>
+                        <option value="rhino">Emily is a rhino</option>
+                        <option value="rooster">Emily is a rooster</option>
+                        <option value="shark">Emily is a shark</option>
+                        <option value="sheep">Emily is a sheep</option>
+                        <option value="snake">Emily is a snake</option>
+                        <option value="tiger">Emily is a tiger</option>
+                        <option value="turkey">Emily is a turkey</option>
+                        <option value="wolf">Emily is a wolf</option>
                     </select>
                 </div>
                 <img src="images/game/pig.png" class="emily" id="emily-img"/>

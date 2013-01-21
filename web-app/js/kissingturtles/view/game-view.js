@@ -155,7 +155,7 @@ kissingturtles.view.gameview = function (model, elements) {
     //----------------------------------------------------------------------------------------
     //   Page init on Settings
     //----------------------------------------------------------------------------------------
-    $('#section-settings').live("pageinit pageshow", function(event) {
+    $('#section-settings').live("pageinit", function(event) {
         // defaults values for Franklin and Emily
         var emily = localStorage.getItem("kissingturtles.settings.emily");
         if(!emily) {
@@ -177,7 +177,8 @@ kissingturtles.view.gameview = function (model, elements) {
             }
         });
         select.val(selectedIndex);
-        //select.selectmenu('refresh');
+        $(options[selectedIndex]).attr("selected", "selected");
+        select.selectmenu('refresh');
 
         var franklin = localStorage.getItem("kissingturtles.settings.franklin");
         if(!franklin) {
@@ -199,7 +200,8 @@ kissingturtles.view.gameview = function (model, elements) {
             }
         });
         select.val(selectedIndex);
-        //select.selectmenu('refresh');
+        $(options[selectedIndex]).attr("selected", "selected");
+        select.selectmenu('refresh');
     });
 
     //----------------------------------------------------------------------------------------
