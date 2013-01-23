@@ -197,7 +197,7 @@
       frame[name] = to;
       animations[name].cb = function () {
         if (oldcb) {
-          setTimeout(oldcb, 0);
+          oldcb();
         }
         oneMoreStep(frame, callback);
       };
