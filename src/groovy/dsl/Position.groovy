@@ -74,9 +74,9 @@ class Position {
         def isOnWalls = walls.find() {
             it.x == x && it.y == y
         }
-        if (isOnWalls) {
-          random(gridSize, walls)
-        }
+//        if (isOnWalls) {
+//          random(gridSize, walls)
+//        }
         this
     }
 

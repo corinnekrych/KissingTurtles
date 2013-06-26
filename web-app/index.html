@@ -273,9 +273,7 @@
 <section data-role="page" id="section-show-game">
     <div data-role="header" id="show-game" data-position="fixed">
         <a href="#start-game" data-transition="slide" data-icon="arrow-l">Cancel</a>
-
-        <h1>Game</h1>
-        <div style="float:right" data-role="controlgroup" data-type="horizontal" data-mini="true">
+        <div  style="display:inline-block;float:right" data-role="controlgroup" data-type="horizontal">
             <a href="" id="left" data-role="button" data-icon="arrow-l" data-iconpos="notext">Left</a>
             <a href="" id="up" data-role="button" data-icon="arrow-u" data-iconpos="notext">Up</a>
             <a href="" id="down" data-role="button" data-icon="arrow-d" data-iconpos="notext">Down</a>
@@ -285,7 +283,7 @@
     </div>
 
 
-    <canvas id="canvas" width="500" height="500" style='width:500px;height:500px'></canvas>
+    <canvas id="canvas" width="1000" height="1000" style="max-width: 500px; width: 100%;"></canvas>
     <ul style="position:fixed;top:100px;right:15px;opacity: 0.6" data-role="listview" data-inset="true">
         <li style="display: none" id="dsl-text" data-role="fieldcontain">
             <textarea style="width:400px;height:400px"class="validate[required]" name="name" id="input-move-name"></textarea>
