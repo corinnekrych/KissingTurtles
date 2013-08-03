@@ -4,13 +4,10 @@ grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 grails.project.target.level = 1.6
 grails.project.source.level = 1.6
-//grails.project.war.file = "target/${appName}-${appVersion}.war"
 
 grails.project.dependency.resolution = {
-    // inherit Grails' default dependencies
+
     inherits("global") {
-        // specify dependency exclusions here; for example, uncomment this to disable ehcache:
-        // excludes 'ehcache'
     }
     log "error" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
     checksums true // Whether to verify checksums on resolve
@@ -24,31 +21,17 @@ grails.project.dependency.resolution = {
 
         mavenLocal()
         mavenCentral()
-
-        // uncomment these (or add new ones) to enable remote dependency resolution from public Maven repositories
-        //mavenRepo "http://snapshots.repository.codehaus.org"
-        //mavenRepo "http://repository.codehaus.org"
-        //mavenRepo "http://download.java.net/maven/2/"
-        //mavenRepo "http://repository.jboss.com/maven2/"
+        mavenRepo "https://oss.sonatype.org/content/repositories/snapshots/"
     }
     dependencies {
-        // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
-
-        // runtime 'mysql:mysql-connector-java:5.1.20'
     }
 
     plugins {
-        runtime ":hibernate:$grailsVersion"
         runtime ":jquery:1.8.2"
-        runtime ":cors:1.0.3"
-
-
-
-        build ":tomcat:$grailsVersion"
-
-        runtime ":database-migration:1.1"
-
-        compile ":platform-core:1.0.M3"
-        compile ":events-push:1.0.M3"
+        //runtime ":cors:1.0.3"
+        build ':tomcat:7.0.39'
+        runtime ':hibernate:3.6.10.M3'
+//        compile ":platform-core:1.0.M3"     //platform-core-1.0.RC5              //resources-1.2.RC3
+        compile ":events-push:1.0.M7"     //m3
     }
 }
