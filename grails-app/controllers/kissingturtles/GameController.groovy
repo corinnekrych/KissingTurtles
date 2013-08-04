@@ -11,16 +11,19 @@ import dsl.DslScript
 import dsl.Turtle
 import dsl.Position
 
+
+
 class GameController {
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
     def gameService
     def wallGeneratorService
+    Binding binding
 
     def run() {
         println "in the inputs" + params
-
+        binding = new Binding()
         def userInteraction = new UserInteraction(this, params.gameId)
 
         def game = Game.findById(params.gameId)
@@ -40,19 +43,19 @@ class GameController {
             turtle = new Turtle("emily", "image", emilyPosition, game.mazeTTT, userInteraction)
         }
 
-        def binding = new Binding([
-                turtle: turtle,
-                left: dsl.Direction.left,
-                right: dsl.Direction.right,
-                down: dsl.Direction.down,
-                up: dsl.Direction.up,
-                move: turtle.&move,
-                by: turtle.&by,
-                ask: turtle.&ask,
-                to: turtle.&to
-        ])
+        binding.setVariable("turtle", turtle)
+        binding.setVariable("left", dsl.Direction.left)
+        binding.setVariable("right", dsl.Direction.right)
+        binding.setVariable("up", dsl.Direction.up)
+        binding.setVariable("down", dsl.Direction.down)
+        binding.setVariable("move", turtle.&move)
+        binding.setVariable("by", turtle.&by)
+        binding.setVariable("ask", turtle.&ask)
+        binding.setVariable("to", turtle.&to)
+
         def shell = new GroovyShell(binding)
         shell.evaluate(script)
+
         def result = binding.getVariable('turtle').result
 
         def conf = gameService.runFormatting(game, turtle, result)

@@ -81,6 +81,7 @@ class Turtle {
                 def response = userInteraction.waitForAnswer(myQuestion)
                 myAsk[variable] = response
                 asks.add(myAsk)
+                userInteraction.gameController.binding.setVariable(variable, response)
             }
         }]
     }
