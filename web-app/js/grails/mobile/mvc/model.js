@@ -32,6 +32,7 @@ grails.mobile.mvc.model = function (items) {
     that.updatedItem = grails.mobile.event(that);
     that.deletedItem = grails.mobile.event(that);
     that.executed = grails.mobile.event(that);
+    that.asked = grails.mobile.event(that);
 
 
     that.getItems = function () {
@@ -71,6 +72,14 @@ grails.mobile.mvc.model = function (items) {
             return false;
         }
         that.items[item.id] = item;
+        return true;
+    };
+
+    that.ask = function (item, context) {
+        that.asked.notify({item: item}, context);
+        if (item.errors || item.message) {
+            return false;
+        }
         return true;
     };
 

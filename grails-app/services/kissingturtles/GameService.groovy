@@ -23,26 +23,27 @@ class GameService {
             array.add(obj)
         }
 
-        def last = array.last()
+        def last = array.size() == 0 ? null :  array.last()
         boolean win = false
-        if (turtle.name == "franklin") {
-            if ((last.franklin.x == treeInitialPosition.x) && (last.franklin.y == treeInitialPosition.y) && (game.emilyX == treeInitialPosition.x) && (game.emilyY == treeInitialPosition.y)) {
-                win = true
+        if (last) {
+            if (turtle.name == "franklin") {
+                if ((last.franklin.x == treeInitialPosition.x) && (last.franklin.y == treeInitialPosition.y) && (game.emilyX == treeInitialPosition.x) && (game.emilyY == treeInitialPosition.y)) {
+                    win = true
+                }
+                game.franklinX = last.franklin.x
+                game.franklinY = last.franklin.y
+                game.franklinRot = last.franklin.rotation
+                game.franklinDir = last.franklin.direction
+            } else if (turtle.name == "emily") {
+                if ((last.emily.x == treeInitialPosition.x) && (last.emily.y == treeInitialPosition.y) && (game.franklinX == treeInitialPosition.x) && (game.franklinY == treeInitialPosition.y)) {
+                    win = true
+                }
+                game.emilyX = last.emily.x
+                game.emilyY = last.emily.y
+                game.emilyRot = last.emily.rotation
+                game.emilyDir = last.emily.direction
             }
-            game.franklinX = last.franklin.x
-            game.franklinY = last.franklin.y
-            game.franklinRot = last.franklin.rotation
-            game.franklinDir = last.franklin.direction
-        } else if (turtle.name == "emily") {
-            if ((last.emily.x == treeInitialPosition.x) && (last.emily.y == treeInitialPosition.y) && (game.franklinX == treeInitialPosition.x) && (game.franklinY == treeInitialPosition.y)) {
-                win = true
-            }
-            game.emilyX = last.emily.x
-            game.emilyY = last.emily.y
-            game.emilyRot = last.emily.rotation
-            game.emilyDir = last.emily.direction
         }
-
         def root = builder.configuration {
             images {
                 franklin 'turtle.png'
@@ -52,6 +53,7 @@ class GameService {
             (win)? winningAnimation {x treeInitialPosition.x
                 y treeInitialPosition.y}:""
             steps array
+            asks result.asks
             grid 15
             stepDuration 1000
             player turtle.name

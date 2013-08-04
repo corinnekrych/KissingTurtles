@@ -1,6 +1,6 @@
 package kissingturtles
 
-
+import dsl.UserInteraction
 import grails.converters.JSON
 import grails.validation.ValidationErrors
 
@@ -21,6 +21,8 @@ class GameController {
     def run() {
         println "in the inputs" + params
 
+        def userInteraction = new UserInteraction(this, params.gameId)
+
         def game = Game.findById(params.gameId)
 
         Position franklinPosition = new Position(game.franklinX, game.franklinY, game.franklinRot, game.franklinDir)
@@ -33,9 +35,9 @@ class GameController {
         println "my game is ${game.id} with maze ${game.mazeTTT}"
 
         if (game.user1 == params.user) {
-            turtle = new Turtle("franklin", "image", franklinPosition, game.mazeTTT)
+            turtle = new Turtle("franklin", "image", franklinPosition, game.mazeTTT, userInteraction)
         } else if ((game.user2 == params.user)) {
-            turtle = new Turtle("emily", "image", emilyPosition, game.mazeTTT)
+            turtle = new Turtle("emily", "image", emilyPosition, game.mazeTTT, userInteraction)
         }
 
         def binding = new Binding([
@@ -45,14 +47,15 @@ class GameController {
                 down: dsl.Direction.down,
                 up: dsl.Direction.up,
                 move: turtle.&move,
-                by: turtle.&by
+                by: turtle.&by,
+                ask: turtle.&ask,
+                to: turtle.&to
         ])
         def shell = new GroovyShell(binding)
         shell.evaluate(script)
         def result = binding.getVariable('turtle').result
 
         def conf = gameService.runFormatting(game, turtle, result)
-
         // save current position
         if (!game.save(flush: true)) {
             ValidationErrors validationErrors = game.errors
@@ -63,6 +66,13 @@ class GameController {
         event topic: "executegame", data: conf
         println conf
         render conf
+    }
+
+    def answer() {
+        println "in answer = " + params
+        UserInteraction userInteraction = new UserInteraction(this, params.gameId)
+        userInteraction.notifyResponse(params.content)
+        render "{\"empty\":\"emprty\"}"
     }
 
     def index() {

@@ -50,9 +50,14 @@ grails.mobile.push.pushmanager = function (grailsEvents, domainName, store, mode
     });
 
     grailsEvents.on('execute' + domainName , function (data) {
-            var dataParsed = JSON.parse(data);
-            dataParsed.NOTIFIED = true;
-            model.execute(dataParsed);
+        var dataParsed = JSON.parse(data);
+        dataParsed.NOTIFIED = true;
+        model.execute(dataParsed);
+    });
+
+    grailsEvents.on('ask' + domainName , function (data) {
+        var dataParsed = JSON.parse(data);
+        model.ask(dataParsed);
     });
 
     return that;

@@ -9,14 +9,18 @@ class Turtle {
     def currentPosition
     def result = [:]
     def maze
+    def i = 1;
+    def asks =[]
 
-    Turtle(myName, myImage, Position start, mazeId) {
+    UserInteraction userInteraction
+
+    Turtle(myName, myImage, Position start, mazeId, userInterac) {
         name = myName
         image = myImage
-        steps = []
         currentPosition = start
-        result = ['name': name, 'image': image, 'steps': steps]
+        result = ['name': name, 'image': image, 'steps': steps, 'asks': asks]
         maze = new WallGeneratorService().getWalls(mazeId)
+        userInteraction = userInterac
     }
 
     Turtle move(Direction dir) {
@@ -67,6 +71,23 @@ class Turtle {
         currentPosition = newPosition
         this
     }
+
+    def ask(question) {
+        def myQuestion = question
+        [assign : { to ->
+            [:].withDefault {variable ->
+                def myAsk = [:]
+                myAsk["_question"] = myQuestion
+                def response = userInteraction.waitForAnswer(myQuestion)
+                myAsk[variable] = response
+                asks.add(myAsk)
+            }
+        }]
+    }
+    def propertyMissing(def propertyName) {
+        propertyName
+    }
+
 
 }
 enum Direction {

@@ -97,6 +97,18 @@ kissingturtles.view.gameview = function (model, elements) {
             // refresh me if it's not myself pls
             if (!data.item.NOTIFIED || that.player != data.item.configuration.player) {
                 var myGameObject = data.item;
+                $.each(myGameObject.configuration.asks, function(key, value) {
+                    var text = "";
+                    $.each(value, function(innerKey, innerValue) {
+                        if (innerKey == "_question") {
+                            text += "\nquestion = " + innerValue;
+                        } else {
+                            text += "\nresponse = " + innerValue;
+                        }
+                    });
+                    console.log(text);
+                    $('#interaction').text(text);
+                });
                 $.each(myGameObject.configuration.steps, function(key, value) {
                     that.draw(value, function () {
 	                var win = myGameObject.configuration.winningAnimation;
@@ -107,6 +119,23 @@ kissingturtles.view.gameview = function (model, elements) {
                 });
             }
         }
+    });
+
+
+    //----------------------------------------------------------------------------------------
+    //    Callback to display question asked to partner
+    //----------------------------------------------------------------------------------------
+    that.model.asked.attach(function (data, event) {
+        $('#ask').text(data.item.question);
+    });
+
+    //----------------------------------------------------------------------------------------
+    //   Click on Execute my DSL script brings you here
+    //----------------------------------------------------------------------------------------
+    $("#answer").live("click tap", function(event) {
+        var answer = $('#response').val();
+        var gameId = that.gameId;
+        that.answerButtonClicked.notify({title: "KissingTurtles", content: answer, gameId: gameId, user: localStorage.getItem("KissingTurtles.UserId")});
     });
 
     //----------------------------------------------------------------------------------------

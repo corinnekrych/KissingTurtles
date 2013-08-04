@@ -52,5 +52,9 @@ grails.mobile.feed.feed = function (baseUrl, store) {
         currentFeed.execute(data, executed);
     };
 
+    that.answer = function (data, answered) {
+        currentFeed.answer(data, answered);
+    };
+
     return that;
 };

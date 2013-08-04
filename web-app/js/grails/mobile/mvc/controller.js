@@ -33,11 +33,20 @@ grails.mobile.mvc.controller = function (feed, model, view) {
         execute(item, context);
     });
 
+    view.answerButtonClicked.attach(function (item, context) {
+        answer(item, context);
+    });
+
     var execute = function (data, context) {
         var executed = function (data) {
             return that.model.execute(data, context);
         };
         feed.execute(data, executed);
+    };
+
+    var answer = function (data, context) {
+        feed.answer(data,  function (data) {
+        });
     };
 
     view.offlineEvent.attach(function (item) {

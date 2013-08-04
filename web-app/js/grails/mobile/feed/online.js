@@ -27,6 +27,12 @@ grails.mobile.feed.online = function (url, store) {
             executed(data);
         })
     };
+
+    that.answer = function (data, answered) {
+        send(data, "answer", "POST", function(data) {
+            answered(data);
+        })
+    };
     that.listItems = function (listed) {
         send(null, "list", "GET", function (data) {
             listed(data);
