@@ -1,9 +1,10 @@
 package kissingturtles
 
+import dsl.GameCustomizer
 import dsl.UserInteraction
 import grails.converters.JSON
 import grails.validation.ValidationErrors
-
+import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.grails.web.json.JSONObject;
 import org.springframework.dao.DataIntegrityViolationException
 
@@ -53,7 +54,12 @@ class GameController {
         binding.setVariable("ask", turtle.&ask)
         binding.setVariable("to", turtle.&to)
 
-        def shell = new GroovyShell(binding)
+        def config = new CompilerConfiguration()
+        config.addCompilationCustomizers(new GameCustomizer())
+
+        def shell = new GroovyShell(this.class.classLoader,
+                binding,
+                config)
         shell.evaluate(script)
 
         def result = binding.getVariable('turtle').result
