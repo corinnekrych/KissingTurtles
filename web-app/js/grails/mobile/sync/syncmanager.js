@@ -18,11 +18,12 @@ var grails = grails || {};
 grails.mobile = grails.mobile || {};
 grails.mobile.sync = grails.mobile.sync || {};
 
-grails.mobile.sync.syncmanager = function (url, domainName, controller, store, model) {
+grails.mobile.sync.syncmanager = function (url, domainName, controller, store, model, options) {
     var that = {};
     var store = store;
     var domainName = domainName;
     var model = model;
+    var userIdNotification = options.userIdNotification;
 
     controller.onlineEvent.attach(function (item) {
         synchronization();
@@ -68,6 +69,7 @@ grails.mobile.sync.syncmanager = function (url, domainName, controller, store, m
         var oldObj = JSON.parse(usefulString);
 
         store.remove(oldObj);
+        oldObj.offlineStatus = "";
         model.deleteItem(oldObj);
         store.store(data);
         model.createItem(data);
@@ -98,6 +100,7 @@ grails.mobile.sync.syncmanager = function (url, domainName, controller, store, m
             return;
         }
         store.remove(data);
+        model.deleteItem(data);
     };
 
     // Asynchronous Ajax call to server
@@ -107,10 +110,13 @@ grails.mobile.sync.syncmanager = function (url, domainName, controller, store, m
 
 
     var cfg = function (url, type, action, dataToSend, successCallback) {
+        if (dataToSend) {
+            dataToSend.userIdNotification = userIdNotification;
+        }
         return {
             cache: false,
             type: type,
-            async: false,
+            async: true,
             data: dataToSend,
             dataType: "json",
             url: url + action,
@@ -118,7 +124,9 @@ grails.mobile.sync.syncmanager = function (url, domainName, controller, store, m
                 successCallback(data, action, dataToSend);
             },
             error: function (xhr) {
-                alert(xhr.responseText);
+                var data = [];
+                data['message'] = xhr.responseText;
+                successCallback(data, action, dataToSend);
             }
         };
     };

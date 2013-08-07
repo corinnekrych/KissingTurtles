@@ -23,12 +23,14 @@ grails.mobile.mvc = grails.mobile.mvc || {};
 
 grails.mobile.mvc.manager = function (configuration) {
     var that = {};
-    var context = (configuration.applicationName != "") ? "/" + configuration.applicationName : "";
-    var grailsEvents = new grails.Events(context, {transport: 'sse'});
 
     var baseURL = configuration.baseURL;
     var namespace = configuration.namespace;
+    var grailsEvents = new grails.Events(configuration.baseURL, {transport: 'sse'});
+
     var controllers = {};
+
+    var userIdNotification = grails.mobile.helper.generateId();
 
     var resolveNamespace = function (functionPath) {
         var namespaces = functionPath.split(".");
@@ -39,62 +41,85 @@ grails.mobile.mvc.manager = function (configuration) {
                 parent = parent[name];
             }
         });
-//        if (typeof parent === 'undefined') {
-//            throw new TypeError("'" + functionPath + "' does not exist");
-//        }
+        if (typeof parent === 'undefined') {
+            throw new TypeError("'" + functionPath + "' does not exist");
+        }
         var func = parent[funcName];
-//        if (typeof func !== 'function') {
-//            throw new TypeError("'" + functionPath + "' is not a function");
-//        }
+        if (typeof func !== 'function') {
+            throw new TypeError("'" + functionPath + "' is not a function");
+        }
         return func;
     };
 
-    var domainsObjects = {};
+    that.domainsObjects = {};
     $.each(configuration.domain, function () {
+
+        if (this.options === undefined) {
+            this.options = {
+                offline: true,
+                eventPush: true,
+                userIdNotification : userIdNotification
+            }
+        } else {
+            this.options.userIdNotification = userIdNotification
+        }
+
         var domainName = this.name;
 
         // create model for domain object
-        var model = grails.mobile.mvc.model();
+        var modelName = namespace + '.model.' + this.name + 'model';
+        var funcToApply = resolveNamespace(modelName);
+        var model = funcToApply.call(this);
 
         // create local storage for domain object
-        var store = grails.mobile.storage.store(model, domainName);
+        if (this.options.offline) {
+            var store = grails.mobile.storage.store(model, domainName);
+        }
 
         // create view for domain object
         var viewName = namespace + '.view.' + this.name + 'view';
-        var funcToApply = resolveNamespace(viewName);
+        funcToApply = resolveNamespace(viewName);
         var view = funcToApply.call(this, model, this.view);
 
         // Create Feed
-        var feed = grails.mobile.feed.feed(baseURL + this.name + '/', store);
+        var feed = grails.mobile.feed.feed({
+            url: baseURL + this.name + '/',
+            on401: configuration.on401,
+            userIdNotification : userIdNotification
+        }, store);
 
         // create controller for domain object
-        var controller = grails.mobile.mvc.controller(feed, model, view);
+        var controllerName = namespace + '.controller.' + this.name + 'controller';
+        funcToApply = resolveNamespace(controllerName);
+        var controller = funcToApply.call(this, feed, model, view, {baseURL: baseURL + this.name + '/'});
 
-        var sync = grails.mobile.sync.syncmanager(baseURL + this.name + '/', domainName, controller, store, model);
-        var push = grails.mobile.push.pushmanager(grailsEvents, domainName, store, model);
+        var sync = grails.mobile.sync.syncmanager(baseURL + this.name + '/', domainName, controller, store, model, this.options);
 
-        domainsObjects[domainName] = {
+        var push = grails.mobile.push.pushmanager(grailsEvents, domainName, store, model, this.options);
+
+        that.domainsObjects[domainName] = {
             model:model,
             view:view,
             controller:controller,
             sync:sync,
             push: push
         };
+
     });
 
     $.each(configuration.domain, function () {
         if (this.hasOneRelations) {
-            domainsObjects[this.name].controller.hasOneRelations = {};
+            that.domainsObjects[this.name].controller.hasOneRelations = {};
             for (var i = 0; i < this.hasOneRelations.length; i++) {
                 var relationName = this.hasOneRelations[i].type + '_' + this.hasOneRelations[i].name;
-                domainsObjects[this.name].controller.hasOneRelations[relationName] = domainsObjects[this.hasOneRelations[i].type].controller;
+                that.domainsObjects[this.name].controller.hasOneRelations[relationName] = that.domainsObjects[this.hasOneRelations[i].type].controller;
             }
         }
         if (this.oneToManyRelations) {
-            domainsObjects[this.name].controller.oneToManyRelations = {};
+            that.domainsObjects[this.name].controller.oneToManyRelations = {};
             for (var i = 0; i < this.oneToManyRelations.length; i++) {
                 var relationName = this.oneToManyRelations[i].type + '_' + this.oneToManyRelations[i].name;
-                domainsObjects[this.name].controller.oneToManyRelations[relationName] = domainsObjects[this.oneToManyRelations[i].type].controller;
+                that.domainsObjects[this.name].controller.oneToManyRelations[relationName] = that.domainsObjects[this.oneToManyRelations[i].type].controller;
             }
         }
     });

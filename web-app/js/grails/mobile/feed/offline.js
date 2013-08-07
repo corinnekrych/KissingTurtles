@@ -27,29 +27,27 @@ grails.mobile.feed.offline = function (store) {
         listed(list);
     };
 
-    that.execute = function () {
-        // do nothing
-    };
-
     that.createItem = function (data, created) {
-        for (var k in data) {
-            data = data[k]; // remove formatting done in view needed by controller {domain: {id: "", ...}}
-        }
+        $.each(data, function(key, value) {
+            data = value; // remove formatting done in view needed by controller {domain: {id: "", ...}}
+        });
+
         if (grails.mobile.helper.isString(data)) {
             data = grails.mobile.helper.toDomainObject(data);
         }
 
         data.offlineStatus = "NOT-SYNC";
         data.offlineAction = "CREATED";
-        data.id = generateId();
+        data.id = grails.mobile.helper.generateId();
         store.store(data);
         created(data);
     };
 
     that.updateItem = function (data, updated) {
-        for (var k in data) {
-            data = data[k]; // remove formatting done in view needed by controller {domain: {id: "", ...}}
-        }
+        $.each(data, function(key, value) {
+            data = value; // remove formatting done in view needed by controller {domain: {id: "", ...}}
+        });
+
         if (grails.mobile.helper.isString(data)) {
             data = grails.mobile.helper.toDomainObject(data);
         }
@@ -64,30 +62,18 @@ grails.mobile.feed.offline = function (store) {
     };
 
     that.deleteItem = function (data, deleted) {
-        //var obj = store.read(data.id);
-        data.offlineStatus = "NOT-SYNC";
+        data = store.read(data.id);
 
         if (data.id && grails.mobile.helper.isString(data.id) && data.id.match("^" + "grails-") == "grails-") {
+            data.offlineStatus = "";
             store.remove(data);
         } else {
+            data.offlineStatus = "NOT-SYNC";
             data.offlineAction = "DELETED";
             store.store(data);
         }
 
         deleted(data);
-    };
-
-    var generateId = function () {
-        var uuid = "", i, random;
-        for (i = 0; i < 32; i++) {
-            random = Math.random() * 16 | 0;
-
-            if (i === 8 || i === 12 || i === 16 || i === 20) {
-                uuid += "-";
-            }
-            uuid += (i === 12 ? 4 : (i === 16 ? (random & 3 | 8) : random)).toString(16);
-        }
-        return "grails-" + uuid;
     };
 
     return that;

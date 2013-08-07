@@ -25,68 +25,78 @@ grails.mobile.storage.store = function (model, domainName) {
     var that = {};
     that.domainName = domainName;
     that.model = model;
-    var key = "grails.mobile." + that.domainName;
+    var localStorageKey = "grails.mobile." + that.domainName;
 
     that.store = function (object) {
-        var oldValue = localStorage.getItem(key);
+        var oldValue = localStorage.getItem(localStorageKey);
         var listDomainObject = grails.mobile.helper.toDomainObject(oldValue);
-
-        listDomainObject[object.id] = object;
-        localStorage.setItem(key, JSON.stringify(listDomainObject));
+        var newObject = {};
+        $.each(object, function(prop) {
+            if (!$.isArray(object[prop]) || object[prop].length < 50) {
+                newObject[prop] = object[prop];
+            }
+        });
+        listDomainObject[object.id] = newObject;
+        localStorage.setItem(localStorageKey, JSON.stringify(listDomainObject));
         return object;
     };
 
     that.storeList = function (object) {
-        var oldValue = localStorage.getItem(key);
+        var oldValue = localStorage.getItem(localStorageKey);
         var listDomainObject = grails.mobile.helper.toDomainObject(oldValue);
-        var itemKey;
-
-        for (itemKey in object) {
-            listDomainObject[object[itemKey].id] = object[itemKey];
-        }
-        localStorage.setItem(key, JSON.stringify(listDomainObject));
+        $.each(object, function(key, value) {
+            var newObject = {};
+            $.each(value, function(prop) {
+                if (!$.isArray(value[prop]) || value[prop].length < 50) {
+                    newObject[prop] = value[prop];
+                }
+            });
+            listDomainObject[value.id] = newObject;
+        });
+        localStorage.setItem(localStorageKey, JSON.stringify(listDomainObject));
     };
 
     that.remove = function (object) {
         if (object) {
-            var oldValue = localStorage.getItem(key);
-            localStorage.removeItem(key);
+            var oldValue = localStorage.getItem(localStorageKey);
+            localStorage.removeItem(localStorageKey);
 
             var listDomainObject = grails.mobile.helper.toDomainObject(oldValue);
             var domainKey;
-            for (domainKey in listDomainObject) {
-                if (domainKey == object.id) {
-                    delete listDomainObject[domainKey];
+            $.each(listDomainObject, function(key, value) {
+                if (key == object.id) {
+                    delete listDomainObject[key];
                 }
-            }
-            localStorage.setItem(key, JSON.stringify(listDomainObject));
+            });
+            localStorage.setItem(localStorageKey, JSON.stringify(listDomainObject));
         }
     };
 
     // When offline, get list from local storage
     that.read = function (id) {
-        var stringValue = localStorage.getItem(key);
+        var stringValue = localStorage.getItem(localStorageKey);
         var list = grails.mobile.helper.toDomainObject(stringValue);
         if (id) {
-            for (var k in list) {
-                if(list[k].id == id) {
-                    return list[k];
+            var found = null;
+            $.each(list, function(key, value) {
+                if(value.id == id) {
+                    found = value;
                 }
-            }
-            return null;
+            });
+            return found;
         }
         return list;
     };
 
     that.dirty = function () {
-        var stringValue = localStorage.getItem(key);
+        var stringValue = localStorage.getItem(localStorageKey);
         var list = grails.mobile.helper.toDomainObject(stringValue);
         var filteredList = {};
-        for (var k in list) {
-            if(list[k].offlineStatus === 'NOT-SYNC') {
-                filteredList[k] = list[k];
+        $.each(list, function(key, value) {
+            if(value.offlineStatus === 'NOT-SYNC') {
+                filteredList[key] = value;
             }
-        }
+        });
         return filteredList;
     };
 

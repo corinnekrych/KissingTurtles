@@ -27,8 +27,6 @@ grails.mobile.mvc.view = function (model, elements) {
     that.elements = elements;
 
     // List of events for the view
-    that.executeButtonClicked = grails.mobile.event();
-    that.answerButtonClicked = grails.mobile.event();
     that.createButtonClicked = grails.mobile.event();
     that.updateButtonClicked = grails.mobile.event();
     that.addButtonClicked = grails.mobile.event();
@@ -38,6 +36,28 @@ grails.mobile.mvc.view = function (model, elements) {
 
     that.onlineEvent = grails.mobile.event();
     that.offlineEvent = grails.mobile.event();
+
+
+    $(function() {
+        if (!window.cordova) {
+            // Detect online/offline from browser
+            addEventListener('offline', function(e) {
+                that.offlineEvent.notify();
+            });
+
+            addEventListener('online', function(e) {
+                that.onlineEvent.notify();
+            });
+        } else {
+            document.addEventListener("offline", function() {
+                that.offlineEvent.notify();
+            }, false);
+
+            document.addEventListener("online", function() {
+                that.onlineEvent.notify();
+            }, false);
+        }
+    });
 
     return that;
 };

@@ -18,47 +18,90 @@ var grails = grails || {};
 grails.mobile = grails.mobile || {};
 grails.mobile.push = grails.mobile.push || {};
 
-grails.mobile.push.pushmanager = function (grailsEvents, domainName, store, model) {
+grails.mobile.push.pushmanager = function (grailsEvents, domainName, store, model, options) {
     var that = {};
     var store = store;
     var domainName = domainName;
     var model = model;
+    that.grailsEvents = grailsEvents;
+    var userIdNotification = options.userIdNotification;
 
-    grailsEvents.on('create' + domainName , function (data) {
-        if (!store.read(data.id)) {
-            data.NOTIFIED = true;
-            store.store(data);
-            model.createItem(data);
-        }
-    });
+    if (options && options.eventPush) {
+        that.grailsEvents.on('save-' + domainName , function (data) {
+            if (data !== Object(data)) {
+                data = JSON.parse(data);
+            }
+            var userId = data.userIdNotification;
+            if (userId == userIdNotification) {
+                return;
+            }
+            data = data.instance;
+            if (data !== Object(data)) {
+                data = JSON.parse(data);
+            }
+            if (!model.getItems()[data.id]) {
+                data.NOTIFIED = true;
+                if (options.offline) {
+                    store.store(data);
+                }
+                model.createItem(data);
+            }
+        });
 
-    grailsEvents.on('update' + domainName , function (data) {
-        var retrievedData = store.read(data.id);
-        if (retrievedData && retrievedData.version < data.version) {
-            data.NOTIFIED = true;
-            store.store(data);
-            model.updateItem(data);
-        }
-    });
+        that.grailsEvents.on('update-' + domainName , function (data) {
+            if (data !== Object(data)) {
+                data = JSON.parse(data);
+            }
+            var userId = data.userIdNotification;
+            if (userId == userIdNotification) {
+                return;
+            }
+            data = data.instance;
+            if (data !== Object(data)) {
+                data = JSON.parse(data);
+            }
+            var retrievedData = model.getItems()[data.id];
+            if (retrievedData && retrievedData.version < data.version) {
+                data.NOTIFIED = true;
+                if (options.offline) {
+                    store.store(data);
+                }
+                model.updateItem(data);
+            }
+        });
 
-    grailsEvents.on('delete' + domainName , function (data) {
-        if (!store.read(data.id)) {
-            data.NOTIFIED = true;
-            store.remove(data);
-            model.deleteItem(data);
-        }
-    });
+        that.grailsEvents.on('delete-' + domainName , function (data) {
+            if (data !== Object(data)) {
+                data = JSON.parse(data);
+            }
+            var userId = data.userIdNotification;
+            if (userId == userIdNotification) {
+                return;
+            }
+            data = data.instance;
+            if (data !== Object(data)) {
+                data = JSON.parse(data);
+            }
+            if (model.getItems()[data.id]) {
+                data.NOTIFIED = true;
+                if (options.offline) {
+                    store.remove(data);
+                }
+                model.deleteItem(data);
+            }
+        });
 
-    grailsEvents.on('execute' + domainName , function (data) {
-        var dataParsed = JSON.parse(data);
-        dataParsed.NOTIFIED = true;
-        model.execute(dataParsed);
-    });
+        that.grailsEvents.on('execute' + domainName , function (data) {
+            var dataParsed = JSON.parse(data);
+            dataParsed.NOTIFIED = true;
+            model.execute(dataParsed);
+        });
 
-    grailsEvents.on('ask' + domainName , function (data) {
-        var dataParsed = JSON.parse(data);
-        model.ask(dataParsed);
-    });
+        that.grailsEvents.on('ask' + domainName , function (data) {
+            var dataParsed = JSON.parse(data);
+            model.ask(dataParsed);
+        });
+    }
 
     return that;
 };

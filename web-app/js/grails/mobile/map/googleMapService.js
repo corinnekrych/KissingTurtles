@@ -52,13 +52,16 @@ grails.mobile.map.googleMapService = function () {
     };
 
     that.refreshCenterZoomMap = function () {
-        var bounds = new google.maps.LatLngBounds();
-        var previousZoom = map.getZoom();
-        $.each(markers, function (name, value) {
-            bounds.extend(value.getPosition());
-        });
-        map.setCenter(bounds.getCenter());
-        map.fitBounds(bounds);
+        if (map) {
+            google.maps.event.trigger(map, 'resize');
+            var bounds = new google.maps.LatLngBounds();
+            var previousZoom = map.getZoom();
+            $.each(markers, function (name, value) {
+                bounds.extend(value.getPosition());
+            });
+            map.setCenter(bounds.getCenter());
+            map.fitBounds(bounds);
+        }
     };
 
     that.addMarker = function( geolocatedObject, text, callback) {
@@ -81,8 +84,10 @@ grails.mobile.map.googleMapService = function () {
 
     that.removeMarker = function (id) {
         var marker = markers[id];
-        marker.setMap(null);
-        delete markers[id];
+        if (marker) {
+            marker.setMap(null);
+            delete markers[id];
+        }
     };
 
     var removeMarkers = function () {
