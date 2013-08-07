@@ -4,9 +4,13 @@ kissingturtles.view = kissingturtles.view || {};
 kissingturtles.view.gameview = function (model, elements) {
 
     var that = grails.mobile.mvc.view(model, elements);
+    that.executeButtonClicked = grails.mobile.event();
+    that.answerButtonClicked = grails.mobile.event();
 
     that.currentMaze = null;
-
+    that.init = function () {
+        that.listButtonClicked.notify();
+    };
     that.model.listedItems.attach(function (data) {
         renderList();
     });
@@ -132,7 +136,7 @@ kissingturtles.view.gameview = function (model, elements) {
     //----------------------------------------------------------------------------------------
     //   Click on Execute my DSL script brings you here
     //----------------------------------------------------------------------------------------
-    $("#answer").live("click tap", function(event) {
+    $("#answer").on("vclick", function(event) {
         var answer = $('#response').val();
         var gameId = that.gameId;
         that.answerButtonClicked.notify({title: "KissingTurtles", content: answer, gameId: gameId, user: localStorage.getItem("KissingTurtles.UserId")});
@@ -141,7 +145,7 @@ kissingturtles.view.gameview = function (model, elements) {
     //----------------------------------------------------------------------------------------
     //   Click on Play brings you here
     //----------------------------------------------------------------------------------------
-    $('#section-list-games').live('pageinit pageshow', function (e) {
+    $('#section-list-games').on('pageinit pageshow', function (e) {
         var id = localStorage.getItem("KissingTurtles.UserId");
         if (id) {
             that.listButtonClicked.notify();
@@ -153,13 +157,13 @@ kissingturtles.view.gameview = function (model, elements) {
     //----------------------------------------------------------------------------------------
     //   Click on Settings:change images
     //----------------------------------------------------------------------------------------
-    $('#select-emily').live('change', function(event) {
+    $('#select-emily').on('change', function(event) {
         var value = $('#select-emily').val();
         localStorage.setItem("kissingturtles.settings.emily", value);
         $('#emily-img').attr({src: "images/game/" + value + ".png"});
     });
 
-    $("#select-franklin").live('change', function(event) {
+    $("#select-franklin").on('change', function(event) {
         var value = $('#select-franklin').val();
         localStorage.setItem("kissingturtles.settings.franklin", value);
         $('#franklin-img').attr({src: "images/game/" + value + ".png"});
@@ -170,7 +174,7 @@ kissingturtles.view.gameview = function (model, elements) {
     //   Click on Settings:'Reset settings' brings you here.
     //   To clear your name from your browser localStorage.
     //----------------------------------------------------------------------------------------
-    $('#reset-settings').live("click tap", function(event) {
+    $('#reset-settings').on("click tap", function(event) {
         localStorage.clear();
         // defaults values for Franklin and Emily
         localStorage.setItem("kissingturtles.settings.emily", "pig");
@@ -184,7 +188,7 @@ kissingturtles.view.gameview = function (model, elements) {
     //----------------------------------------------------------------------------------------
     //   Page init on Settings
     //----------------------------------------------------------------------------------------
-    $('#section-settings').live("pageinit", function(event) {
+    $('#section-settings').on("pageinit", function(event) {
         // defaults values for Franklin and Emily
         var emily = localStorage.getItem("kissingturtles.settings.emily");
         if(!emily) {
@@ -236,31 +240,31 @@ kissingturtles.view.gameview = function (model, elements) {
     //----------------------------------------------------------------------------------------
     //   Click on Navigation buttons header bar same as execute
     //----------------------------------------------------------------------------------------
-    $("#left").live("click tap", function(event) {
+    $("#left").on("vclick", function(event) {
         var dslInput = "move left by 1";
         var gameId = that.gameId;
         that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId, user: localStorage.getItem("KissingTurtles.UserId")});
     });
 
-    $("#right").live("click tap", function(event) {
+    $("#right").on("vclick", function(event) {
         var dslInput = "move right by 1";
         var gameId = that.gameId;
         that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId, user: localStorage.getItem("KissingTurtles.UserId")});
     });
 
-    $("#up").live("click tap", function(event) {
+    $("#up").on("vclick", function(event) {
         var dslInput = "move up by 1";
         var gameId = that.gameId;
         that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId, user: localStorage.getItem("KissingTurtles.UserId")});
     });
 
-    $("#down").live("click tap", function(event) {
+    $("#down").on("vclick", function(event) {
         var dslInput = "move down by 1";
         var gameId = that.gameId;
         that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId, user: localStorage.getItem("KissingTurtles.UserId")});
     });
 
-    $("#dsl").live("click tap", function(event) {
+    $("#dsl").on("vclick", function(event) {
         if($('#dsl-text').css('display') == 'none'){
             $('#dsl-text').show('slow');
         } else {
@@ -271,7 +275,7 @@ kissingturtles.view.gameview = function (model, elements) {
     //----------------------------------------------------------------------------------------
     //   Click on Save on user page. Your name is asked only once.
     //----------------------------------------------------------------------------------------
-    $("#submit-user").live("click tap", function(event) {
+    $("#submit-user").on("vclick", function(event) {
         var name = $('#input-user-name').val();
         localStorage.setItem("KissingTurtles.UserId", name);
         $.mobile.changePage($("#section-list-games"));
@@ -280,7 +284,7 @@ kissingturtles.view.gameview = function (model, elements) {
     //----------------------------------------------------------------------------------------
     //   Click on Execute my DSL script brings you here
     //----------------------------------------------------------------------------------------
-    $("#submit-game").live("click tap", function(event) {
+    $("#submit-game").on("vclick", function(event) {
         var dslInput = $('#input-move-name').val();
         var gameId = that.gameId;
         that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId, user: localStorage.getItem("KissingTurtles.UserId")});
@@ -289,7 +293,7 @@ kissingturtles.view.gameview = function (model, elements) {
     //----------------------------------------------------------------------------------------
     //   Click on an element of the list to join the game. Second player is Emily.
     //----------------------------------------------------------------------------------------
-    $('a[id ^= "game"]').live('click tap', function (event) {
+    $('a[id ^= "game"]').on('vclick', function (event) {
         var gameId = $(event.currentTarget).attr('data-game-id');
         if(gameId) {
             var obj = {user2: localStorage.getItem("KissingTurtles.UserId"), gameId: gameId};
@@ -304,7 +308,7 @@ kissingturtles.view.gameview = function (model, elements) {
     //----------------------------------------------------------------------------------------
     //   Click on 'Create your own game' brings you here
     //----------------------------------------------------------------------------------------
-    $("#create-game").live('click tap', function (event) {
+    $("#create-game").on('vclick', function (event) {
         var obj = {user1: localStorage.getItem("KissingTurtles.UserId")};
         var newElement = {
                 game: JSON.stringify(obj)

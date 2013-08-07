@@ -31,9 +31,6 @@ grails.mobile.mvc.model = function (items) {
     that.createdItem = grails.mobile.event(that);
     that.updatedItem = grails.mobile.event(that);
     that.deletedItem = grails.mobile.event(that);
-    that.executed = grails.mobile.event(that);
-    that.asked = grails.mobile.event(that);
-
 
     that.getItems = function () {
         return that.items;
@@ -41,20 +38,22 @@ grails.mobile.mvc.model = function (items) {
 
     that.listDependent = function (dependent, dependentName, relationType, items) {
         var keyItem;
-        var list = {}
-        for (keyItem in items) {
-            list[items[keyItem].id] = items[keyItem];
-        }
+        var list = {};
+        $.each(items, function(key, value) {
+            list[value.id] = value;
+        });
         that.dependentItems[dependent] = list;
         that.listedDependentItems.notify({'items': that.dependentItems[dependent], relationType: relationType, dependentName: dependentName});
     };
 
-    that.listItems = function (json) {
+    that.listItems = function (items, notifyView) {
         var keyItem;
-        for (keyItem in json) {
-            that.items[json[keyItem].id] = json[keyItem];
+        $.each(items, function(key, value) {
+            that.items[value.id] = value;
+        });
+        if (notifyView) {
+            that.listedItems.notify({'items': that.items});
         }
-        that.listedItems.notify({'items': that.items});
     };
 
     that.createItem = function (item, context) {
@@ -63,23 +62,6 @@ grails.mobile.mvc.model = function (items) {
             return false;
         }
         that.items[item.id] = item;
-        return true;
-    };
-
-    that.execute = function (item, context) {
-        that.executed.notify({item: item}, context);
-        if (item.errors || item.message) {
-            return false;
-        }
-        that.items[item.id] = item;
-        return true;
-    };
-
-    that.ask = function (item, context) {
-        that.asked.notify({item: item}, context);
-        if (item.errors || item.message) {
-            return false;
-        }
         return true;
     };
 
@@ -97,7 +79,9 @@ grails.mobile.mvc.model = function (items) {
         if (item.errors || item.message) {
             return false;
         }
-        delete that.items[item.id];
+        if (item.offlineStatus != 'NOT-SYNC') {
+            delete that.items[item.id];
+        }
         return true;
     };
 

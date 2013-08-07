@@ -18,19 +18,29 @@ var grails = grails || {};
 grails.mobile = grails.mobile || {};
 grails.mobile.feed = grails.mobile.feed || {};
 
-grails.mobile.feed.feed = function (baseUrl, store) {
+grails.mobile.feed.feed = function (cfg, store) {
     var that = {};
-    var onlineFeed = grails.mobile.feed.online(baseUrl, store);
-    var offlineFeed = grails.mobile.feed.offline(store);
-    var currentFeed = navigator.onLine ? onlineFeed : offlineFeed;
+    var onlineFeed = grails.mobile.feed.online(cfg, store);
+    if (store) {
+        var offlineFeed = grails.mobile.feed.offline(store);
+        var currentFeed = navigator.onLine ? onlineFeed : offlineFeed;
 
-    that.setOffline = function () {
-        currentFeed = offlineFeed;
-    };
+        that.setOffline = function () {
+            currentFeed = offlineFeed;
+        };
 
-    that.setOnline = function () {
-        currentFeed = onlineFeed;
-    };
+        that.setOnline = function () {
+            currentFeed = onlineFeed;
+        };
+    } else {
+        var currentFeed = onlineFeed;
+
+        that.setOffline = function () {
+        };
+
+        that.setOnline = function () {
+        };
+    }
 
     that.listItems = function (listed) {
         currentFeed.listItems(listed);
@@ -46,14 +56,6 @@ grails.mobile.feed.feed = function (baseUrl, store) {
 
     that.deleteItem = function (data, deleted) {
         currentFeed.deleteItem(data, deleted);
-    };
-
-    that.execute = function (data, executed) {
-        currentFeed.execute(data, executed);
-    };
-
-    that.answer = function (data, answered) {
-        currentFeed.answer(data, answered);
     };
 
     return that;

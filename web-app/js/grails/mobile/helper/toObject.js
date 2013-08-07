@@ -21,6 +21,7 @@ var grails = grails || {};
 grails.mobile = grails.mobile || {};
 grails.mobile.helper = grails.mobile.helper || {};
 
+
 grails.mobile.helper.isString = function isString(o) {
     return typeof o === "string" || (typeof o === "object" && o.constructor === String);
 };
@@ -35,6 +36,25 @@ grails.mobile.helper.toDomainObject = function (objectString) {
     return listDomainObject;
 };
 
+grails.mobile.helper.getCookie = function(name) {
+    var dc = document.cookie;
+    var prefix = name + "=";
+    var begin = dc.indexOf("; " + prefix);
+    if (begin == -1) {
+        begin = dc.indexOf(prefix);
+        if (begin != 0) return null;
+    }
+    else
+    {
+        begin += 2;
+        var end = document.cookie.indexOf(";", begin);
+        if (end == -1) {
+            end = dc.length;
+        }
+    }
+    return unescape(dc.substring(begin + prefix.length, end));
+};
+
 grails.mobile.helper.toObject = function (inputs) {
     var objectData;
     objectData = {};
@@ -44,7 +64,7 @@ grails.mobile.helper.toObject = function (inputs) {
         var add = true;
         if (this.type === 'select-one') {
             value = $(this).val();
-        } else if (this.type === 'date') {
+        } else if (this.type === 'text' && $(this).attr('data-type') === 'date') {
             value = $(this).scroller('getDate', true);
         } else if (this.type === 'radio') {
             if ($(this).is(':checked')) {
@@ -53,6 +73,9 @@ grails.mobile.helper.toObject = function (inputs) {
                 add = false;
             }
         } else if($(this).attr("data-gorm-relation") === "one-to-many") {
+            if (!objectData[this.name]) {
+                objectData[this.name] = [];
+            }
             if (this.checked) {
                 value = $(this).attr('id');
                 var values = value.split('-');
@@ -66,7 +89,11 @@ grails.mobile.helper.toObject = function (inputs) {
             if ($(this).data('data-role') === 'calbox') {
                 value = $(this).data('calbox').theDate;
             } else if (this.value !== null) {
-                value = this.value;
+                if ($(this).attr('data-value')) {
+                    value = $(this).attr('data-value');
+                } else {
+                    value = this.value;
+                }
             } else {
                 value = '';
             }
@@ -86,4 +113,17 @@ grails.mobile.helper.toObject = function (inputs) {
     });
 
     return objectData;
+};
+
+grails.mobile.helper.generateId = function () {
+    var uuid = "", i, random;
+    for (i = 0; i < 32; i++) {
+        random = Math.random() * 16 | 0;
+
+        if (i === 8 || i === 12 || i === 16 || i === 20) {
+            uuid += "-";
+        }
+        uuid += (i === 12 ? 4 : (i === 16 ? (random & 3 | 8) : random)).toString(16);
+    }
+    return "grails-" + uuid;
 };
