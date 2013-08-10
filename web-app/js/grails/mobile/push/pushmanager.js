@@ -91,15 +91,27 @@ grails.mobile.push.pushmanager = function (grailsEvents, domainName, store, mode
             }
         });
 
-        that.grailsEvents.on('execute' + domainName , function (data) {
-            var dataParsed = JSON.parse(data);
-            dataParsed.NOTIFIED = true;
-            model.execute(dataParsed);
+        that.grailsEvents.on('execute-' + domainName , function (data) {
+            if (data !== Object(data)) {
+                data = JSON.parse(data);
+            }
+            var userId = data.configuration.userIdNotification;
+            if (userId == userIdNotification) {
+                return;
+            }
+            data.NOTIFIED = true;
+            model.execute(data);
         });
 
-        that.grailsEvents.on('ask' + domainName , function (data) {
-            var dataParsed = JSON.parse(data);
-            model.ask(dataParsed);
+        that.grailsEvents.on('ask-' + domainName , function (data) {
+            if (data !== Object(data)) {
+                data = JSON.parse(data);
+            }
+            var userId = data.userIdNotification;
+            if (userId == userIdNotification) {
+                return;
+            }
+            model.ask(data);
         });
     }
 

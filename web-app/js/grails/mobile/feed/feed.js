@@ -58,5 +58,9 @@ grails.mobile.feed.feed = function (cfg, store) {
         currentFeed.deleteItem(data, deleted);
     };
 
+    that.send = function(item, action, type, callback) {
+        onlineFeed.send(item, action, type, callback);
+    }
+
     return that;
 };

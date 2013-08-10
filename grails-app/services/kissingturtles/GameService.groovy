@@ -6,7 +6,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 
 class GameService {
 
-    def runFormatting(game, turtle, result) {
+    def runFormatting(game, turtle, result, idNotification) {
         Position treeInitialPosition = new Position(game.treeX, game.treeY, game.treeRot, game.treeDir)
 
         def builder = new groovy.json.JsonBuilder()
@@ -58,6 +58,7 @@ class GameService {
             stepDuration 1000
             player turtle.name
             id game.id
+            userIdNotification idNotification
         }
 
         def conf = builder.toString()

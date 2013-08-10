@@ -1,7 +1,7 @@
 events = {
-    "creategame" browser: true
-    "updategame" browser: true
-    "executegame" browser: true
-    "askgame" browser: true
-    "deletegame" browser: true
+    "save-game" browser: true
+    "update-game" browser: true
+    "execute-game" browser: true
+    "ask-game" browser: true
+    "delete-game" browser: true
 }

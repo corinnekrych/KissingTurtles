@@ -21,6 +21,7 @@ grails.project.dependency.resolution = {
 
         mavenLocal()
         mavenCentral()
+        mavenRepo "https://oss.sonatype.org/content/repositories/snapshots/"
     }
     dependencies {
         compile('org.atmosphere:atmosphere-runtime:1.0.15') {

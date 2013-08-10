@@ -1,20 +1,15 @@
+var kissingturtles = kissingturtles || {};
 
-    
-
-    var kissingturtles = kissingturtles || {};
-
-    kissingturtles.loadgame = (function () {
-
-        kissingturtles.configuration.domain.push(
+kissingturtles.loadgame = (function () {
+    kissingturtles.configuration.domain.push(
+        {
+            name: "game",
+            view:
             {
-                name: "game",
-                view:
-                {
-                    'list': $('#section-list-games'),
-                    'execute': $("#submit-game"),
-                    'add': $('#section-show-game'),
-                    'remove': $("#delete-game")
-                }
-
-            });
+                'list': $('#section-list-games'),
+                'execute': $("#submit-game"),
+                'add': $('#section-show-game'),
+                'remove': $("#delete-game")
+            }
+        });
 }());
