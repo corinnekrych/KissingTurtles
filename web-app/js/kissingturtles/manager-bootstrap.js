@@ -1,11 +1,34 @@
+var kissingturtles = kissingturtles || {};
 
-    
+kissingturtles.load = (function () {
+    var frameworkAreReady = function() {
+        $.mobile.phonegapNavigationEnabled = true;
+        $.mobile.buttonMarkup.hoverDelay = 50;
+        init();
+    };
+    var mobileInitDeferred = $.Deferred();
+    $(document).on("pageinit", function () {
+        mobileInitDeferred.resolve();
+    });
 
-    var kissingturtles = kissingturtles || {};
+    var onLoadDeferred = $.Deferred();
+    $(document).ready(function() {
+        onLoadDeferred.resolve();
+    });
 
-    kissingturtles.load = (function () {
+    if (window.cordova) {
+        var deviceReadyDeferred = $.Deferred();
+        var deviceReady = function() {
+            deviceReadyDeferred.resolve();
+        };
+        document.addEventListener("deviceReady", deviceReady, false);
+        $.when(onLoadDeferred, deviceReadyDeferred, mobileInitDeferred).then(frameworkAreReady);
 
-    var managerObject = grails.mobile.mvc.manager(kissingturtles.configuration);
-
+    } else {
+        $.when(onLoadDeferred, mobileInitDeferred).then(frameworkAreReady);
+    }
+    var init = function() {
+        var managerObject = grails.mobile.mvc.manager(kissingturtles.configuration);
+//        managerObject.domainsObjects[kissingturtles.mainView].view.init();
+    }
 }());
-

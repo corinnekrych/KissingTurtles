@@ -3,7 +3,7 @@ package kissingturtles
 import dsl.UserInteraction
 import grails.converters.JSON
 import grails.validation.ValidationErrors
-
+import groovy.json.JsonBuilder
 import org.codehaus.groovy.grails.web.json.JSONObject;
 import org.springframework.dao.DataIntegrityViolationException
 
@@ -21,7 +21,7 @@ class GameController {
     def run() {
         println "in the inputs" + params
 
-        def userInteraction = new UserInteraction(this, params.gameId)
+        def userInteraction = new UserInteraction(this, params.gameId, params.userIdNotification)
 
         def game = Game.findById(params.gameId)
 
@@ -55,7 +55,7 @@ class GameController {
         shell.evaluate(script)
         def result = binding.getVariable('turtle').result
 
-        def conf = gameService.runFormatting(game, turtle, result)
+        def conf = gameService.runFormatting(game, turtle, result, params.userIdNotification)
         // save current position
         if (!game.save(flush: true)) {
             ValidationErrors validationErrors = game.errors
@@ -63,16 +63,16 @@ class GameController {
         }
 
         // notify when turtle moves
-        event topic: "executegame", data: conf
+        event topic: "execute-game", data: conf
         println conf
         render conf
     }
 
     def answer() {
         println "in answer = " + params
-        UserInteraction userInteraction = new UserInteraction(this, params.gameId)
+        UserInteraction userInteraction = new UserInteraction(this, params.gameId, "")
         userInteraction.notifyResponse(params.content)
-        render "{\"empty\":\"emprty\"}"
+        render "{\"userIdNotification\":\"" + params.userIdNotification + "\"}"
     }
 
     def index() {
@@ -122,7 +122,14 @@ class GameController {
             render validationErrors as JSON
         }
         // notify when first turtle create a new game
-        event topic: "creategame", data: gameInstance
+        def asJSON = gameInstance as JSON
+        def json = asJSON.toString()
+        def builder = new JsonBuilder()
+        builder {
+            userIdNotification params.userIdNotification
+            instance json
+        }
+        event topic: "save-game", data: builder.toString()
         render gameInstance as JSON
     }
 
@@ -159,7 +166,13 @@ class GameController {
         }
 
         // notify that Emily enters the game
-        event topic: "updategame", data: gameInstance
+        def asJSON = gameInstance as JSON
+        def builder = new JsonBuilder()
+        builder {
+            userIdNotification params.userIdNotification
+            instance asJSON.toString()
+        }
+        event topic: "update-game", data: builder.toString()
         render gameInstance as JSON
     }
 

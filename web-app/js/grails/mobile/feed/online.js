@@ -18,62 +18,85 @@ var grails = grails || {};
 grails.mobile = grails.mobile || {};
 grails.mobile.feed = grails.mobile.feed || {};
 
-grails.mobile.feed.online = function (url, store) {
+grails.mobile.feed.online = function (cfg, store) {
     var that = {};
+    var url = cfg.url;
+    var on401 = cfg.on401;
     var store = store;
+    var userIdNotification = cfg.userIdNotification;
 
-    that.execute = function (data, executed) {
-        send(data, "run", "POST", function(data) {
-            executed(data);
-        })
-    };
-
-    that.answer = function (data, answered) {
-        send(data, "answer", "POST", function(data) {
-            answered(data);
-        })
-    };
     that.listItems = function (listed) {
-        send(null, "list", "GET", function (data) {
+        that.send(null, "list", "GET", function (data) {
             listed(data);
-            store.storeList(data);
+            if (store) {
+                store.storeList(data);
+            }
         });
     };
 
     that.createItem = function (data, created) {
-        send(data, "save", "POST", function (response) {
+        that.send(data, "save", "POST", function (response) {
             if (created(response)) {
-                store.store(response);
+                if (store) {
+                    store.store(response);
+                }
             }
         });
     };
 
     that.updateItem = function (data, updated) {
-        send(data, "update", "POST", function (response) {
+        that.send(data, "update", "POST", function (response) {
             if(updated(response)) {
-                store.store(response);
+                if (store) {
+                    store.store(response);
+                }
             }
         });
     };
 
     that.deleteItem = function (data, deleted) {
-        send(data, "delete", "POST", function (response) {
+        that.send(data, "delete", "POST", function (response) {
             deleted(response);
-            store.remove(response);
+            if (store) {
+                store.remove(response);
+            }
         });
     };
 
     // Asynchronous Ajax call to server
-    var send = function (item, action, type, callback) {
-        $.ajax(cfg(url, type, action, item, callback));
+    that.send = function (item, action, type, callback) {
+        if (item) {
+            item.userIdNotification = userIdNotification;
+        }
+        $.ajax(grails.mobile.feed.online.AjaxConfig.getConfig(url, type, action, item, callback));
     };
 
+    return that;
+};
 
-    var cfg = function (url, type, action, dataToSend, successCallback) {
+
+grails.mobile.feed.online.AjaxConfig = (function () {
+    var that = this;
+
+    var counter = 0;
+
+    that.getConfig = function(url, type, action, dataToSend, successCallback) {
         return {
+            beforeSend: function() {
+                if (counter === 0) {
+                    $.mobile.showPageLoadingMsg();
+                }
+                counter++;
+            },
+            complete: function() {
+                counter--;
+                if (counter === 0) {
+                    $.mobile.hidePageLoadingMsg();
+                }
+            },
             cache: false,
             type: type,
-            async: false,
+            async: true,
             data: dataToSend,
             dataType: "json",
             url: url + action,
@@ -81,10 +104,18 @@ grails.mobile.feed.online = function (url, store) {
                 successCallback(data, action, dataToSend);
             },
             error: function (xhr) {
-                alert("Ooops something went wrong");
+                var data = [];
+                if (xhr.status == "401" ) {
+                    if (on401) {
+                        on401();
+                    }
+                } else {
+                    data['message'] = xhr.responseText;
+                    successCallback(data, action, dataToSend);
+                }
             }
         };
     };
 
     return that;
-};
+}());
