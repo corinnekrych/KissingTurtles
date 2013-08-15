@@ -254,25 +254,27 @@
 
 <section data-role="page" id="section-show-game">
 
-    <div style="display:inline-block;float:left;width:50%">
+    <div style="display:inline-block;float:left;width:60%">
         <canvas id="canvas" width="1000" height="1000" style="max-width: 500px; width: 100%;"></canvas>
     </div>
-    <div style="display:inline-block;float:left;width:50%">
-        <div data-role="collapsible" id="script" data-collapsed="false">
-            <h4>Script it</h4>
+    <div style="display:inline-block;float:left;width:38%">
+        <div data-role="collapsible" id="script">
+            <h4><span>Script</span>
+                <span style="float:right"><img id="belldsl" width="25px" src="images/redhat_games.png"/></span></h4>
             <ul data-role="listview" data-inset="true">
                 <li style="" id="dsl-text" data-role="fieldcontain">
                     <textarea style="width:100%;height:200px;max-width:100%;max-height:300px"
                               name="name" id="input-move-name"
-                              placeholder="move left by 2"></textarea>
+                              placeholder="move left by 2">ask "question" assign to me</textarea>
                     <button data-transition="slide" id="submit-game">Execute</button>
                 </li>
             </ul>
         </div>
         <div data-role="collapsible" id="chat" >
-            <h4>Chat</h4>
+            <h4><span>Chat</span>
+                <span style="float:right"><img id="bell" width="25px" src="images/ringtone.png"/></span></h4>
             <ul data-role="listview" data-inset="true">
-                <li style="" id="dsl-text" data-role="fieldcontain">
+                <li style="" id="chat-text" data-role="fieldcontain">
                     <div style="width:100%" id="interaction2">
                         <textarea style="width:100%;height:200%; max-width:100%;max-height:300px" readonly id="interaction"></textarea>
                         <br/><br/>
@@ -284,7 +286,7 @@
         </div>
 
     </div>
-
+    <div style="display:inline-block;float:left;width:2%">&nbsp;</div>
 
     <input type="hidden" name="id" id="input-game-id"/>
     <input type="hidden" name="user-id" id="input-user1-move"/>
@@ -295,13 +297,15 @@
 
     <div data-role="footer" id="show-game" data-position="fixed">
         <a href="#start-game" data-transition="slide" data-icon="arrow-l">Cancel</a>
-        <div  style="display:inline-block;float:right" data-role="controlgroup" data-type="horizontal">
-            <a href="" id="left" data-role="button" data-icon="arrow-l" data-iconpos="notext">Left</a>
-            <a href="" id="up" data-role="button" data-icon="arrow-u" data-iconpos="notext">Up</a>
-            <a href="" id="down" data-role="button" data-icon="arrow-d" data-iconpos="notext">Down</a>
-            <a href="" id="right" data-role="button" data-icon="arrow-r" data-iconpos="notext">Right</a>
-            <a href="" id="dsl" data-role="button" data-icon="plus" data-iconpos="notext">DSL</a>
-        </div>
+        <!--<div style="display:inline-block;float:right"  id="status">ddd</div>-->
+        <!--<div  style="display:inline-block;float:right" data-role="controlgroup" data-type="horizontal">-->
+
+            <!--&lt;!&ndash;<a href="" id="left" data-role="button" data-icon="arrow-l" data-iconpos="notext">Left</a>&ndash;&gt;-->
+            <!--&lt;!&ndash;<a href="" id="up" data-role="button" data-icon="arrow-u" data-iconpos="notext">Up</a>&ndash;&gt;-->
+            <!--&lt;!&ndash;<a href="" id="down" data-role="button" data-icon="arrow-d" data-iconpos="notext">Down</a>&ndash;&gt;-->
+            <!--&lt;!&ndash;<a href="" id="right" data-role="button" data-icon="arrow-r" data-iconpos="notext">Right</a>&ndash;&gt;-->
+            <!--&lt;!&ndash;<a href="" id="dsl" data-role="button" data-icon="plus" data-iconpos="notext">DSL</a>&ndash;&gt;-->
+        <!--</div>-->
     </div>
 </section>
 

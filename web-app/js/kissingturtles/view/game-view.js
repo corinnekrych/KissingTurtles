@@ -48,6 +48,9 @@ kissingturtles.view.gameview = function (model, elements) {
 
             if (!data.item.NOTIFIED) {
               $.mobile.changePage($("#section-show-game"));
+              $('#submit-game').button('disable');
+                $('#script').trigger('expand');
+                $('#chat').trigger('collapse');
             }
 		}
     });
@@ -86,14 +89,41 @@ kissingturtles.view.gameview = function (model, elements) {
                 that.role = 'emily';
                 that.gameId = data.item.id;
                 $.mobile.changePage($("#section-show-game"));
+                $('#submit-game').button('disable');
+                $('#script').trigger('collapse');
+                $('#chat').trigger('expand');
             } else if (that.role == "franklin" && that.gameId == data.item.id) {
                 // For Franklin game
+                showGeneralMessage(data.item.user2 + " joined the game as Emily!");
+                $('#submit-game').button('enable');
                 that.draw({emily: that.currentMaze.steps[0].emily});
             } else {
                 $("#list-games").listview('refresh');
             }
         }
     });
+
+    var showGeneralMessage = function(data) {
+        $.mobile.showPageLoadingMsg( $.mobile.pageLoadErrorMessageTheme, data, true );
+        setTimeout( $.mobile.hidePageLoadingMsg, 3000 );
+    };
+
+    var toggle = function(elt) {
+        if ($(elt).attr('disabled')) {
+            $(elt).button('enable')
+            $('#belldsl').addClass('blink');
+            blink('#belldsl');
+            $('#script').trigger('expand');
+            $('#chat').trigger('collapse');
+//            $('#status').val('Is playing...');
+        } else {
+            $('#belldsl').removeClass('blink');
+            $(elt).button('disable');
+            $('#script').trigger('collapse');
+            $('#chat').trigger('expand');
+//            $('#status').val('Is waiting...');
+        }
+    };
 
     //----------------------------------------------------------------------------------------
     //    Callback to display the maze after execute method
@@ -109,7 +139,6 @@ kissingturtles.view.gameview = function (model, elements) {
                     otherPlayer = data.item.configuration.user2
                 }
                 $.each(myGameObject.configuration.asks, function(key, value) {
-                    var text = "";
                     $.each(value, function(innerKey, innerValue) {
                         if (innerKey == "_question") {
                             $('#interaction').append("\n" + that.user + "\t: " + innerValue).keyup();
@@ -118,12 +147,11 @@ kissingturtles.view.gameview = function (model, elements) {
                         }
 
                     });
-                    $('#script').trigger('collapse');
-                    $('#chat').trigger('expand');
                     $('#response').textinput('disable');
                     $('#answer').button('disable');
-                    console.log(text);
                 });
+            } else {
+                toggle('#submit-game');
             }
             $.each(myGameObject.configuration.steps, function(key, value) {
                 that.draw(value, function () {
@@ -137,16 +165,28 @@ kissingturtles.view.gameview = function (model, elements) {
     });
 
 
+    var blink = function(elt) {
+        $(elt).fadeOut('slow', function() {
+            $(elt).fadeIn('slow', function() {
+                if($(elt).hasClass('blink')) {
+                    blink(elt);
+                }
+            });
+        });
+    };
+
+
     //----------------------------------------------------------------------------------------
     //    Callback to display question asked to partner
     //----------------------------------------------------------------------------------------
     that.model.asked.attach(function (data, event) {
         if (that.gameId == data.item.gameId) {
-            $('#script').trigger('collapse');
             $('#interaction').append("\n" + data.item.user + "\t: " + data.item.question).keyup();
-            $('#chat').trigger('expand');
             $('#response').val('').textinput('enable').focus();
             $('#answer').button('enable');
+
+            $('#bell').addClass('blink');
+            blink('#bell');
         }
     });
 
@@ -165,6 +205,7 @@ kissingturtles.view.gameview = function (model, elements) {
             user: that.user,
             role: that.role});
         $('#interaction').append("\n" + that.user + "\t: " + answer).keyup();
+        $('#bell').removeClass('blink');
     });
 
     //----------------------------------------------------------------------------------------
@@ -313,6 +354,7 @@ kissingturtles.view.gameview = function (model, elements) {
     $("#submit-game").on("vclick", function(event) {
         var dslInput = $('#input-move-name').val();
         var gameId = that.gameId;
+        toggle('#submit-game');
         that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId, user: that.user, role: that.role});
     });
 
@@ -428,7 +470,7 @@ kissingturtles.view.gameview = function (model, elements) {
     };
 
     var getText = function (data) {
-        return data.user1 + " playing with " + data.user2;
+        return data.user1 + " is waiting for you";
     };
 
     return that;
