@@ -115,15 +115,22 @@ kissingturtles.view.gameview = function (model, elements) {
             blink('#belldsl');
             $('#script').trigger('expand');
             $('#chat').trigger('collapse');
-//            $('#status').val('Is playing...');
         } else {
             $('#belldsl').removeClass('blink');
             $(elt).button('disable');
             $('#script').trigger('collapse');
             $('#chat').trigger('expand');
-//            $('#status').val('Is waiting...');
         }
     };
+
+    $('#script').on('expand', function (e) {
+            $('#chat').trigger('collapse');
+    });
+
+    $('#chat').on('expand', function (e) {
+        $('#script').trigger('collapse');
+    });
+
 
     //----------------------------------------------------------------------------------------
     //    Callback to display the maze after execute method

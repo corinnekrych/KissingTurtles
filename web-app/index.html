@@ -33,24 +33,28 @@
             canvasNode.style.left = (pw-canvasNode.width)/2 + "px";
         }
     </script>
+    <script>
+        (function (doc) {
 
+            var addEvent = 'addEventListener',
+                    type = 'gesturestart',
+                    qsa = 'querySelectorAll',
+                    scales = [1, 1],
+                    meta = qsa in doc ? doc[qsa]('meta[name=viewport]') : [];
 
-    <style>
-        #canvas {
-            display: block;
-            margin: 0 auto;
-        }
+            function fix() {
+                meta.content = 'width=device-width,minimum-scale=' + scales[0] + ',maximum-scale=' + scales[1];
+                doc.removeEventListener(type, fix, true);
+            }
 
-        .center-wrapper {
-            text-align: center;
-        }
+            if ((meta = meta[meta.length - 1]) && addEvent in doc) {
+                fix();
+                scales = [.25, 1.6];
+                doc[addEvent](type, fix, true);
+            }
 
-        .center-wrapper * {
-            margin: 0 auto;
-        }
-
-    </style>
-
+        }(document));
+    </script>
 </head>
 
 <body>
@@ -252,18 +256,18 @@
     </div>
 </section>
 
-<section data-role="page" id="section-show-game">
+<section data-role="page" id="section-show-game" >
 
     <div style="display:inline-block;float:left;width:60%">
-        <canvas id="canvas" width="1000" height="1000" style="max-width: 500px; width: 100%;"></canvas>
+        <canvas id="canvas" width="1000" height="1000" style="max-height:800px;width: 100%;"></canvas>
     </div>
-    <div style="display:inline-block;float:left;width:38%">
+    <div style="display:inline-block;float:left;max-height: 800px;width:38%">
         <div data-role="collapsible" id="script">
             <h4><span>Script</span>
                 <span style="float:right"><img id="belldsl" width="25px" src="images/redhat_games.png"/></span></h4>
             <ul data-role="listview" data-inset="true">
                 <li style="" id="dsl-text" data-role="fieldcontain">
-                    <textarea style="width:100%;height:200px;max-width:100%;max-height:300px"
+                    <textarea style="width:100%;height:300px;max-width:100%;max-height:300px"
                               name="name" id="input-move-name"
                               placeholder="move left by 2">ask "question" assign to me</textarea>
                     <button data-transition="slide" id="submit-game">Execute</button>
@@ -276,7 +280,7 @@
             <ul data-role="listview" data-inset="true">
                 <li style="" id="chat-text" data-role="fieldcontain">
                     <div style="width:100%" id="interaction2">
-                        <textarea style="width:100%;height:200%; max-width:100%;max-height:300px" readonly id="interaction"></textarea>
+                        <textarea style="width:100%;height:300px; max-width:100%;max-height:300px" readonly id="interaction"></textarea>
                         <br/><br/>
                         <input disabled="true" style="width:100%;" id="response" placeholder="Place your answer here"></input>
                         <button disabled="true" data-transition="slide" id="answer">Answer</button>
