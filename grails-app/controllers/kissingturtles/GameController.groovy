@@ -2,6 +2,7 @@ package kissingturtles
 
 import dsl.GameCustomizer
 import dsl.UserInteraction
+import dslprez.scala.eval.Evaluator
 import grails.converters.JSON
 import grails.validation.ValidationErrors
 import org.codehaus.groovy.control.CompilerConfiguration
@@ -13,7 +14,10 @@ import dsl.DslScript
 import dsl.Turtle
 import dsl.Position
 
-
+//import dslprez.Turtle
+import dslprez.up
+import dslprez.Direction
+//import dslprez.Position
 
 class GameController {
 
@@ -23,13 +27,90 @@ class GameController {
     def wallGeneratorService
     Binding binding
 
+    def executeScala(game) {
+        // Ugly search how to do better
+        def cp = System.getProperty("java.class.path")
+        if (!cp.contains("scala")) {
+            cp = "lib/scaladsl.jar:lib/scalainterpreter.jar:lib/scala-reflect.jar:lib/scala-compiler.jar:lib/scala-library.jar:lib/lift-json.jar:target/classes:"+cp
+            System.setProperty("java.class.path", cp)
+        }
+
+        def encoding = 'UTF-8'
+        def stream = new ByteArrayOutputStream()
+        def printStream = new PrintStream(stream, true, encoding)
+
+        def result = ""
+        def stacktrace = ""
+
+        def evaluator
+        try {
+            evaluator = new Evaluator(printStream).withContinuations().withPluginsDir("lib/plugins")
+
+            // Temporary solution
+            if (params.scalaTimer != null) {
+                dslprez.timer.MyTimer.reinit()
+                evaluator.withPluginOption("dslplugin:timerValue:"+params.scalaTimer)
+            }
+            if (params.scalaSecurity != null) {
+                evaluator.withPluginOption("dslplugin:blacklistFile:anyfile")
+            }
+
+            // Example for the game use bind and import
+            def turtle = new dslprez.Turtle(new dslprez.Position(0,0,up as Direction))
+            evaluator.addImport("dslprez._")
+            println("Turtle is $turtle ==========")
+            evaluator.bind("I","dslprez.Turtle",turtle)
+            //End
+
+            // editor2
+//            def turtle = new Turtle()
+//            evaluator.bind("I","dslprez.steps.editor2.Turtle",turtle)
+//            evaluator.bind("left","String","left")
+            // End editor2
+
+            result = evaluator.eval(params.content)
+            println result
+        } catch (Exception e) {
+            stacktrace = e.message
+        } finally {
+            if (evaluator != null) evaluator.close()
+        }
+
+//        def resultObject = new Result()
+//        resultObject.result = stream.toString(encoding)
+//        resultObject.shellResult = result
+//        resultObject.stacktrace = stacktrace
+//
+//        // to avoid grails bringing 404 error
+//        render resultObject as JSON
+    }
+
     def run() {
         println "in the inputs" + params
+        def conf
+        def lang = params.lang
+        def game = Game.findById(params.gameId)
+        if (lang == "scala") {
+            conf = executeScala(game)
+        } else {
+            conf = executeGroovy(game)
+        }
 
+        // save current position
+        if (!game.save(flush: true)) {
+            ValidationErrors validationErrors = game.errors
+            render validationErrors as JSON
+        }
+
+        // notify when turtle moves
+        event topic: "execute-game", data: conf
+        println conf
+        render conf
+    }
+
+    def executeGroovy(game) {
         binding = new Binding()
         def userInteraction = new UserInteraction(this, params.gameId, params.userIdNotification, params.user, params.role)
-
-        def game = Game.findById(params.gameId)
 
         Position franklinPosition = new Position(game.franklinX, game.franklinY, game.franklinRot, game.franklinDir)
         Position emilyPosition = new Position(game.emilyX, game.emilyY, game.emilyRot, game.emilyDir)
@@ -66,17 +147,7 @@ class GameController {
 
         def result = binding.getVariable('turtle').result
 
-        def conf = gameService.runFormatting(game, turtle, result, params.userIdNotification)
-        // save current position
-        if (!game.save(flush: true)) {
-            ValidationErrors validationErrors = game.errors
-            render validationErrors as JSON
-        }
-
-        // notify when turtle moves
-        event topic: "execute-game", data: conf
-        println conf
-        render conf
+        gameService.runFormatting(game, turtle, result, params.userIdNotification)
     }
 
     def answer() {

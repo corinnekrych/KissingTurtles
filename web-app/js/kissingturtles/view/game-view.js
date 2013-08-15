@@ -366,7 +366,11 @@ kissingturtles.view.gameview = function (model, elements) {
         var dslInput = $('#input-move-name').val();
         var gameId = that.gameId;
         toggle('#submit-game');
-        that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId, user: that.user, role: that.role});
+        var lang = "groovy";
+        if (that.role == "emily") {
+            lang = "scala";
+        }
+        that.executeButtonClicked.notify({title: "KissingTurtles", lang: lang, content: dslInput, gameId: gameId, user: that.user, role: that.role});
     });
 
     //----------------------------------------------------------------------------------------
