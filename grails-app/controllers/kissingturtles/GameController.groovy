@@ -4,7 +4,10 @@ import dsl.GameCustomizer
 import dsl.UserInteraction
 import grails.converters.JSON
 import grails.validation.ValidationErrors
+<<<<<<< HEAD
 import org.codehaus.groovy.control.CompilerConfiguration
+=======
+>>>>>>> b4dcce6d11a5871273ec8bf99750d26113b1eed5
 import groovy.json.JsonBuilder
 import org.codehaus.groovy.grails.web.json.JSONObject;
 import org.springframework.dao.DataIntegrityViolationException
