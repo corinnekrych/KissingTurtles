@@ -3,6 +3,8 @@ package kissingturtles
 class Game {
     String user1
     String user2
+    String role1
+    String role2
     String mazeDefinition
     int mazeTTT
 
@@ -24,6 +26,8 @@ class Game {
     static constraints = {
         user1 nullable: true
         user2 nullable: true
+        role1 nullable: true
+        role2 nullable: true
         mazeDefinition type: 'text', nullable: true, maxSize: 15000
         emilyDir nullable: true
     }

@@ -56,7 +56,10 @@ class GameService {
             asks result.asks
             grid 15
             stepDuration 1000
-            player turtle.name
+            role1 game.role1
+            user1 game.user1
+            user2 game.user2
+            role2 game.role2
             id game.id
             userIdNotification idNotification
         }

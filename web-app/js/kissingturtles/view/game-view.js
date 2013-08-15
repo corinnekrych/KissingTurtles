@@ -38,7 +38,8 @@ kissingturtles.view.gameview = function (model, elements) {
                 }
 
                that.draw = ktDraw(document.getElementById('canvas'), conf, that.currentMaze.steps[0]);
-               that.player = "franklin";
+               that.role = "franklin";
+               that.user = localStorage.getItem("KissingTurtles.UserId");
                that.gameId = data.item.id;
             }
             renderElement(data.item);
@@ -81,10 +82,11 @@ kissingturtles.view.gameview = function (model, elements) {
                     conf.images['emily'] = emilyImageName;
                 }
                 that.draw = ktDraw(document.getElementById('canvas'), conf, that.currentMaze.steps[0]);
-                that.player = "emily";
+                that.user = localStorage.getItem("KissingTurtles.UserId");
+                that.role = 'emily';
                 that.gameId = data.item.id;
                 $.mobile.changePage($("#section-show-game"));
-            } else if (that.player == "franklin" && that.gameId == data.item.id) {
+            } else if (that.role == "franklin" && that.gameId == data.item.id) {
                 // For Franklin game
                 that.draw({emily: that.currentMaze.steps[0].emily});
             } else {
@@ -100,29 +102,37 @@ kissingturtles.view.gameview = function (model, elements) {
         // only for my game
         if (that.gameId == data.item.configuration.id) {
             // refresh me if it's not myself pls
-            if (!data.item.NOTIFIED || that.player != data.item.configuration.player) {
-                var myGameObject = data.item;
+            var myGameObject = data.item;
+            if (!data.item.NOTIFIED) {
+                var otherPlayer = data.item.configuration.user1;
+                if (that.user == data.item.configuration.user1) {
+                    otherPlayer = data.item.configuration.user2
+                }
                 $.each(myGameObject.configuration.asks, function(key, value) {
                     var text = "";
                     $.each(value, function(innerKey, innerValue) {
                         if (innerKey == "_question") {
-                            text += "\nquestion = " + innerValue;
+                            $('#interaction').append("\n" + that.user + "\t: " + innerValue).keyup();
                         } else {
-                            text += "\nresponse = " + innerValue;
+                            $('#interaction').append("\n" + otherPlayer + "\t: " + innerValue).keyup();
                         }
+
                     });
+                    $('#script').trigger('collapse');
+                    $('#chat').trigger('expand');
+                    $('#response').textinput('disable');
+                    $('#answer').button('disable');
                     console.log(text);
-                    $('#interaction').text(text);
-                });
-                $.each(myGameObject.configuration.steps, function(key, value) {
-                    that.draw(value, function () {
-	                var win = myGameObject.configuration.winningAnimation;
-	                if (win) {
-	                    that.draw.win(win.x, win.y);
-	                }
-                    });
                 });
             }
+            $.each(myGameObject.configuration.steps, function(key, value) {
+                that.draw(value, function () {
+                    var win = myGameObject.configuration.winningAnimation;
+                    if (win) {
+                        that.draw.win(win.x, win.y);
+                    }
+                });
+            });
         }
     });
 
@@ -131,7 +141,13 @@ kissingturtles.view.gameview = function (model, elements) {
     //    Callback to display question asked to partner
     //----------------------------------------------------------------------------------------
     that.model.asked.attach(function (data, event) {
-        $('#ask').text(data.item.question);
+        if (that.gameId == data.item.gameId) {
+            $('#script').trigger('collapse');
+            $('#interaction').append("\n" + data.item.user + "\t: " + data.item.question).keyup();
+            $('#chat').trigger('expand');
+            $('#response').val('').textinput('enable').focus();
+            $('#answer').button('enable');
+        }
     });
 
     //----------------------------------------------------------------------------------------
@@ -140,7 +156,15 @@ kissingturtles.view.gameview = function (model, elements) {
     $("#answer").on("vclick", function(event) {
         var answer = $('#response').val();
         var gameId = that.gameId;
-        that.answerButtonClicked.notify({title: "KissingTurtles", content: answer, gameId: gameId, user: localStorage.getItem("KissingTurtles.UserId")});
+        $('#response').textinput('disable');
+        $('#answer').button('disable');
+        that.answerButtonClicked.notify({
+            title: "KissingTurtles",
+            content: answer,
+            gameId: gameId,
+            user: that.user,
+            role: that.role});
+        $('#interaction').append("\n" + that.user + "\t: " + answer).keyup();
     });
 
     //----------------------------------------------------------------------------------------
@@ -289,16 +313,15 @@ kissingturtles.view.gameview = function (model, elements) {
     $("#submit-game").on("vclick", function(event) {
         var dslInput = $('#input-move-name').val();
         var gameId = that.gameId;
-        that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId, user: localStorage.getItem("KissingTurtles.UserId")});
+        that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId, user: that.user, role: that.role});
     });
 
     //----------------------------------------------------------------------------------------
     //   Click on 'Create your own game' brings you here
     //----------------------------------------------------------------------------------------
     $("#create-game").on('vclick', function (event) {
-        var obj = {user1: localStorage.getItem("KissingTurtles.UserId")};
         var newElement = {
-                game: JSON.stringify(obj)
+                user1: localStorage.getItem("KissingTurtles.UserId")
         };
         that.createButtonClicked.notify(newElement, event);
     });

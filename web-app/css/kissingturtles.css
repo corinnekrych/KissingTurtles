@@ -1,0 +1,16 @@
+.ui-corner-all {
+    -webkit-border-radius: 0em;
+    border-radius: 0em;
+}
+
+.ui-btn-corner-all {
+    -webkit-border-radius: 0em;
+    border-radius: 0em;
+}
+
+.ui-input-text,
+.ui-select
+{
+    width: 100% !important;
+    padding: 0.1em 0em !important;
+}

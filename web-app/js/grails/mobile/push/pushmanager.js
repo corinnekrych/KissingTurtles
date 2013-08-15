@@ -111,6 +111,7 @@ grails.mobile.push.pushmanager = function (grailsEvents, domainName, store, mode
             if (userId == userIdNotification) {
                 return;
             }
+            data.NOTIFIED = true;
             model.ask(data);
         });
     }

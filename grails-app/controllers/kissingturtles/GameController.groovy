@@ -27,7 +27,7 @@ class GameController {
         println "in the inputs" + params
 
         binding = new Binding()
-        def userInteraction = new UserInteraction(this, params.gameId, params.userIdNotification)
+        def userInteraction = new UserInteraction(this, params.gameId, params.userIdNotification, params.user, params.role)
 
         def game = Game.findById(params.gameId)
 
@@ -40,9 +40,9 @@ class GameController {
 
         println "my game is ${game.id} with maze ${game.mazeTTT}"
 
-        if (game.user1 == params.user) {
+        if (game.role1 == params.role) {
             turtle = new Turtle("franklin", "image", franklinPosition, game.mazeTTT, userInteraction)
-        } else if ((game.user2 == params.user)) {
+        } else {
             turtle = new Turtle("emily", "image", emilyPosition, game.mazeTTT, userInteraction)
         }
 
@@ -81,7 +81,7 @@ class GameController {
 
     def answer() {
         println "in answer = " + params
-        UserInteraction userInteraction = new UserInteraction(this, params.gameId, "")
+        UserInteraction userInteraction = new UserInteraction(this, params.gameId, "", params.user, params.role)
         userInteraction.notifyResponse(params.content)
         render "{\"userIdNotification\":\"" + params.userIdNotification + "\"}"
     }
@@ -102,7 +102,6 @@ class GameController {
 
     def save() {
         def size = 15
-        JSONObject jsonObject = JSON.parse(params.game)
 
         // generate walls
         def whichMaze = wallGeneratorService.randomWallConfiguration()
@@ -117,7 +116,8 @@ class GameController {
 
         // create new Game
         Game gameInstance = new Game()
-        gameInstance.user1 = jsonObject.entrySet().iterator().next().value
+        gameInstance.user1 = params.user1
+        gameInstance.role1 = 'franklin'
         gameInstance.mazeDefinition = mazeDefinition
         gameInstance.mazeTTT = whichMaze
         gameInstance.franklinX = franklinPosition.x
@@ -169,6 +169,7 @@ class GameController {
             render flash as JSON
         }
         gameInstance.user2 = jsonObject.get("user2")
+        gameInstance.role2 = 'emily'
 
         // save game
         if (!gameInstance.save(flush: true)) {
