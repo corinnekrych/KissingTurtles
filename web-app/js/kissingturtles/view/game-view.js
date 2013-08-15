@@ -92,11 +92,15 @@ kissingturtles.view.gameview = function (model, elements) {
                 $('#submit-game').button('disable');
                 $('#script').trigger('collapse');
                 $('#chat').trigger('expand');
+                $('#belldsl').removeClass('blink');
             } else if (that.role == "franklin" && that.gameId == data.item.id) {
                 // For Franklin game
                 showGeneralMessage(data.item.user2 + " joined the game as Emily!");
                 $('#submit-game').button('enable');
                 that.draw({emily: that.currentMaze.steps[0].emily});
+                $('#script').trigger('expand');
+                $('#belldsl').addClass('blink');
+                blink($('#belldsl'));
             } else {
                 $("#list-games").listview('refresh');
             }
@@ -114,11 +118,11 @@ kissingturtles.view.gameview = function (model, elements) {
             $('#belldsl').addClass('blink');
             blink('#belldsl');
             $('#script').trigger('expand');
-            $('#chat').trigger('collapse');
+            //$('#chat').trigger('collapse');
         } else {
             $('#belldsl').removeClass('blink');
             $(elt).button('disable');
-            $('#script').trigger('collapse');
+            //$('#script').trigger('collapse');
             $('#chat').trigger('expand');
         }
     };
