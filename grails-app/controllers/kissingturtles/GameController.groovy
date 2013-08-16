@@ -88,7 +88,7 @@ class GameController {
     def run() {
         println "in the inputs" + params
         def conf
-        def lang = params.lang
+        def lang = "groovy"//params.lang
         def game = Game.findById(params.gameId)
         if (lang == "scala") {
             conf = executeScala(game)

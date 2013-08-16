@@ -67,19 +67,11 @@ class GameService {
         def conf = builder.toString()
     }
 
-    def createFormatting(walls, franklinPosition, treePosition) {
-        //TODO generate positions after wall generation and exclude wall places
+    def mazeAsJson(walls) {
         def builder = new groovy.json.JsonBuilder()
 
-        def images = [
-                franklin: 'turtle.png',
-                emily: 'turtle2.png',
-                tree1: 'tree.png'
-        ]
-        def obj = [
-                franklin: (franklinPosition as JSON)['target'],
-                tree1: (treePosition as JSON)['target']
-        ]
+        def images = [:]
+        def obj = [:]
 
         def flowerNumber = 8;
         def rnd = new Random()
@@ -95,16 +87,43 @@ class GameService {
                 grid: 15,
                 stepDuration: 1000
         ]
-        String mazeDefinition = (root as JSON).toString()
+    }
+
+    def createFormatting(walls, franklinPosition, treePosition) {
+        //TODO generate positions after wall generation and exclude wall places
+        def builder = new groovy.json.JsonBuilder()
+
+        def images = [
+                franklin: 'turtle.png',
+                emily: 'turtle2.png',
+                tree1: 'tree.png'
+        ]
+        def obj = [
+                franklin: (franklinPosition as JSON)['target'],
+                tree1: (treePosition as JSON)['target']
+        ]
+
+        def root = [
+                images: images,
+                steps: [obj],
+                grid: 15,
+                stepDuration: 1000,
+
+        ]
+
+        def bigRoot = [ turtles : root, walls: mazeAsJson(walls)]
+
+        (bigRoot as JSON).toString();
     }
 
     def updateFormatting(game, emilyPosition) {
         Position franklinPosition = new Position(game.franklinX, game.franklinY, game.franklinRot, game.franklinDir)
 
         JSONObject json = JSON.parse(game.mazeDefinition)
-        def images = json["images"]
+        def turtles = json["turtles"]
+        def images = turtles["images"]
         images["emily"] = 'turtle2.png'
-        def obj = json['steps'][0]
+        def obj = turtles['steps'][0]
         obj['franklin'] = (franklinPosition as JSON)['target']
         obj['emily'] = ( emilyPosition as JSON)['target']
 
@@ -114,7 +133,10 @@ class GameService {
                 grid: 15,
                 stepDuration: 1000
         ]
-       (root as JSON).toString()
+
+       def bigRoot = [ turtles : root, walls: json['walls']]
+
+       (bigRoot as JSON).toString()
 
     }
 }

@@ -37,7 +37,9 @@ kissingturtles.view.gameview = function (model, elements) {
                     conf.images['franklin'] = franklinImageName;
                 }
 
-               that.draw = ktDraw(document.getElementById('canvas'), conf, that.currentMaze.steps[0]);
+                that.drawGrid = ktDrawGrid(document.getElementById('canvasGrid'), conf.walls.grid);
+                that.drawWalls = ktDrawWalls(document.getElementById('canvasWalls'), conf.walls, that.currentMaze.walls.steps[0]);
+                that.drawTurtles = ktDrawTurtles(document.getElementById('canvasTurtles'), conf.turtles, that.currentMaze.turtles.steps[0]);
                that.role = "franklin";
                that.user = localStorage.getItem("KissingTurtles.UserId");
                that.gameId = data.item.id;
@@ -84,7 +86,10 @@ kissingturtles.view.gameview = function (model, elements) {
                     emilyImageName += '.png';
                     conf.images['emily'] = emilyImageName;
                 }
-                that.draw = ktDraw(document.getElementById('canvas'), conf, that.currentMaze.steps[0]);
+                that.drawGrid = ktDrawGrid(document.getElementById('canvasGrid'), conf.walls.grid);
+                that.drawWalls = ktDrawWalls(document.getElementById('canvasWalls'), conf.walls, that.currentMaze.walls.steps[0]);
+                that.drawTurtles = ktDrawTurtles(document.getElementById('canvasTurtles'), conf.turtles, that.currentMaze.turtles.steps[0]);
+
                 that.user = localStorage.getItem("KissingTurtles.UserId");
                 that.role = 'emily';
                 that.gameId = data.item.id;
@@ -97,7 +102,7 @@ kissingturtles.view.gameview = function (model, elements) {
                 // For Franklin game
                 showGeneralMessage(data.item.user2 + " joined the game as Emily!");
                 $('#submit-game').button('enable');
-                that.draw({emily: that.currentMaze.steps[0].emily});
+                that.drawTurtles({emily: that.currentMaze.turtles.steps[0].emily});
                 $('#script').trigger('expand');
                 $('#belldsl').addClass('blink');
                 blink($('#belldsl'));
@@ -165,10 +170,10 @@ kissingturtles.view.gameview = function (model, elements) {
                 toggle('#submit-game');
             }
             $.each(myGameObject.configuration.steps, function(key, value) {
-                that.draw(value, function () {
+                that.drawTurtles(value, function () {
                     var win = myGameObject.configuration.winningAnimation;
                     if (win) {
-                        that.draw.win(win.x, win.y);
+                        that.drawTurtles.win(win.x, win.y);
                     }
                 });
             });

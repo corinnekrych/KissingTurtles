@@ -1,38 +1,8 @@
-// Library to display the maze and its movements
-//
-// Code example: <pre><code>
-// window.onload = function () {
-//   window.ktDraw(document.getElementById('canvas'), {
-//     grid: 15,
-//     gridLineWidth: 5,
-//     stepDuration: 1000,
-//     images: {
-//       flankin: 'turtle.png',
-//       emily: 'turtle.png',
-//       tree1: 'tree.png'
-//     }
-//   }, {
-//     flankin: { x: 1, y: 0, direction: '+x' }
-//   })({
-//     flankin: { x: 2, y: 0, direction: '+x' }
-//   })({
-//     emily: { x: 2, y: 1, direction: '+x' },
-//     flankin: { x: 3, y: 1, direction: '+x' }
-//   })({
-//     emily: { x: 2, y: 1, direction: '+y' },
-//     flankin: { x: 4, y: 1, direction: '+x' }
-//   })({
-//     emily: { x: 2, y: 2, direction: '+y' },
-//     flankin: { x: 5, y: 1, direction: '+x' }
-//   });
-// };
-// </code></pre>
-
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(factory);
   } else {
-    root.ktDraw = factory();
+    root.ktDrawTurtles = factory();
   }
 }(this, function () {
   // Polyfill for requestAnimationFrame
@@ -60,27 +30,6 @@
     return from + (to - from) * progress;
   }
 
-  /**
-   * Configuration function.
-   *
-   * Example configuration: <pre><code>
-   * {
-   *   grid: 15,
-   *   gridLineWidth: 5,
-   *   stepDuration: 1000,
-   *   images: {
-   *     flankin: 'turtle.png',
-   *     emily: 'turtle.png',
-   *     tree1: 'tree.png'
-   *   }
-   * }
-   * </code></pre>
-   *
-   * @param canvas the canvas element, example <code>$('#canvas')</code>.
-   * @param config configuration to use.
-   * @param initial the initial frame to display (see return function for format).
-   * @return the animation function.
-   */
   return function (canvas, config, initial) {
     var ctx = canvas.getContext('2d');
     var width = canvas.width;
@@ -89,7 +38,7 @@
     var hstep = height / (config.grid + 1);
     var current = initial;
     var animations = {};
-    var paused = true;//TODO get rid by counting animations keys
+    var paused = true;
 
     // Launch images loading in parallel
     var images = {};
@@ -119,27 +68,7 @@
     var clean = function () {
       ctx.clearRect(0, 0, width, height);
     };
-    var drawGrid = function () {
-      ctx.save();
-      var wstart = Math.floor(wstep / 2);
-      var hstart = Math.floor(hstep / 2);
-      // Styling
-      ctx.lineWidth = config.gridLineWidth;
-      ctx.lineCap = 'round';
-      ctx.strokeStyle = 'green';
-      ctx.beginPath();
-      for (var i = 1; i <= config.grid; i++) {
-        // Horizontal
-        ctx.moveTo(wstart, i * wstep);
-        ctx.lineTo(width - wstart, i * wstep);
-        // Vertical
-        ctx.moveTo(i * hstep, hstart);
-        ctx.lineTo(i * hstep, height - hstart);
-      }
-      ctx.stroke();
-      ctx.closePath();
-      ctx.restore();
-    };
+
     var drawImage = function (name, x, y, rotation) {
       ctx.save();
       ctx.translate((x + 1) * wstep, (config.grid - y) * hstep);
@@ -156,7 +85,6 @@
       var animation;
       var animateMore = false;
       clean();
-      drawGrid();
       for (name in animations) {
         if (animations.hasOwnProperty(name)) {
           animation = animations[name];
@@ -202,21 +130,7 @@
         oneMoreStep(frame, callback);
       };
     };
-    /**
-     * Animation function.
-     *
-     * Example frame: <pre><code>
-     * {
-     *   flankin: { x: 1, y: 0, direction: '+x' },
-     *   emily: { x: 3, y: 4, direction: '-y' }
-     * }
-     * </code></pre>
-     *
-     * Notes: positions are 0-indexed and y is the opposite of the US convention: 0 is bottom and grid size is top.
-     *
-     * @param frame the frame to draw (only differences from the previous frame are to be included).
-     * @param cb callback called once animation is over.
-     */
+
     var oneMoreStep = function (frame, callback) {
       var caller = null;
       for (var name in frame) {
@@ -249,12 +163,7 @@
       }
       return oneMoreStep;
     };
-    /**
-     * Winning animation
-     *
-     * @param x x position to start the animation at.
-     * @param y y position to start the animation at.
-     */
+
     oneMoreStep.win = function (x, y, callback) {
       var dist;
       var speed = 3;
