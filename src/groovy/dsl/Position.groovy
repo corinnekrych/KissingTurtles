@@ -64,9 +64,9 @@ class Position {
     }
 
     Position random(int gridSize, walls) {
-        def random = new Random()
-        def randomX = random.nextInt(gridSize-2)
-        def randomY = random.nextInt(gridSize-2)
+        def randomMe = new Random()
+        def randomX = randomMe.nextInt(gridSize-2)
+        def randomY = randomMe.nextInt(gridSize-2)
         x = 1 + randomX
         y = 1 + randomY
         rotation = 90
@@ -74,9 +74,9 @@ class Position {
         def isOnWalls = walls.find() {
             it.x == x && it.y == y
         }
-//        if (isOnWalls) {
-//          random(gridSize, walls)
-//        }
+        if (isOnWalls != null) {
+          random(gridSize, walls)
+        }
         this
     }
 

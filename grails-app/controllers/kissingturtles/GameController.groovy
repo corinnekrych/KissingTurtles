@@ -118,13 +118,11 @@ class GameController {
         def scriptInstance = new DslScript(params)
         def script = scriptInstance.content
         def turtle
-
-        println "my game is ${game.id} with maze ${game.mazeTTT}"
-
+        def walls = JSON.parse(game.mazeDefinition)['walls']['steps'][0].values()
         if (game.role1 == params.role) {
-            turtle = new Turtle("franklin", "image", franklinPosition, game.mazeTTT, userInteraction)
+            turtle = new Turtle("franklin", "image", franklinPosition, walls, userInteraction)
         } else {
-            turtle = new Turtle("emily", "image", emilyPosition, game.mazeTTT, userInteraction)
+            turtle = new Turtle("emily", "image", emilyPosition, walls, userInteraction)
         }
 
         binding.setVariable("turtle", turtle)
@@ -175,8 +173,7 @@ class GameController {
         def size = 15
 
         // generate walls
-        def whichMaze = wallGeneratorService.randomWallConfiguration()
-        def walls = wallGeneratorService.getWalls(whichMaze)
+        def walls = wallGeneratorService.getWalls()
 
         // generate position for Franklin and the meeting point
         Position franklinPosition = new Position().random(size, walls)
@@ -190,7 +187,6 @@ class GameController {
         gameInstance.user1 = params.user1
         gameInstance.role1 = 'franklin'
         gameInstance.mazeDefinition = mazeDefinition
-        gameInstance.mazeTTT = whichMaze
         gameInstance.franklinX = franklinPosition.x
         gameInstance.franklinY = franklinPosition.y
         gameInstance.franklinRot = franklinPosition.rotation
@@ -220,7 +216,7 @@ class GameController {
         def gameInstance = Game.get(jsonObject.gameId)
 
         // generate position for Emily (anywhere except on the walls)
-        def walls = wallGeneratorService.getWalls(gameInstance.mazeTTT)
+        def walls = JSON.parse(gameInstance.mazeDefinition)['walls']['steps'][0].values()
         Position emilyPosition = new Position().random(15, walls)
         gameInstance.emilyX = emilyPosition.x
         gameInstance.emilyY = emilyPosition.y

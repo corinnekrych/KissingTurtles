@@ -6,7 +6,6 @@ class Game {
     String role1
     String role2
     String mazeDefinition
-    int mazeTTT
 
     int franklinX
     int franklinY
@@ -28,7 +27,7 @@ class Game {
         user2 nullable: true
         role1 nullable: true
         role2 nullable: true
-        mazeDefinition type: 'text', nullable: true, maxSize: 15000
+        mazeDefinition type: 'text', nullable: true, maxSize:70000
         emilyDir nullable: true
     }
 }

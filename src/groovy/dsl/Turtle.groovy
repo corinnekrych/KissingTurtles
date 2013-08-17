@@ -14,12 +14,12 @@ class Turtle {
 
     UserInteraction userInteraction
 
-    Turtle(myName, myImage, Position start, mazeId, userInterac) {
+    Turtle(myName, myImage, Position start, walls, userInterac) {
         name = myName
         image = myImage
         currentPosition = start
         result = ['name': name, 'image': image, 'steps': steps, 'asks': asks]
-        maze = new WallGeneratorService().getWalls(mazeId)
+        maze = walls
         userInteraction = userInterac
     }
 
@@ -43,26 +43,32 @@ class Turtle {
         Position newPosition = currentPosition.move(step)
 
         def obstacleX = maze.findAll() {it ->
-           ((currentPosition.direction == '+x' && currentPosition.x < it.x && it.x <= newPosition.x) ||
-            (currentPosition.direction == '-x' && currentPosition.x > it.x && it.x >= newPosition.x)) && (currentPosition.y == it.y)
+            ((currentPosition.direction == '+x' && currentPosition.x < it.x && it.x <= newPosition.x) ||
+                    (currentPosition.direction == '-x' && currentPosition.x > it.x && it.x >= newPosition.x)) && (currentPosition.y == it.y)
         }
         if (obstacleX) {
-            def x = obstacleX.collect() { Math.abs(it.x) }
-            def min = x.min()
+
             if (currentPosition.direction == '+x') {
-              newPosition = new Position(min - 1, currentPosition.y, 90, '+x')
+                def x = obstacleX.collect() { Math.abs(it.x) }
+                def min = x.min()
+                newPosition = new Position(min - 1, currentPosition.y, 90, '+x')
             } else if (currentPosition.direction == '-x') {
-              newPosition = new Position(min + 1, currentPosition.y, -90, '-x')
+                def x = obstacleX.collect() { Math.abs(it.x) }
+                def min = x.max()
+                newPosition = new Position(min + 1, currentPosition.y, -90, '-x')
             }
         }
         def obstacleY = maze.findAll() {it -> ((currentPosition.direction == '+y' && currentPosition.y < it.y && it.y <= newPosition.y)||
-                                               (currentPosition.direction == '-y' && currentPosition.y > it.y && it.y >= newPosition.y)) && (currentPosition.x == it.x)}
+                (currentPosition.direction == '-y' && currentPosition.y > it.y && it.y >= newPosition.y)) && (currentPosition.x == it.x)}
         if (obstacleY) {
-            def y = obstacleY.collect() { Math.abs(it.y) }
-            def minY = y.min()
+
             if (currentPosition.direction == '+y') {
+                def y = obstacleY.collect() { Math.abs(it.y) }
+                def minY = y.min()
                 newPosition = new Position(currentPosition.x, minY - 1, 0, '+y')
             } else if (currentPosition.direction == '-y') {
+                def y = obstacleY.collect() { Math.abs(it.y) }
+                def minY = y.max()
                 newPosition = new Position(currentPosition.x, minY + 1, 180, '-y')
             }
         }

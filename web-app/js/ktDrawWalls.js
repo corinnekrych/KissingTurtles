@@ -65,7 +65,7 @@
             var grid = 15;
             var centerx = x * pixels / grid;
             var centery = y * pixels / grid;
-            var size = 5;
+            var size = 4;
             for (var i = 0; i < pixels; i++) {
                 for (var j = 0; j < pixels; j++) {
                     var distance = Math.sqrt((i - centerx) * (i - centerx) + (j - centery) * (j - centery));
@@ -78,6 +78,15 @@
             }
 
 
+        };
+
+        var drawSimpleWall = function (x, y, rotation) {
+            ctx.save();
+            ctx.translate((x + 1) * wstep, (config.grid - y) * hstep);
+            ctx.rotate(rotation);
+            ctx.strokeStyle = 'green';
+            ctx.fillRect(-wstep/2, -hstep/2, wstep, hstep);
+            ctx.restore();
         };
 
         // Animate from frame to frame
@@ -101,7 +110,21 @@
         };
 
         // Draw initial frame
-        animate();
+//        animate();
+
+        var animateSimple = function () {
+            var name;
+            var item;
+            clean();
+
+            for (name in current) {
+                if (current.hasOwnProperty(name)) {
+                    item = current[name];
+                    drawSimpleWall(item.x, item.y, 0);
+                }
+            }
+        };
+        animateSimple();
 
     };
 }));
