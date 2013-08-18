@@ -86,7 +86,6 @@ class GameController {
     }
 
     def run() {
-        println "in the inputs" + params
         def conf
         def lang = "groovy"//params.lang
         def game = Game.findById(params.gameId)
@@ -104,7 +103,6 @@ class GameController {
 
         // notify when turtle moves
         event topic: "execute-game", data: conf
-        println conf
         render conf
     }
 
@@ -149,7 +147,6 @@ class GameController {
     }
 
     def answer() {
-        println "in answer = " + params
         UserInteraction userInteraction = new UserInteraction(this, params.gameId, "", params.user, params.role)
         userInteraction.notifyResponse(params.content)
         render "{\"userIdNotification\":\"" + params.userIdNotification + "\"}"

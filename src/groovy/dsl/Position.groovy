@@ -9,7 +9,6 @@ class Position {
     Position move(Integer step) {
         Position newPosition
         if (direction == '+y') {
-            println "y+step = " + y+step
             newPosition = new Position(x, y + step, rotation, direction)
         } else if (direction == '+x') {
             newPosition = new Position(x + step, y, rotation, direction)
@@ -22,28 +21,24 @@ class Position {
     }
 
     Position left() {
-        println "left"
         def newRotation = - 90;
         def newDirection = whichDirection(newRotation)
         new Position(x, y, newRotation, newDirection);
     }
 
     Position right() {
-        println "right"
         def newRotation = 90;
         def newDirection = whichDirection(newRotation)
         new Position(x, y, newRotation, newDirection);
     }
 
     Position up() {
-        println "up"
         def newRotation = 0;
         def newDirection = whichDirection(newRotation)
         new Position(x, y, newRotation, newDirection);
     }
 
     Position down() {
-        println "down"
         def newRotation = 180;
         def newDirection = whichDirection(newRotation)
         new Position(x, y, newRotation, newDirection);
@@ -96,5 +91,28 @@ class Position {
         y = 0
         rotation = 90
         direction = '+x'
+    }
+
+    boolean equals(o) {
+        if (this.is(o)) return true
+        if (!(o instanceof Position)) return false
+
+        Position position = (Position) o
+
+        if (rotation != position.rotation) return false
+        if (x != position.x) return false
+        if (y != position.y) return false
+        if (direction != position.direction) return false
+
+        return true
+    }
+
+    int hashCode() {
+        int result
+        result = x
+        result = 31 * result + y
+        result = 31 * result + rotation
+        result = 31 * result + (direction != null ? direction.hashCode() : 0)
+        return result
     }
 }

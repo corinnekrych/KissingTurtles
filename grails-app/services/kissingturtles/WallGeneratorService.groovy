@@ -9,7 +9,7 @@ class WallGeneratorService {
 
         MazeGenerator maze = new MazeGenerator(gridSize, gridSize);
 
-        def myWalls = []
+        def myWalls = [] as Set
         for (int i = 0; i < gridSize; i++) {
             // draw the north edge
             for (int j = 0; j < gridSize; j++) {

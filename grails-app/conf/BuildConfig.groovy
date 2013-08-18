@@ -39,5 +39,9 @@ grails.project.dependency.resolution = {
         runtime ":hibernate:3.6.10.M5" // or ":hibernate4:4.1.11.M2"
         runtime ":jquery:1.10.2"
         runtime ":resources:1.2"
+        //compile ":ui-performance:1.2.2"
+//        runtime ":zipped-resources:1.0.1"
+//        runtime ":cached-resources:1.1"
+//        runtime ":yui-minify-resources:0.1.5"
     }
 }
