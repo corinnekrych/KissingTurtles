@@ -1,32 +1,3 @@
-// Library to display the maze and its movements
-//
-// Code example: <pre><code>
-// window.onload = function () {
-//   window.ktDraw(document.getElementById('canvas'), {
-//     grid: 15,
-//     gridLineWidth: 5,
-//     stepDuration: 1000,
-//     images: {
-//       flankin: 'turtle.png',
-//       emily: 'turtle.png',
-//       tree1: 'tree.png'
-//     }
-//   }, {
-//     flankin: { x: 1, y: 0, direction: '+x' }
-//   })({
-//     flankin: { x: 2, y: 0, direction: '+x' }
-//   })({
-//     emily: { x: 2, y: 1, direction: '+x' },
-//     flankin: { x: 3, y: 1, direction: '+x' }
-//   })({
-//     emily: { x: 2, y: 1, direction: '+y' },
-//     flankin: { x: 4, y: 1, direction: '+x' }
-//   })({
-//     emily: { x: 2, y: 2, direction: '+y' },
-//     flankin: { x: 5, y: 1, direction: '+x' }
-//   });
-// };
-// </code></pre>
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {

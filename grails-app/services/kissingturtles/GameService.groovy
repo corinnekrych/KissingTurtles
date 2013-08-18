@@ -2,6 +2,7 @@ package kissingturtles
 
 import grails.converters.JSON
 import dsl.Position
+import groovy.json.JsonBuilder
 import org.codehaus.groovy.grails.web.json.JSONObject
 
 class GameService {
@@ -68,21 +69,19 @@ class GameService {
     }
 
     def mazeAsJson(walls) {
-        def builder = new groovy.json.JsonBuilder()
-
-        def images = [:]
         def obj = [:]
 
-        def flowerNumber = 8;
-        def rnd = new Random()
         walls.eachWithIndex { w, idx ->
             def name = "wall${idx}"
-            images[name] = "flower${rnd.nextInt(flowerNumber) + 1}.png"
-            obj[name] = (w as JSON)['target']
+            def builder = new JsonBuilder()
+            builder {
+                x w.x
+                y w.y
+            }
+            obj[name] = builder['content']
         }
 
         def root = [
-                images: images,
                 steps: [obj],
                 grid: 15,
                 stepDuration: 1000
@@ -90,8 +89,6 @@ class GameService {
     }
 
     def createFormatting(walls, franklinPosition, treePosition) {
-        //TODO generate positions after wall generation and exclude wall places
-        def builder = new groovy.json.JsonBuilder()
 
         def images = [
                 franklin: 'turtle.png',

@@ -198,7 +198,7 @@ class GameController {
         }
         // notify when first turtle create a new game
         def asJSON = gameInstance as JSON
-        def json = asJSON.toString()
+        def json = asJSON.toString(true)
         def builder = new JsonBuilder()
         builder {
             userIdNotification params.userIdNotification

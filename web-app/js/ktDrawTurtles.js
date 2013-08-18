@@ -50,6 +50,11 @@
           animate();
         }
       };
+
+        src[file].onerror = function () {
+           alert("Error!!!");
+        };
+
       src[file].src = 'images/game/' + file;
     };
     var fetchImages = function (imgs) {
