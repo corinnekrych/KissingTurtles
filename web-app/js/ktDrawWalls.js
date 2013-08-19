@@ -6,14 +6,15 @@
         root.ktDrawWalls = factory();
     }
 }(this, function () {
-    var pixels = 200;
 
     return function (canvas, config, initial) {
+        var pixels = 200;
         var ctx = canvas.getContext('2d');
         var width = canvas.width;
         var height = canvas.height;
-        var wstep = width / (config.grid + 1);
-        var hstep = height / (config.grid + 1);
+        var grid = config.grid;
+        var wstep = width / (grid + 1);
+        var hstep = height / (grid + 1);
         var current = initial;
 
         // Drawing
@@ -53,7 +54,7 @@
 
         var drawSimpleWall = function (x, y, rotation) {
             ctx.save();
-            ctx.translate((x + 1) * wstep, (config.grid - y) * hstep);
+            ctx.translate((x + 1) * wstep, (grid - y) * hstep);
             ctx.rotate(rotation);
             ctx.strokeStyle = 'green';
             ctx.fillRect(-wstep/2, -hstep/2, wstep, hstep);
@@ -71,7 +72,7 @@
             for (name in current) {
                 if (current.hasOwnProperty(name)) {
                     item = current[name];
-                    drawWall(item.x, item.y, 0);
+                    drawWall(item.x, (grid - item.y) - 1, 0);
                 }
             }
 
