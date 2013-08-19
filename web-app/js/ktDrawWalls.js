@@ -6,6 +6,7 @@
         root.ktDrawWalls = factory();
     }
 }(this, function () {
+    var pixels = 200;
 
     return function (canvas, config, initial) {
         var ctx = canvas.getContext('2d');
@@ -28,15 +29,14 @@
             return Math.floor(color.min[idx] + ((color.max[idx] - color.min[idx]) * intensity));
         }
         var drawWall = function (x, y, rotation) {
-            var pixels = 150;
             var green = {
                 min: [55, 90, 36],
                 max: [105, 170, 70]
             };
             var grid = 15;
-            var centerx = x * pixels / grid;
-            var centery = y * pixels / grid;
-            var size = 4;
+            var centerx = (x + 1) * pixels / (grid + 1);
+            var centery = (y + 1) * pixels / (grid + 1);
+            var size = 5;
             for (var i = 0; i < pixels; i++) {
                 for (var j = 0; j < pixels; j++) {
                     var distance = Math.sqrt((i - centerx) * (i - centerx) + (j - centery) * (j - centery));
@@ -65,10 +65,8 @@
             var name;
             var item;
             clean();
-            var pixels = 100;
             ctx.save();
-//            ctx.scale(canvas.width / pixels, canvas.height / pixels);
-            ctx.scale(7,7);
+            ctx.scale(canvas.width / pixels, canvas.height / pixels);
 
             for (name in current) {
                 if (current.hasOwnProperty(name)) {
@@ -81,7 +79,7 @@
         };
 
         // Draw initial frame
-//        animate();
+        animate();
 
         var animateSimple = function () {
             var name;
@@ -95,7 +93,7 @@
                 }
             }
         };
-        animateSimple();
+        //animateSimple();
 
     };
 }));
