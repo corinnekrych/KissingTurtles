@@ -34,7 +34,7 @@ kissingturtles.view.gameview = function (model, elements) {
                var franklinImageName = localStorage.getItem("kissingturtles.settings.franklin");
                 if (franklinImageName) {
                     franklinImageName += '.png';
-                    conf.images['franklin'] = franklinImageName;
+                    conf.turtles.images['franklin'] = franklinImageName;
                 }
 
                 that.drawGrid = ktDrawGrid(document.getElementById('canvasGrid'), conf.walls.grid);
@@ -79,12 +79,12 @@ kissingturtles.view.gameview = function (model, elements) {
                 var franklinImageName = localStorage.getItem("kissingturtles.settings.franklin");
                 if (franklinImageName) {
                     franklinImageName += '.png';
-                    conf.images['franklin'] = franklinImageName;
+                    conf.turtles.images['franklin'] = franklinImageName;
                 }
                 var emilyImageName = localStorage.getItem("kissingturtles.settings.emily");
                 if (emilyImageName) {
                     emilyImageName += '.png';
-                    conf.images['emily'] = emilyImageName;
+                    conf.turtles.images['emily'] = emilyImageName;
                 }
                 that.drawGrid = ktDrawGrid(document.getElementById('canvasGrid'), conf.walls.grid);
                 that.drawWalls = ktDrawWalls(document.getElementById('canvasWalls'), conf.walls, that.currentMaze.walls.steps[0]);

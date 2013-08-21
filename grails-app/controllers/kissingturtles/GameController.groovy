@@ -14,11 +14,6 @@ import dsl.DslScript
 import dsl.Turtle
 import dsl.Position
 
-//import dslprez.Turtle
-import dslprez.up
-import dslprez.Direction
-//import dslprez.Position
-
 class GameController {
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
@@ -27,6 +22,29 @@ class GameController {
     def wallGeneratorService
     Binding binding
 
+    /*
+    def getScalaDir(dir) {
+      if (dir == "+x") return dslprez.scala.game.right
+      if (dir == "-x") return dslprez.scala.game.left
+      if (dir == "+y") return dslprez.scala.game.up
+      if (dir == "-y") return dslprez.scala.game.down
+      return dslprez.scala.game.up
+    }*/
+    
+    def contains(walls, i,j) {
+      walls.any {(it.x == i) && (it.y == j)}
+    }
+    
+    def getScalaWalls(walls, size) {
+       def scalaWall = new int[size][size]
+          for (int i = 0; i < size; i++) {
+             for (int j = 0; j < size; j++) {
+                if (contains(walls,i,j)) scalaWall[i][j]=1 else scalaWall[i][j]=0
+                }
+          }
+       scalaWall
+   }
+   
     def executeScala(game) {
         // Ugly search how to do better
         def cp = System.getProperty("java.class.path")
@@ -39,6 +57,8 @@ class GameController {
         def stream = new ByteArrayOutputStream()
         def printStream = new PrintStream(stream, true, encoding)
 
+        
+        def turtle
         def result = ""
         def stacktrace = ""
 
@@ -46,6 +66,7 @@ class GameController {
         try {
             evaluator = new Evaluator(printStream).withContinuations().withPluginsDir("lib/plugins")
 
+            /*
             // Temporary solution
             if (params.scalaTimer != null) {
                 dslprez.timer.MyTimer.reinit()
@@ -54,40 +75,46 @@ class GameController {
             if (params.scalaSecurity != null) {
                 evaluator.withPluginOption("dslplugin:blacklistFile:anyfile")
             }
+            */
 
-            // Example for the game use bind and import
-            def turtle = new dslprez.Turtle(new dslprez.Position(0,0,up as Direction))
-            evaluator.addImport("dslprez._")
-            println("Turtle is $turtle ==========")
-            evaluator.bind("I","dslprez.Turtle",turtle)
-            //End
+            def userInteraction = new UserInteraction(this, params.gameId, params.userIdNotification, params.user, params.role)
 
-            // editor2
-//            def turtle = new Turtle()
-//            evaluator.bind("I","dslprez.steps.editor2.Turtle",turtle)
-//            evaluator.bind("left","String","left")
-            // End editor2
+            def scalaFranklinDir = game.franklinDir //getScalaDir(game.franklinDir)
+            def scalaEmilyDir = game.emilyDir //getScalaDir(game.emilyDir)
+            def franklinPosition = dslprez.scala.game.Position.getPosition(game.franklinX, game.franklinY, game.franklinRot, scalaFranklinDir)
+            def emilyPosition = dslprez.scala.game.Position.getPosition(game.emilyX, game.emilyY, game.emilyRot, scalaEmilyDir)
 
-            result = evaluator.eval(params.content)
-            println result
-        } catch (Exception e) {
-            stacktrace = e.message
+            def walls = JSON.parse(game.mazeDefinition)['walls']['steps'][0].values()
+            def scalaWalls = getScalaWalls(walls,15)
+     
+            if (game.role1 == params.role) {
+              turtle = new dslprez.scala.game.Turtle("franklin", "image", franklinPosition, scalaWalls)
+            } else {
+              turtle = new dslprez.scala.game.Turtle("emily", "image", emilyPosition, scalaWalls)
+            }
+
+            evaluator.addImport("dslprez.scala.game._")
+            evaluator.addImport("dslprez.scala.game.Turtle.end")
+
+            
+            evaluator.bind("turtleInstance","dslprez.scala.game.Turtle",turtle)
+            evaluator.eval("implicit val I = turtleInstance")
+            
+            def finalScript = "Turtle startDsl {\n"+params.content+"\nend\n}\n"
+            
+            result = evaluator.eval(finalScript)
+                 
         } finally {
             if (evaluator != null) evaluator.close()
         }
+ 
+        gameService.runScalaFormatting(game, turtle, params.userIdNotification)
 
-//        def resultObject = new Result()
-//        resultObject.result = stream.toString(encoding)
-//        resultObject.shellResult = result
-//        resultObject.stacktrace = stacktrace
-//
-//        // to avoid grails bringing 404 error
-//        render resultObject as JSON
     }
 
     def run() {
         def conf
-        def lang = "groovy"//params.lang
+        def lang = "groovy" //params.lang
         def game = Game.findById(params.gameId)
         if (lang == "scala") {
             conf = executeScala(game)
@@ -142,7 +169,6 @@ class GameController {
         shell.evaluate(script)
 
         def result = binding.getVariable('turtle').result
-
         gameService.runFormatting(game, turtle, result, params.userIdNotification)
     }
 
