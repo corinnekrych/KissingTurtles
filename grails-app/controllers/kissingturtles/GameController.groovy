@@ -21,16 +21,8 @@ class GameController {
     def gameService
     def wallGeneratorService
     Binding binding
-
-    /*
-    def getScalaDir(dir) {
-      if (dir == "+x") return dslprez.scala.game.right
-      if (dir == "-x") return dslprez.scala.game.left
-      if (dir == "+y") return dslprez.scala.game.up
-      if (dir == "-y") return dslprez.scala.game.down
-      return dslprez.scala.game.up
-    }*/
     
+    /* Transforms walls into an int[][] array for scala conversion */
     def contains(walls, i,j) {
       walls.any {(it.x == i) && (it.y == j)}
     }
@@ -44,8 +36,11 @@ class GameController {
           }
        scalaWall
    }
+   /* End of Helper */
    
-    def executeScala(game) {
+   static def scalaNotifiers = [:]
+   
+   def executeScala(game) {
         // Ugly search how to do better
         def cp = System.getProperty("java.class.path")
         if (!cp.contains("scala")) {
@@ -77,7 +72,7 @@ class GameController {
             }
             */
 
-            def userInteraction = new UserInteraction(this, params.gameId, params.userIdNotification, params.user, params.role)
+            def userInteract = new UserInteraction(this, params.gameId, params.userIdNotification, params.user, params.role)
 
             def scalaFranklinDir = game.franklinDir //getScalaDir(game.franklinDir)
             def scalaEmilyDir = game.emilyDir //getScalaDir(game.emilyDir)
@@ -87,12 +82,18 @@ class GameController {
             def walls = JSON.parse(game.mazeDefinition)['walls']['steps'][0].values()
             def scalaWalls = getScalaWalls(walls,15)
      
+            def userInteraction = new dslprez.scala.game.Notifier(userInteract,null)
+           println("My notifier for "+params.role+" = "+userInteraction)
+           scalaNotifiers[params.role] = userInteraction
+            
             if (game.role1 == params.role) {
-              turtle = new dslprez.scala.game.Turtle("franklin", "image", franklinPosition, scalaWalls)
+              turtle = new dslprez.scala.game.Turtle("franklin", "image", franklinPosition, scalaWalls, userInteraction)
             } else {
-              turtle = new dslprez.scala.game.Turtle("emily", "image", emilyPosition, scalaWalls)
+              turtle = new dslprez.scala.game.Turtle("emily", "image", emilyPosition, scalaWalls, userInteraction)
             }
 
+            userInteraction.setTurtle(turtle)
+            
             evaluator.addImport("dslprez.scala.game._")
             evaluator.addImport("dslprez.scala.game.Turtle.end")
 
@@ -114,7 +115,7 @@ class GameController {
 
     def run() {
         def conf
-        def lang = "groovy" //params.lang
+        def lang = "scala" //params.lang
         def game = Game.findById(params.gameId)
         if (lang == "scala") {
             conf = executeScala(game)
@@ -173,9 +174,16 @@ class GameController {
     }
 
     def answer() {
-        UserInteraction userInteraction = new UserInteraction(this, params.gameId, "", params.user, params.role)
-        userInteraction.notifyResponse(params.content)
-        render "{\"userIdNotification\":\"" + params.userIdNotification + "\"}"
+      //println("Answer")
+      if (false) { //scala) {
+        def userInteraction =  scalaNotifiers[params.role]
+         println("My notifier for "+params.role+" = "+userInteraction)
+        userInteraction.notify(params.content.toString())
+      } else {           
+         UserInteraction userInteraction = new UserInteraction(this, params.gameId, "", params.user, params.role)
+         userInteraction.notifyResponse(params.content)
+      }
+      render "{\"userIdNotification\":\"" + params.userIdNotification + "\"}"
     }
 
     def index() {
