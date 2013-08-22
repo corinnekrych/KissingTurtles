@@ -7,9 +7,7 @@ import grails.converters.JSON
 import grails.validation.ValidationErrors
 import org.codehaus.groovy.control.CompilerConfiguration
 import groovy.json.JsonBuilder
-import org.codehaus.groovy.grails.web.json.JSONObject;
-import org.springframework.dao.DataIntegrityViolationException
-
+import org.codehaus.groovy.grails.web.json.JSONObject
 import dsl.DslScript
 import dsl.Turtle
 import dsl.Position
@@ -21,11 +19,17 @@ import dslprez.Direction
 
 class GameController {
 
+    int delay = 60000   // delay for 5 sec.
+    int period = 60000  // repeat every sec.
+
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
     def gameService
     def wallGeneratorService
     Binding binding
+
+
+    Timer timer = new Timer()
 
     def executeScala(game) {
         // Ugly search how to do better
@@ -89,6 +93,14 @@ class GameController {
         def conf
         def lang = "groovy"//params.lang
         def game = Game.findById(params.gameId)
+        game.lastModified = new Date().getTime()
+
+        // save game
+        if (!game.save(flush: true)) {
+            ValidationErrors validationErrors = gameInstance.errors
+            render validationErrors as JSON
+        }
+
         if (lang == "scala") {
             conf = executeScala(game)
         } else {
@@ -192,6 +204,7 @@ class GameController {
         gameInstance.treeY = treePosition.y
         gameInstance.treeRot = treePosition.rotation
         gameInstance.treeDir = treePosition.direction
+        gameInstance.lastModified = new Date().getTime()
         if (!gameInstance.save(flush: true)) {
             ValidationErrors validationErrors = gameInstance.errors
             render validationErrors as JSON
@@ -205,6 +218,7 @@ class GameController {
             instance json
         }
         event topic: "save-game", data: builder.toString()
+        timer.scheduleAtFixedRate(new CleanGameTask(gameInstance.id, this), delay, period)
         render gameInstance as JSON
     }
 
@@ -234,6 +248,7 @@ class GameController {
         }
         gameInstance.user2 = jsonObject.get("user2")
         gameInstance.role2 = 'emily'
+        gameInstance.lastModified = new Date().getTime()
 
         // save game
         if (!gameInstance.save(flush: true)) {
@@ -253,19 +268,18 @@ class GameController {
     }
 
     def delete() {
-        def gameId = params.id
         def gameInstance = Game.get(params.id)
         if (!gameInstance) {
             flash.message = message(code: 'default.not.found.message', args: [message(code: 'game.label', default: 'Game'), params.id])
             render flash as JSON
         }
-        try {
-            gameInstance.delete(flush: true)
+        gameInstance.delete(flush: true)
+        def builder = new JsonBuilder()
+        builder {
+            userIdNotification params.userIdNotification
+            id params.id.toString()
         }
-        catch (DataIntegrityViolationException e) {
-            flash.message = message(code: 'default.not.deleted.message', args: [message(code: 'game.label', default: 'Game'), params.id])
-            render flash as JSON
-        }
-        render gameInstance as JSON
+        event topic: "delete-game", data: builder.toString()
+        render builder as JSON
     }
 }

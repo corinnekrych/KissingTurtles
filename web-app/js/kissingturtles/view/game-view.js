@@ -21,40 +21,60 @@ kissingturtles.view.gameview = function (model, elements) {
     //----------------------------------------------------------------------------------------
     that.model.createdItem.attach(function (data, event) {
         if (data.item.errors) {
-            alert("Ooops something wrong happens");
+            alert('Ooops something wrong happens');
         } else if (data.item.message) {
-            alert("Ooops something wrong happens");
+            alert('Ooops something wrong happens');
         } else {
             var confAsString = data.item.mazeDefinition;
             var conf = JSON.parse(confAsString);
 
             if (!data.item.NOTIFIED) {
-               that.currentMaze = conf;
+                that.currentMaze = conf;
                 // take local config to customize Franklin's picture
-               var franklinImageName = localStorage.getItem("kissingturtles.settings.franklin");
+                var franklinImageName = localStorage.getItem('kissingturtles.settings.franklin');
                 if (franklinImageName) {
                     franklinImageName += '.png';
-                    conf.images['franklin'] = franklinImageName;
+
+                    if (!conf.turtles) {
+                       conf.turtles = {};
+                    }
+                    if (!conf.turtles.images) {
+                        conf.turtles.images = {}
+                    }
+                    conf.turtles.images['franklin'] = franklinImageName;
+                }
+                var emilyImageName = localStorage.getItem('kissingturtles.settings.emily');
+                if (emilyImageName) {
+                    if (!conf.turtles) {
+                        conf.turtles = {};
+                    }
+                    if (!conf.turtles.images) {
+                        conf.turtles.images = {}
+                    }
+                    emilyImageName += '.png';
+                    conf.turtles.images['emily'] = emilyImageName;
                 }
 
                 that.drawGrid = ktDrawGrid(document.getElementById('canvasGrid'), conf.walls.grid);
                 that.drawWalls = ktDrawWalls(document.getElementById('canvasWalls'), conf.walls, that.currentMaze.walls.steps[0]);
                 that.drawTurtles = ktDrawTurtles(document.getElementById('canvasTurtles'), conf.turtles, that.currentMaze.turtles.steps[0]);
-               that.role = "franklin";
-               that.user = localStorage.getItem("KissingTurtles.UserId");
-               that.gameId = data.item.id;
+                that.role = 'franklin';
+                that.user = localStorage.getItem('KissingTurtles.UserId');
+                that.gameId = data.item.id;
             }
             renderElement(data.item);
             showElement(data.item);
-            $("#list-games").listview('refresh');
+            $('#list-games').listview('refresh');
 
             if (!data.item.NOTIFIED) {
-              $.mobile.changePage($("#section-show-game"));
-              $('#submit-game').button('disable');
+                $.mobile.changePage($('#section-show-game'));
+                $('#input-move-name').val('');
+                $('#response').val('');
+                $('#submit-game').button('disable');
                 $('#script').trigger('expand');
                 $('#chat').trigger('collapse');
             }
-		}
+        }
     });
 
     //----------------------------------------------------------------------------------------
@@ -63,9 +83,9 @@ kissingturtles.view.gameview = function (model, elements) {
     that.model.updatedItem.attach(function (data, event) {
         // Display error for third fellow. Only 2 players game.
         if (data.item.errors) {
-            alert("Ooops something wrong happens");
+            alert('Ooops something wrong happens');
         } else if (data.item.message) {
-            alert("Ooops something wrong happens" +  data.item.message);
+            alert('Ooops something wrong happens' +  data.item.message);
             event.stopPropagation();
         } else {
             // In case of Emily or Franklin we go here
@@ -76,38 +96,40 @@ kissingturtles.view.gameview = function (model, elements) {
             if (!data.item.NOTIFIED) {
                 // For Emily game, initialize canvas
                 // take local config to customize Franklin's picture
-                var franklinImageName = localStorage.getItem("kissingturtles.settings.franklin");
+                var franklinImageName = localStorage.getItem('kissingturtles.settings.franklin');
                 if (franklinImageName) {
                     franklinImageName += '.png';
-                    conf.images['franklin'] = franklinImageName;
+                    conf.turtles.images['franklin'] = franklinImageName;
                 }
-                var emilyImageName = localStorage.getItem("kissingturtles.settings.emily");
+                var emilyImageName = localStorage.getItem('kissingturtles.settings.emily');
                 if (emilyImageName) {
                     emilyImageName += '.png';
-                    conf.images['emily'] = emilyImageName;
+                    conf.turtles.images['emily'] = emilyImageName;
                 }
                 that.drawGrid = ktDrawGrid(document.getElementById('canvasGrid'), conf.walls.grid);
                 that.drawWalls = ktDrawWalls(document.getElementById('canvasWalls'), conf.walls, that.currentMaze.walls.steps[0]);
                 that.drawTurtles = ktDrawTurtles(document.getElementById('canvasTurtles'), conf.turtles, that.currentMaze.turtles.steps[0]);
 
-                that.user = localStorage.getItem("KissingTurtles.UserId");
+                that.user = localStorage.getItem('KissingTurtles.UserId');
                 that.role = 'emily';
                 that.gameId = data.item.id;
-                $.mobile.changePage($("#section-show-game"));
+                $.mobile.changePage($('#section-show-game'));
+                $('#input-move-name').val('');
+                $('#response').val('');
                 $('#submit-game').button('disable');
                 $('#script').trigger('collapse');
                 $('#chat').trigger('expand');
                 $('#belldsl').removeClass('blink');
-            } else if (that.role == "franklin" && that.gameId == data.item.id) {
+            } else if (that.role == 'franklin' && that.gameId == data.item.id) {
                 // For Franklin game
-                showGeneralMessage(data.item.user2 + " joined the game as Emily!");
+                showGeneralMessage(data.item.user2 + ' joined the game as Emily!');
                 $('#submit-game').button('enable');
                 that.drawTurtles({emily: that.currentMaze.turtles.steps[0].emily});
                 $('#script').trigger('expand');
                 $('#belldsl').addClass('blink');
                 blink($('#belldsl'));
             } else {
-                $("#list-games").listview('refresh');
+                $('#list-games').listview('refresh');
             }
         }
     });
@@ -118,6 +140,8 @@ kissingturtles.view.gameview = function (model, elements) {
     };
 
     var toggle = function(elt) {
+        $('#input-move-name').val('');
+        $('#response').val('');
         if ($(elt).attr('disabled')) {
             $(elt).button('enable')
             $('#belldsl').addClass('blink');
@@ -133,7 +157,7 @@ kissingturtles.view.gameview = function (model, elements) {
     };
 
     $('#script').on('expand', function (e) {
-            $('#chat').trigger('collapse');
+        $('#chat').trigger('collapse');
     });
 
     $('#chat').on('expand', function (e) {
@@ -156,10 +180,10 @@ kissingturtles.view.gameview = function (model, elements) {
                 }
                 $.each(myGameObject.configuration.asks, function(key, value) {
                     $.each(value, function(innerKey, innerValue) {
-                        if (innerKey == "_question") {
-                            $('#interaction').append("\n" + that.user + "\t: " + innerValue).keyup();
+                        if (innerKey == '_question') {
+                            $('#interaction').append('\n' + that.user + '\t: ' + innerValue).keyup();
                         } else {
-                            $('#interaction').append("\n" + otherPlayer + "\t: " + innerValue).keyup();
+                            $('#interaction').append('\n' + otherPlayer + '\t: ' + innerValue).keyup();
                         }
 
                     });
@@ -169,6 +193,19 @@ kissingturtles.view.gameview = function (model, elements) {
             } else {
                 toggle('#submit-game');
             }
+
+            if (data.item.configuration.winningAnimation) {
+                $('#input-move-name').val('');
+                $('#input-move-name').textinput('disable')
+                $('#response').val('');
+                $('#response').textinput('disable');
+                $('#submit-game').button('disable');
+                $('#answer').button('disable');
+                setTimeout(function() {
+                    $.mobile.changePage( '#won');
+                }, 4000);
+            }
+
             $.each(myGameObject.configuration.steps, function(key, value) {
                 that.drawTurtles(value, function () {
                     var win = myGameObject.configuration.winningAnimation;
@@ -197,7 +234,7 @@ kissingturtles.view.gameview = function (model, elements) {
     //----------------------------------------------------------------------------------------
     that.model.asked.attach(function (data, event) {
         if (that.gameId == data.item.gameId) {
-            $('#interaction').append("\n" + data.item.user + "\t: " + data.item.question).keyup();
+            $('#interaction').append('\n' + data.item.user + '\t: ' + data.item.question).keyup();
             $('#response').val('').textinput('enable').focus();
             $('#answer').button('enable');
 
@@ -209,31 +246,58 @@ kissingturtles.view.gameview = function (model, elements) {
     //----------------------------------------------------------------------------------------
     //   Click on Execute my DSL script brings you here
     //----------------------------------------------------------------------------------------
-    $("#answer").on("vclick", function(event) {
+    $('#answer').on('vclick', function(event) {
         var answer = $('#response').val();
         var gameId = that.gameId;
         $('#response').textinput('disable');
         $('#answer').button('disable');
         that.answerButtonClicked.notify({
-            title: "KissingTurtles",
+            title: 'KissingTurtles',
             content: answer,
             gameId: gameId,
             user: that.user,
             role: that.role});
-        $('#interaction').append("\n" + that.user + "\t: " + answer).keyup();
+        $('#interaction').append('\n' + that.user + '\t: ' + answer).keyup();
         $('#bell').removeClass('blink');
+    });
+
+    //----------------------------------------------------------------------------------------
+    //   Click on Cancel for a Game => Leaving
+    //----------------------------------------------------------------------------------------
+    $('#leavingGame').on('vclick', function(event) {
+        that.deleteButtonClicked.notify({ id: that.gameId });
+    });
+
+    that.model.deletedItem.attach(function (data, event) {
+        // Display error for third fellow. Only 2 players game.
+        if (data.item.errors) {
+            alert('Ooops something wrong happens');
+        } else if (data.item.message) {
+            alert('Ooops something wrong happens' +  data.item.message);
+            event.stopPropagation();
+        } else {
+            // In case of Emily or Franklin we go here
+            renderList();
+            if (data.item.NOTIFIED && that.gameId == data.item.id) {
+                if (data.item.userIdNotification == 'server') {
+                    $('#header-left').text('Snifff');
+                    $('#content-left').text('Nobody wants to join');
+                }
+                $.mobile.changePage( '#game-left');
+            }
+        }
     });
 
     //----------------------------------------------------------------------------------------
     //   Click on Play brings you here
     //----------------------------------------------------------------------------------------
     $('#play').on('vclick', function (e) {
-        var id = localStorage.getItem("KissingTurtles.UserId");
+        var id = localStorage.getItem('KissingTurtles.UserId');
         if (id) {
-            $.mobile.changePage($("#section-list-games"));
+            $.mobile.changePage($('#section-list-games'));
             that.listButtonClicked.notify();
         } else {
-            $.mobile.changePage($("#section-show-user"));
+            $.mobile.changePage($('#section-show-user'));
         }
     });
 
@@ -241,113 +305,121 @@ kissingturtles.view.gameview = function (model, elements) {
     //   Click on Settings:change images
     //----------------------------------------------------------------------------------------
     $('#select-emily').on('change', function(event) {
+        changeDisabled('select-emily', 'select-franklin');
+
         var value = $('#select-emily').val();
-        localStorage.setItem("kissingturtles.settings.emily", value);
-        $('#emily-img').attr({src: "images/game/" + value + ".png"});
+        localStorage.setItem('kissingturtles.settings.emily', value);
+        $('#emily-img').attr({src: 'images/game/' + value + '.png'});
     });
 
-    $("#select-franklin").on('change', function(event) {
+    $('#select-franklin').on('change', function(event) {
+        changeDisabled('select-franklin', 'select-emily');
+
         var value = $('#select-franklin').val();
-        localStorage.setItem("kissingturtles.settings.franklin", value);
-        $('#franklin-img').attr({src: "images/game/" + value + ".png"});
+        localStorage.setItem('kissingturtles.settings.franklin', value);
+        $('#franklin-img').attr({src: 'images/game/' + value + '.png'});
     });
+
+
+    var changeDisabled = function(select1Value, select2Value) {
+        var select1 = $('#' + select1Value);
+        var select2 = $('#' + select2Value);
+
+        $('#' + select2Value + " option[disabled='disabled']").removeAttr('disabled');
+
+        var index = select1[0].selectedIndex;
+        var options = select2.prop('options');
+        $(options[index]).attr('disabled', 'disabled');
+        select1.selectmenu('refresh', true );
+        select2.selectmenu('refresh', true );
+    }
+
+    var changeSelected = function(selectValue, cartoon) {
+        var select  = $('#' + selectValue);
+        var options = select.prop('options');
+        var selectedIndex = 0;
+        $.each(options, function (key, value) {
+            if (value.value == cartoon)  {
+                selectedIndex = key;
+            }
+        });
+        select.val(selectedIndex);
+        $(options[selectedIndex]).attr('selected', 'selected');
+    }
 
 
     //----------------------------------------------------------------------------------------
     //   Click on Settings:'Reset settings' brings you here.
     //   To clear your name from your browser localStorage.
     //----------------------------------------------------------------------------------------
-    $('#reset-settings').on("click tap", function(event) {
+    $('#reset-settings').on('vclick', function(event) {
         localStorage.clear();
         // defaults values for Franklin and Emily
-        localStorage.setItem("kissingturtles.settings.emily", "pig");
-        $('#emily-img').attr({src: "images/game/pig.png"});
-        //$('#select-emily').val('Emily is a pig');
-        localStorage.setItem("kissingturtles.settings.franklin", "turtle");
-        $('#franklin-img').attr({src: "images/game/turtle.png"});
-        //$('#select-franklin').val('Franklin is a turtle');
+        var emily = 'pig';
+        localStorage.setItem('kissingturtles.settings.emily', emily);
+        $('#emily-img').attr({src: 'images/game/pig.png'});
+        var franklin = 'turtle';
+        localStorage.setItem('kissingturtles.settings.franklin', franklin);
+        $('#franklin-img').attr({src: 'images/game/turtle.png'});
+
+        changeSelected('select-emily', emily);
+        changeSelected('select-franklin', franklin);
+        changeDisabled('select-franklin', 'select-emily');
+        changeDisabled('select-emily', 'select-franklin');
     });
 
     //----------------------------------------------------------------------------------------
     //   Page init on Settings
     //----------------------------------------------------------------------------------------
     $('#settings').on('vclick', function(event) {
+        $.mobile.changePage('#section-settings');
         // defaults values for Franklin and Emily
-        var emily = localStorage.getItem("kissingturtles.settings.emily");
+        var emily = localStorage.getItem('kissingturtles.settings.emily');
         if(!emily) {
             emily = 'pig';
+            localStorage.setItem('kissingturtles.settings.emily', emily);
         }
-        $('#emily-img').attr({src: "images/game/" + emily + ".png"});
-        var select  = $('#select-emily');
-        var options = null;
-        if(select.prop) {
-            options = select.prop('options');
-        }
-        else {
-            options = select.attr('options');
-        }
-        var selectedIndex = 0;
-        $.each(options, function (key, value) {
-            if (value.value == emily)  {
-                selectedIndex = key;
-            }
-        });
-        select.val(selectedIndex);
-        $(options[selectedIndex]).attr("selected", "selected");
-        select.selectmenu('refresh');
-
-        var franklin = localStorage.getItem("kissingturtles.settings.franklin");
+        $('#emily-img').attr({src: 'images/game/' + emily + '.png'});
+        var franklin = localStorage.getItem('kissingturtles.settings.franklin');
         if(!franklin) {
             franklin = 'turtle';
+            localStorage.setItem('kissingturtles.settings.franklin', franklin);
         }
-        $('#franklin-img').attr({src: "images/game/" + franklin + ".png"});
-        select  = $('#select-franklin');
-        options = null;
-        if(select.prop) {
-            options = select.prop('options');
-        }
-        else {
-            options = select.attr('options');
-        }
-        var selectedIndex = 0;
-        $.each(options, function (key, value) {
-            if (value.value == franklin)  {
-                selectedIndex = key;
-            }
-        });
-        select.val(selectedIndex);
-        $(options[selectedIndex]).attr("selected", "selected");
-        select.selectmenu('refresh');
+        $('#franklin-img').attr({src: 'images/game/' + franklin + '.png'});
+        changeSelected('select-emily', emily);
+        changeSelected('select-franklin', franklin);
+        changeDisabled('select-franklin', 'select-emily');
+        changeDisabled('select-emily', 'select-franklin');
     });
 
     //----------------------------------------------------------------------------------------
     //   Click on Navigation buttons header bar same as execute
     //----------------------------------------------------------------------------------------
-    $("#left").on("vclick", function(event) {
-        var dslInput = "move left by 1";
+    $('#left').on('vclick', function(event) {
+        var dslInput = 'move left by 1';
         var gameId = that.gameId;
-        that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId, user: localStorage.getItem("KissingTurtles.UserId")});
+        that.executeButtonClicked.notify({title: 'KissingTurtles', content: dslInput, gameId: gameId, user: localStorage.getItem('KissingTurtles.UserId')});
     });
 
-    $("#right").on("vclick", function(event) {
-        var dslInput = "move right by 1";
+    $('#right').on('vclick', function(event) {
+        var dslInput = 'move right by 1';
         var gameId = that.gameId;
-        that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId, user: localStorage.getItem("KissingTurtles.UserId")});
+        that.executeButtonClicked.notify({title: 'KissingTurtles', content: dslInput, gameId: gameId, user: localStorage.getItem('KissingTurtles.UserId')});
     });
 
-    $("#up").on("vclick", function(event) {
-        var dslInput = "move up by 1";
+    $('#up').on('vclick', function(event) {
+        var dslInput = 'move up by 1';
         var gameId = that.gameId;
-        that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId, user: localStorage.getItem("KissingTurtles.UserId")});
+        that.executeButtonClicked.notify({title: 'KissingTurtles', content: dslInput, gameId: gameId, user: localStorage.getItem('KissingTurtles.UserId')});
     });
 
-    $("#down").on("vclick", function(event) {
-        var dslInput = "move down by 1";
+    $('#down').on('vclick', function(event) {
+        var dslInput = 'move down by 1';
         var gameId = that.gameId;
-        that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId, user: localStorage.getItem("KissingTurtles.UserId")});
+        that.executeButtonClicked.notify({title: 'KissingTurtles', content: dslInput, gameId: gameId, user: localStorage.getItem('KissingTurtles.UserId')});
     });
 
-    $("#dsl").on("vclick", function(event) {
+    $('#dsl').on('vclick', function(event) {
         if($('#dsl-text').css('display') == 'none'){
             $('#dsl-text').show('slow');
         } else {
@@ -358,32 +430,32 @@ kissingturtles.view.gameview = function (model, elements) {
     //----------------------------------------------------------------------------------------
     //   Click on Save on user page. Your name is asked only once.
     //----------------------------------------------------------------------------------------
-    $("#submit-user").on("vclick", function(event) {
+    $('#submit-user').on('vclick', function(event) {
         var name = $('#input-user-name').val();
-        localStorage.setItem("KissingTurtles.UserId", name);
-        $.mobile.changePage($("#section-list-games"));
+        localStorage.setItem('KissingTurtles.UserId', name);
+        $.mobile.changePage($('#section-list-games'));
     });
 
     //----------------------------------------------------------------------------------------
     //   Click on Execute my DSL script brings you here
     //----------------------------------------------------------------------------------------
-    $("#submit-game").on("vclick", function(event) {
+    $('#submit-game').on('vclick', function(event) {
         var dslInput = $('#input-move-name').val();
         var gameId = that.gameId;
         toggle('#submit-game');
-        var lang = "groovy";
-        if (that.role == "emily") {
-            lang = "scala";
+        var lang = 'groovy';
+        if (that.role == 'emily') {
+            lang = 'scala';
         }
-        that.executeButtonClicked.notify({title: "KissingTurtles", lang: lang, content: dslInput, gameId: gameId, user: that.user, role: that.role});
+        that.executeButtonClicked.notify({title: 'KissingTurtles', lang: lang, content: dslInput, gameId: gameId, user: that.user, role: that.role});
     });
 
     //----------------------------------------------------------------------------------------
     //   Click on 'Create your own game' brings you here
     //----------------------------------------------------------------------------------------
-    $("#create-game").on('vclick', function (event) {
+    $('#create-game').on('vclick', function (event) {
         var newElement = {
-                user1: localStorage.getItem("KissingTurtles.UserId")
+            user1: localStorage.getItem('KissingTurtles.UserId')
         };
         that.createButtonClicked.notify(newElement, event);
     });
@@ -392,18 +464,18 @@ kissingturtles.view.gameview = function (model, elements) {
     //   Rendering methods
     //----------------------------------------------------------------------------------------
     var showElement = function (element) {
-        resetForm("form-update-game");
+        resetForm('form-update-game');
         if (element) {
             $.each(element, function(name, value) {
-                var input = $("#input-game-" + name);
+                var input = $('#input-game-' + name);
                 input.val(value);
             });
         }
-        $("#delete-game").show();
+        $('#delete-game').show();
     };
 
     var resetForm = function (form) {
-        $('input[type="date"]').each(function() {
+        $("input[type='date']").each(function() {
             $(this).scroller('destroy');
             $(this).scroller({
                 preset: 'date',
@@ -413,14 +485,14 @@ kissingturtles.view.gameview = function (model, elements) {
                 dateOrder: 'mmD ddyy'
             });
         });
-        var div = $("#" + form);
-        div.find('input:text, input:hidden, input[type="number"], input:file, input:password, textarea').val('');
+        var div = $('#' + form);
+        div.find("input:text, input:hidden, input[type='number'], input:file, input:password, textarea").val('');
         div.find('input:radio, input:checkbox').removeAttr('checked').removeAttr('selected');//.checkboxradio('refresh');
     };
-    
+
 
     var renderList = function () {
-        
+
         $('#list-games').empty();
         var key, items = model.getItems();
         for (key in items) {
@@ -434,14 +506,14 @@ kissingturtles.view.gameview = function (model, elements) {
     var clickGame = function(event) {
         var gameId = $(event.currentTarget).attr('data-id');
         if(gameId) {
-            var obj = {user2: localStorage.getItem("KissingTurtles.UserId"), gameId: gameId};
+            var obj = {user2: localStorage.getItem('KissingTurtles.UserId'), gameId: gameId};
             var newElement = {
                 game: JSON.stringify(obj)
             };
             that.updateButtonClicked.notify(newElement, event);
         }
     };
-    
+
     var renderElement = function (element) {
         if (element.offlineAction !== 'DELETED') {
             var a = $('<a>').attr({ href: '#section-show-game'});
@@ -451,11 +523,11 @@ kissingturtles.view.gameview = function (model, elements) {
             a.text(getText(element));
             a.on('vclick', clickGame);
             // filter, display only game created by other
-            if (element.user1 != localStorage.getItem("KissingTurtles.UserId") && element.user2 == null) {
-                if (element.offlineStatus === "NOT-SYNC") {
-                    $("#list-games").append($('<li data-theme="e">').append(a));
+            if (element.user1 != localStorage.getItem('KissingTurtles.UserId') && element.user2 == null) {
+                if (element.offlineStatus === 'NOT-SYNC') {
+                    $('#list-games').append($("<li data-theme='e'>").append(a));
                 } else {
-                    $("#list-games").append($('<li>').append(a));
+                    $('#list-games').append($('<li>').append(a));
                 }
             }
         }
@@ -463,10 +535,10 @@ kissingturtles.view.gameview = function (model, elements) {
 
     var updateElement = function (element) {
         // filter, display only game created by other
-        if (element.user1 != localStorage.getItem("KissingTurtles.UserId") && element.user2 == null) {
-          $('#game-list-' + element.id).parents('li').replaceWith(createListItem(element));
+        if (element.user1 != localStorage.getItem('KissingTurtles.UserId') && element.user2 == null) {
+            $('#game-list-' + element.id).parents('li').replaceWith(createListItem(element));
         } else {
-          $('#game-list-' + element.id).parents('li').remove();
+            $('#game-list-' + element.id).parents('li').remove();
         }
     };
 
@@ -490,7 +562,7 @@ kissingturtles.view.gameview = function (model, elements) {
     };
 
     var getText = function (data) {
-        return data.user1 + " is waiting for you";
+        return data.user1 + ' is waiting for you';
     };
 
     return that;

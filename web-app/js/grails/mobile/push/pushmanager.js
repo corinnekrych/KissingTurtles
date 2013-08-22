@@ -78,10 +78,6 @@ grails.mobile.push.pushmanager = function (grailsEvents, domainName, store, mode
             if (userId == userIdNotification) {
                 return;
             }
-            data = data.instance;
-            if (data !== Object(data)) {
-                data = JSON.parse(data);
-            }
             if (model.getItems()[data.id]) {
                 data.NOTIFIED = true;
                 if (options.offline) {

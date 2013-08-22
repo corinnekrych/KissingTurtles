@@ -21,6 +21,7 @@ class Game {
     int emilyY
     int emilyRot
     String emilyDir
+    Long lastModified
 
     static constraints = {
         user1 nullable: true
