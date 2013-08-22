@@ -1,4 +1,4 @@
-var kissingturtles = kissingturtles || {};
+    var kissingturtles = kissingturtles || {};
 kissingturtles.view = kissingturtles.view || {};
 
 kissingturtles.view.gameview = function (model, elements) {
@@ -34,7 +34,6 @@ kissingturtles.view.gameview = function (model, elements) {
                 var franklinImageName = localStorage.getItem('kissingturtles.settings.franklin');
                 if (franklinImageName) {
                     franklinImageName += '.png';
-
                     if (!conf.turtles) {
                        conf.turtles = {};
                     }
