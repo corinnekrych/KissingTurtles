@@ -14,8 +14,8 @@ import dsl.Position
 
 class GameController {
 
-    int delay = 60000   // delay for 5 sec.
-    int period = 60000  // repeat every sec.
+    int delay = 600000   // delay for 5 sec.
+    int period = 600000  // repeat every sec.
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
@@ -117,7 +117,7 @@ class GameController {
 
     def run() {
         def conf
-        def lang = "scala" //params.lang
+        def lang = "groovy" //params.lang
         def game = Game.findById(params.gameId)
         game.lastModified = new Date().getTime()
 
