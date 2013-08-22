@@ -22,14 +22,8 @@ class GameController {
     def gameService
     def wallGeneratorService
     Binding binding
-<<<<<<< HEAD
-
-
     Timer timer = new Timer()
 
-    def executeScala(game) {
-=======
-    
     /* Transforms walls into an int[][] array for scala conversion */
     def contains(walls, i,j) {
       walls.any {(it.x == i) && (it.y == j)}
@@ -49,7 +43,6 @@ class GameController {
    static def scalaNotifiers = [:]
    
    def executeScala(game) {
->>>>>>> 843084dea634d2fba59b1d94bc47189a8cb07888
         // Ugly search how to do better
         def cp = System.getProperty("java.class.path")
         if (!cp.contains("scala")) {
