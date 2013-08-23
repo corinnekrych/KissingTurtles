@@ -67,7 +67,7 @@ class Position {
         rotation = 90
         direction = '+x'
         def isOnWalls = walls.find() {
-            it.x == x && it.y == y
+            it[0] == x && it[1] == y
         }
         if (isOnWalls != null) {
           random(gridSize, walls)

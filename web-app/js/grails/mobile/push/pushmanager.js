@@ -91,10 +91,11 @@ grails.mobile.push.pushmanager = function (grailsEvents, domainName, store, mode
             if (data !== Object(data)) {
                 data = JSON.parse(data);
             }
-            var userId = data.configuration.userIdNotification;
+            var userId = data.userIdNotification;
             if (userId == userIdNotification) {
                 return;
             }
+            data = data.instance;
             data.NOTIFIED = true;
             model.execute(data);
         });

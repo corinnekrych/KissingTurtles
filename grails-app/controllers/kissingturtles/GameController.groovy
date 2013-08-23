@@ -26,23 +26,23 @@ class GameController {
 
     /* Transforms walls into an int[][] array for scala conversion */
     def contains(walls, i,j) {
-      walls.any {(it.x == i) && (it.y == j)}
+        walls.any {(it.x == i) && (it.y == j)}
     }
-    
+
     def getScalaWalls(walls, size) {
-       def scalaWall = new int[size][size]
-          for (int i = 0; i < size; i++) {
-             for (int j = 0; j < size; j++) {
+        def scalaWall = new int[size][size]
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
                 if (contains(walls,i,j)) scalaWall[i][j]=1 else scalaWall[i][j]=0
-                }
-          }
-       scalaWall
-   }
-   /* End of Helper */
-   
-   static def scalaNotifiers = [:]
-   
-   def executeScala(game) {
+            }
+        }
+        scalaWall
+    }
+    /* End of Helper */
+
+    static def scalaNotifiers = [:]
+
+    def executeScala(game) {
         // Ugly search how to do better
         def cp = System.getProperty("java.class.path")
         if (!cp.contains("scala")) {
@@ -54,7 +54,7 @@ class GameController {
         def stream = new ByteArrayOutputStream()
         def printStream = new PrintStream(stream, true, encoding)
 
-        
+
         def turtle
         def result = ""
         def stacktrace = ""
@@ -83,34 +83,34 @@ class GameController {
 
             def walls = JSON.parse(game.mazeDefinition)['walls']['steps'][0].values()
             def scalaWalls = getScalaWalls(walls,15)
-     
+
             def userInteraction = new dslprez.scala.game.Notifier(userInteract,null)
-           println("My notifier for "+params.role+" = "+userInteraction)
-           scalaNotifiers[params.role] = userInteraction
-            
+            println("My notifier for "+params.role+" = "+userInteraction)
+            scalaNotifiers[params.role] = userInteraction
+
             if (game.role1 == params.role) {
-              turtle = new dslprez.scala.game.Turtle("franklin", "image", franklinPosition, scalaWalls, userInteraction)
+                turtle = new dslprez.scala.game.Turtle("franklin", "image", franklinPosition, scalaWalls, userInteraction)
             } else {
-              turtle = new dslprez.scala.game.Turtle("emily", "image", emilyPosition, scalaWalls, userInteraction)
+                turtle = new dslprez.scala.game.Turtle("emily", "image", emilyPosition, scalaWalls, userInteraction)
             }
 
             userInteraction.setTurtle(turtle)
-            
+
             evaluator.addImport("dslprez.scala.game._")
             evaluator.addImport("dslprez.scala.game.Turtle.end")
 
-            
+
             evaluator.bind("turtleInstance","dslprez.scala.game.Turtle",turtle)
             evaluator.eval("implicit val I = turtleInstance")
-            
+
             def finalScript = "Turtle startDsl {\n"+params.content+"\nend\n}\n"
-            
+
             result = evaluator.eval(finalScript)
-                 
+
         } finally {
             if (evaluator != null) evaluator.close()
         }
- 
+
         gameService.runScalaFormatting(game, turtle, params.userIdNotification)
 
     }
@@ -119,13 +119,6 @@ class GameController {
         def conf
         def lang = "groovy" //params.lang
         def game = Game.findById(params.gameId)
-        game.lastModified = new Date().getTime()
-
-        // save game
-        if (!game.save(flush: true)) {
-            ValidationErrors validationErrors = gameInstance.errors
-            render validationErrors as JSON
-        }
 
         if (lang == "scala") {
             conf = executeScala(game)
@@ -133,6 +126,7 @@ class GameController {
             conf = executeGroovy(game)
         }
 
+        game.lastModified = new Date().getTime()
         // save current position
         if (!game.save(flush: true)) {
             ValidationErrors validationErrors = game.errors
@@ -140,22 +134,23 @@ class GameController {
         }
 
         // notify when turtle moves
-        event topic: "execute-game", data: conf
-        render conf
+        event topic: "execute-game", data: [userIdNotification: params.userIdNotification, instance:conf]
+        render conf as JSON
     }
 
     def executeGroovy(game) {
         binding = new Binding()
         def userInteraction = new UserInteraction(this, params.gameId, params.userIdNotification, params.user, params.role)
 
-        Position franklinPosition = new Position(game.franklinX, game.franklinY, game.franklinRot, game.franklinDir)
-        Position emilyPosition = new Position(game.emilyX, game.emilyY, game.emilyRot, game.emilyDir)
+        def mazeDefinition = JSON.parse(game.mazeDefinition)
+        Position emilyPosition = new Position(mazeDefinition['turtles']['position']['emily'][0], mazeDefinition['turtles']['position']['emily'][1], 0, '+x')
+        Position franklinPosition = new Position(mazeDefinition['turtles']['position']['franklin'][0], mazeDefinition['turtles']['position']['franklin'][1], 0, '+x')
 
         def scriptInstance = new DslScript(params)
         def script = scriptInstance.content
         def turtle
-        def walls = JSON.parse(game.mazeDefinition)['walls']['steps'][0].values()
-        if (game.role1 == params.role) {
+        def walls = mazeDefinition['walls']
+        if ("franklin" == params.role) {
             turtle = new Turtle("franklin", "image", franklinPosition, walls, userInteraction)
         } else {
             turtle = new Turtle("emily", "image", emilyPosition, walls, userInteraction)
@@ -180,20 +175,20 @@ class GameController {
         shell.evaluate(script)
 
         def result = binding.getVariable('turtle').result
-        gameService.runFormatting(game, turtle, result, params.userIdNotification)
+        gameService.runFormatting(game, mazeDefinition, turtle, result, params.userIdNotification)
     }
 
     def answer() {
-      //println("Answer")
-      if (false) { //scala) {
-        def userInteraction =  scalaNotifiers[params.role]
-         println("My notifier for "+params.role+" = "+userInteraction)
-        userInteraction.notify(params.content.toString())
-      } else {           
-         UserInteraction userInteraction = new UserInteraction(this, params.gameId, "", params.user, params.role)
-         userInteraction.notifyResponse(params.content)
-      }
-      render "{\"userIdNotification\":\"" + params.userIdNotification + "\"}"
+        //println("Answer")
+        if (false) { //scala) {
+            def userInteraction =  scalaNotifiers[params.role]
+            println("My notifier for "+params.role+" = "+userInteraction)
+            userInteraction.notify(params.content.toString())
+        } else {
+            UserInteraction userInteraction = new UserInteraction(this, params.gameId, "", params.user, params.role)
+            userInteraction.notifyResponse(params.content)
+        }
+        render "{\"userIdNotification\":\"" + params.userIdNotification + "\"}"
     }
 
     def index() {
@@ -226,47 +221,29 @@ class GameController {
         // create new Game
         Game gameInstance = new Game()
         gameInstance.user1 = params.user1
-        gameInstance.role1 = 'franklin'
         gameInstance.mazeDefinition = mazeDefinition
-        gameInstance.franklinX = franklinPosition.x
-        gameInstance.franklinY = franklinPosition.y
-        gameInstance.franklinRot = franklinPosition.rotation
-        gameInstance.franklinDir = franklinPosition.direction
-        gameInstance.treeX = treePosition.x
-        gameInstance.treeY = treePosition.y
-        gameInstance.treeRot = treePosition.rotation
-        gameInstance.treeDir = treePosition.direction
         gameInstance.lastModified = new Date().getTime()
         if (!gameInstance.save(flush: true)) {
             ValidationErrors validationErrors = gameInstance.errors
             render validationErrors as JSON
         }
-        // notify when first turtle create a new game
-        def asJSON = gameInstance as JSON
-        def json = asJSON.toString(true)
-        def builder = new JsonBuilder()
-        builder {
-            userIdNotification params.userIdNotification
-            instance json
-        }
-        event topic: "save-game", data: builder.toString()
         timer.scheduleAtFixedRate(new CleanGameTask(gameInstance.id, this), delay, period)
-        render gameInstance as JSON
+
+        // notify when first turtle create a new game
+        event topic: "save-game", data: [userIdNotification: params.userIdNotification, instance:[id:gameInstance.id, version: gameInstance.version, user1: gameInstance.user1]]
+
+        def oooo = [
+                id : gameInstance.id,
+                version : gameInstance.version,
+                user1: gameInstance.user1,
+                mazeDefinition: mazeDefinition
+        ]
+        render oooo as JSON
     }
 
     def update() {
         JSONObject jsonObject = JSON.parse(params.game)
         def gameInstance = Game.get(jsonObject.gameId)
-
-        // generate position for Emily (anywhere except on the walls)
-        def walls = JSON.parse(gameInstance.mazeDefinition)['walls']['steps'][0].values()
-        Position emilyPosition = new Position().random(15, walls)
-        gameInstance.emilyX = emilyPosition.x
-        gameInstance.emilyY = emilyPosition.y
-        gameInstance.emilyRot = emilyPosition.rotation
-        gameInstance.emilyDir = emilyPosition.direction
-
-        gameInstance.mazeDefinition = gameService.updateFormatting(gameInstance, emilyPosition)
 
         if (!gameInstance) {
             flash.message = message(code: 'default.not.found.message', args: [message(code: 'game.label', default: 'Game'), params.id])
@@ -278,40 +255,44 @@ class GameController {
             flash.message = message(code: 'default.game.already.started', args: [message(code: 'game.label', default: 'Game'), params.id])
             render flash as JSON
         }
-        gameInstance.user2 = jsonObject.get("user2")
-        gameInstance.role2 = 'emily'
-        gameInstance.lastModified = new Date().getTime()
 
+        // generate position for Emily (anywhere except on the walls)
+        def mazeDefinition = gameService.updateFormatting(gameInstance)
+
+        gameInstance.user2 = jsonObject.get("user2")
+        gameInstance.lastModified = new Date().getTime()
+        gameInstance.mazeDefinition = mazeDefinition
         // save game
         if (!gameInstance.save(flush: true)) {
             ValidationErrors validationErrors = gameInstance.errors
             render validationErrors as JSON
         }
 
-        // notify that Emily enters the game
-        def asJSON = gameInstance as JSON
-        def builder = new JsonBuilder()
-        builder {
-            userIdNotification params.userIdNotification
-            instance asJSON.toString()
-        }
-        event topic: "update-game", data: builder.toString()
-        render gameInstance as JSON
+
+        // notify when first turtle create a new game
+        event topic: "update-game", data: [userIdNotification: params.userIdNotification, instance:[id:gameInstance.id, version: gameInstance.version, user1: gameInstance.user1, user2: gameInstance.user2, turtles: mazeDefinition['turtles']]]
+
+        def oooo = [
+                id : gameInstance.id,
+                version : gameInstance.version,
+                user1: gameInstance.user1,
+                user2: gameInstance.user2,
+                mazeDefinition: mazeDefinition
+        ]
+        render oooo as JSON
     }
 
     def delete() {
         def gameInstance = Game.get(params.id)
-        if (!gameInstance) {
-            flash.message = message(code: 'default.not.found.message', args: [message(code: 'game.label', default: 'Game'), params.id])
-            render flash as JSON
-        }
-        gameInstance.delete(flush: true)
         def builder = new JsonBuilder()
         builder {
             userIdNotification params.userIdNotification
             id params.id.toString()
         }
-        event topic: "delete-game", data: builder.toString()
+        if (gameInstance) {
+            gameInstance.delete(flush: true)
+            event topic: "delete-game", data: builder.toString()
+        }
         render builder as JSON
     }
 }

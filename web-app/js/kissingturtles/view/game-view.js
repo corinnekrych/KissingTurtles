@@ -25,38 +25,35 @@ kissingturtles.view.gameview = function (model, elements) {
         } else if (data.item.message) {
             alert('Ooops something wrong happens');
         } else {
-            var confAsString = data.item.mazeDefinition;
-            var conf = JSON.parse(confAsString);
-
             if (!data.item.NOTIFIED) {
-                that.currentMaze = conf;
+                that.currentMaze = data.item.mazeDefinition;
                 // take local config to customize Franklin's picture
                 var franklinImageName = localStorage.getItem('kissingturtles.settings.franklin');
                 if (franklinImageName) {
                     franklinImageName += '.png';
-                    if (!conf.turtles) {
-                       conf.turtles = {};
+                    if (!that.currentMaze.turtles) {
+                        that.currentMaze.turtles = {};
                     }
-                    if (!conf.turtles.images) {
-                        conf.turtles.images = {}
+                    if (!that.currentMaze.turtles.images) {
+                        that.currentMaze.turtles.images = {}
                     }
-                    conf.turtles.images['franklin'] = franklinImageName;
+                    that.currentMaze.turtles.images['franklin'] = franklinImageName;
                 }
                 var emilyImageName = localStorage.getItem('kissingturtles.settings.emily');
                 if (emilyImageName) {
-                    if (!conf.turtles) {
-                        conf.turtles = {};
+                    if (!that.currentMaze.turtles) {
+                        that.currentMaze.turtles = {};
                     }
-                    if (!conf.turtles.images) {
-                        conf.turtles.images = {}
+                    if (!that.currentMaze.turtles.images) {
+                        that.currentMaze.turtles.images = {}
                     }
                     emilyImageName += '.png';
-                    conf.turtles.images['emily'] = emilyImageName;
+                    that.currentMaze.turtles.images['emily'] = emilyImageName;
                 }
 
-                that.drawGrid = ktDrawGrid(document.getElementById('canvasGrid'), conf.walls.grid);
-                that.drawWalls = ktDrawWalls(document.getElementById('canvasWalls'), conf.walls, that.currentMaze.walls.steps[0]);
-                that.drawTurtles = ktDrawTurtles(document.getElementById('canvasTurtles'), conf.turtles, that.currentMaze.turtles.steps[0]);
+                that.drawGrid = ktDrawGrid(document.getElementById('canvasGrid'), that.currentMaze.turtles.grid);
+                that.drawWalls = ktDrawWalls(document.getElementById('canvasWalls'), that.currentMaze.walls, that.currentMaze.turtles.grid);
+                that.drawTurtles = ktDrawTurtles(document.getElementById('canvasTurtles'), that.currentMaze.turtles, that.currentMaze.turtles.grid);
                 that.role = 'franklin';
                 that.user = localStorage.getItem('KissingTurtles.UserId');
                 that.gameId = data.item.id;
@@ -67,6 +64,7 @@ kissingturtles.view.gameview = function (model, elements) {
 
             if (!data.item.NOTIFIED) {
                 $.mobile.changePage($('#section-show-game'));
+                $('#input-move-name').textinput('enable')
                 $('#input-move-name').val('');
                 $('#response').val('');
                 $('#submit-game').button('disable');
@@ -88,26 +86,24 @@ kissingturtles.view.gameview = function (model, elements) {
             event.stopPropagation();
         } else {
             // In case of Emily or Franklin we go here
-            var confAsString = data.item.mazeDefinition;
-            var conf = JSON.parse(confAsString);
-            that.currentMaze = conf;
             updateElement(data.item);
             if (!data.item.NOTIFIED) {
+                that.currentMaze = data.item.mazeDefinition;
                 // For Emily game, initialize canvas
                 // take local config to customize Franklin's picture
                 var franklinImageName = localStorage.getItem('kissingturtles.settings.franklin');
                 if (franklinImageName) {
                     franklinImageName += '.png';
-                    conf.turtles.images['franklin'] = franklinImageName;
+                    that.currentMaze.turtles.images['franklin'] = franklinImageName;
                 }
                 var emilyImageName = localStorage.getItem('kissingturtles.settings.emily');
                 if (emilyImageName) {
                     emilyImageName += '.png';
-                    conf.turtles.images['emily'] = emilyImageName;
+                    that.currentMaze.turtles.images['emily'] = emilyImageName;
                 }
-                that.drawGrid = ktDrawGrid(document.getElementById('canvasGrid'), conf.walls.grid);
-                that.drawWalls = ktDrawWalls(document.getElementById('canvasWalls'), conf.walls, that.currentMaze.walls.steps[0]);
-                that.drawTurtles = ktDrawTurtles(document.getElementById('canvasTurtles'), conf.turtles, that.currentMaze.turtles.steps[0]);
+                that.drawGrid = ktDrawGrid(document.getElementById('canvasGrid'), that.currentMaze.turtles.grid);
+                that.drawWalls = ktDrawWalls(document.getElementById('canvasWalls'), that.currentMaze.walls, that.currentMaze.turtles.grid);
+                that.drawTurtles = ktDrawTurtles(document.getElementById('canvasTurtles'), that.currentMaze.turtles, that.currentMaze.turtles.grid);
 
                 that.user = localStorage.getItem('KissingTurtles.UserId');
                 that.role = 'emily';
@@ -120,10 +116,11 @@ kissingturtles.view.gameview = function (model, elements) {
                 $('#chat').trigger('expand');
                 $('#belldsl').removeClass('blink');
             } else if (that.role == 'franklin' && that.gameId == data.item.id) {
+                that.currentMaze.turtles = data.item.turtles
                 // For Franklin game
                 showGeneralMessage(data.item.user2 + ' joined the game as Emily!');
                 $('#submit-game').button('enable');
-                that.drawTurtles({emily: that.currentMaze.turtles.steps[0].emily});
+                that.drawTurtles({emily: that.currentMaze.turtles.position['emily']});
                 $('#script').trigger('expand');
                 $('#belldsl').addClass('blink');
                 blink($('#belldsl'));
@@ -169,31 +166,33 @@ kissingturtles.view.gameview = function (model, elements) {
     //----------------------------------------------------------------------------------------
     that.model.executed.attach(function (data, event) {
         // only for my game
-        if (that.gameId == data.item.configuration.id) {
+        if (that.gameId == data.item.id) {
             // refresh me if it's not myself pls
             var myGameObject = data.item;
             if (!data.item.NOTIFIED) {
-                var otherPlayer = data.item.configuration.user1;
-                if (that.user == data.item.configuration.user1) {
-                    otherPlayer = data.item.configuration.user2
+                var otherPlayer = data.item.user1;
+                if (that.user == data.item.user1) {
+                    otherPlayer = data.item.user2
                 }
-                $.each(myGameObject.configuration.asks, function(key, value) {
-                    $.each(value, function(innerKey, innerValue) {
-                        if (innerKey == '_question') {
-                            $('#interaction').append('\n' + that.user + '\t: ' + innerValue).keyup();
-                        } else {
-                            $('#interaction').append('\n' + otherPlayer + '\t: ' + innerValue).keyup();
-                        }
+                if (myGameObject.asks) {
+                    $.each(myGameObject.asks, function(key, value) {
+                        $.each(value, function(innerKey, innerValue) {
+                            if (innerKey == '_question') {
+                                $('#interaction').append('\n' + that.user + '\t: ' + innerValue).keyup();
+                            } else {
+                                $('#interaction').append('\n' + otherPlayer + '\t: ' + innerValue).keyup();
+                            }
 
+                        });
+                        $('#response').textinput('disable');
+                        $('#answer').button('disable');
                     });
-                    $('#response').textinput('disable');
-                    $('#answer').button('disable');
-                });
+                }
             } else {
                 toggle('#submit-game');
             }
 
-            if (data.item.configuration.winningAnimation) {
+            if (data.item.win) {
                 $('#input-move-name').val('');
                 $('#input-move-name').textinput('disable')
                 $('#response').val('');
@@ -205,13 +204,16 @@ kissingturtles.view.gameview = function (model, elements) {
                 }, 4000);
             }
 
-            $.each(myGameObject.configuration.steps, function(key, value) {
-                that.drawTurtles(value, function () {
-                    var win = myGameObject.configuration.winningAnimation;
-                    if (win) {
-                        that.drawTurtles.win(win.x, win.y);
-                    }
-                });
+            $.each(myGameObject.position, function(key, value) {
+                for (var i= 0; i < value.length; i++) {
+                    var obj= {};
+                    obj[key] = value[i];
+                    that.drawTurtles(obj, function () {
+                        if (myGameObject.win) {
+                            that.drawTurtles.win(myGameObject.winningAnimation[0], myGameObject.winningAnimation[1]);
+                        }
+                    });
+                }
             });
         }
     });

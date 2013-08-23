@@ -30,13 +30,14 @@
         return from + (to - from) * progress;
     }
 
-    return function (canvas, config, initial) {
+    return function (canvas, config, gridSize) {
         var ctx = canvas.getContext('2d');
         var width = canvas.width;
         var height = canvas.height;
-        var wstep = width / (config.grid + 1);
-        var hstep = height / (config.grid + 1);
-        var current = initial;
+        var grid = gridSize
+        var wstep = width / (grid + 1);
+        var hstep = height / (grid + 1);
+        var current = config;
         var animations = {};
         var paused = true;
 
@@ -55,7 +56,6 @@
                 alert("Error!!!");
             };
 
-//            src[file].src = 'images/game/snake.png';
             src[file].src = 'images/game/' + file;
         };
         var fetchImages = function (imgs) {
@@ -68,7 +68,7 @@
                 }
             }
         };
-        fetchImages(config.images);
+        fetchImages(current.images);
 
         // Drawing
         var clean = function () {
@@ -77,7 +77,7 @@
 
         var drawImage = function (name, x, y, rotation) {
             ctx.save();
-            ctx.translate((x + 1) * wstep, (config.grid - y) * hstep);
+            ctx.translate((x + 1) * wstep, (grid - y) * hstep);
             ctx.rotate(rotation);
             ctx.drawImage(images[name], -wstep/2, -hstep/2, wstep, hstep);
             ctx.restore();
@@ -99,20 +99,21 @@
                         if (animation.cb) {
                             setTimeout(animation.cb, 0);
                         }
+                        current.position[name] = animation.to;
                         delete animations[name];
                     } else {
                         animateMore = true;
                         var progress = 1 - ((animation.end - timestamp) / config.stepDuration);
-                        var currentx = computeProgress(animation.from.x, animation.to.x, progress);
-                        var currenty = computeProgress(animation.from.y, animation.to.y, progress);
+                        var currentx = computeProgress(animation.from[0], animation.to[0], progress);
+                        var currenty = computeProgress(animation.from[1], animation.to[1], progress);
                         drawImage(name, currentx, currenty, 0);//Can handle rotation too
                     }
                 }
             }
-            for (name in current) {
-                if (current.hasOwnProperty(name)) {
-                    item = current[name];
-                    drawImage(name, item.x, item.y, 0);//Can handle rotation too
+            for (name in current.position) {
+                if (current.position.hasOwnProperty(name)) {
+                    item = current.position[name];
+                    drawImage(name, item[0], item[1], 0);//Can handle rotation too
                 }
             }
             if (!animateMore) {
@@ -141,22 +142,22 @@
             var caller = null;
             for (var name in frame) {
                 if (frame.hasOwnProperty(name)) {
-                    if (current.hasOwnProperty(name)) {
+                    if (current.position.hasOwnProperty(name)) {
                         // Currently present but not animated
                         animations[name] = {
-                            from: current[name],
+                            from: current.position[name],
                             to: frame[name],
                             end: Date.now() + config.stepDuration
                         };
                         caller = animations[name];
-                        delete current[name];
+                        delete current.position[name];
                     } else if (animations.hasOwnProperty(name)) {
                         // Currently animated: add the step once this one is finished
                         animateLater(name, frame[name], callback);
                         callback = null;
                         caller = {};
                     } else {
-                        current[name] = frame[name];
+                        current.position[name] = frame[name];
                     }
                 }
             }
@@ -180,17 +181,18 @@
                 'winningHeart4': 'heart.png'
             });
             var dirs = ['+x', '-x', '+y', '-y'];
-            var max = Math.ceil((Math.max(Math.max(config.grid - x, x), Math.max(config.grid - y, y)) / speed) + 2);
+            var max = Math.ceil((Math.max(Math.max(grid - x, x), Math.max(grid - y, y)) / speed) + 2);
             var i = 0;
             var iteration = function () {
+                console.log("win " + x + ":" + y);
                 if (i < max) {
                     dist = i * speed;
-                    oneMoreStep({
-                        winningHeart1: { x: x + dist, y: y       , direction: dirs[0] },
-                        winningHeart2: { x: x - dist, y: y       , direction: dirs[1] },
-                        winningHeart3: { x: x       , y: y + dist, direction: dirs[2] },
-                        winningHeart4: { x: x       , y: y - dist, direction: dirs[3] }
-                    }, iteration);
+                    var obj = {}
+                    obj['winningHeart1'] = [x + dist, y];
+                    obj['winningHeart2'] = [x - dist, y];
+                    obj['winningHeart3'] = [x       , y + dist];
+                    obj['winningHeart4'] = [x       , y - dist];
+                    oneMoreStep(obj, iteration);
                     for (var j = 0; j < dirs.length; j++) {
                         dirs[j] = nextDir(dirs[j]);
                     }

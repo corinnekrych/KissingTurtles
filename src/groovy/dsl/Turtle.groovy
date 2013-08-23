@@ -42,36 +42,38 @@ class Turtle {
     Turtle by(Integer step) {
         Position newPosition = currentPosition.move(step)
 
-        def obstacleX = maze.findAll() {it ->
-            ((currentPosition.direction == '+x' && currentPosition.x < it.x && it.x <= newPosition.x) ||
-                    (currentPosition.direction == '-x' && currentPosition.x > it.x && it.x >= newPosition.x)) && (currentPosition.y == it.y)
-        }
-        if (obstacleX) {
-
-            if (currentPosition.direction == '+x') {
-                def x = obstacleX.collect() { Math.abs(it.x) }
-                def min = x.min()
-                newPosition = new Position(min - 1, currentPosition.y, 90, '+x')
-            } else if (currentPosition.direction == '-x') {
-                def x = obstacleX.collect() { Math.abs(it.x) }
-                def min = x.max()
-                newPosition = new Position(min + 1, currentPosition.y, -90, '-x')
-            }
-        }
-        def obstacleY = maze.findAll() {it -> ((currentPosition.direction == '+y' && currentPosition.y < it.y && it.y <= newPosition.y)||
-                (currentPosition.direction == '-y' && currentPosition.y > it.y && it.y >= newPosition.y)) && (currentPosition.x == it.x)}
-        if (obstacleY) {
-
-            if (currentPosition.direction == '+y') {
-                def y = obstacleY.collect() { Math.abs(it.y) }
-                def minY = y.min()
-                newPosition = new Position(currentPosition.x, minY - 1, 0, '+y')
-            } else if (currentPosition.direction == '-y') {
-                def y = obstacleY.collect() { Math.abs(it.y) }
-                def minY = y.max()
-                newPosition = new Position(currentPosition.x, minY + 1, 180, '-y')
-            }
-        }
+//        def obstacleX = maze.findAll() {it ->
+//            ((currentPosition.direction == '+x' && currentPosition.x < it[0] && it[0] <= newPosition.x) ||
+//                    (currentPosition.direction == '-x' && currentPosition.x > it[0] && it[0] >= newPosition.x)) && (currentPosition.y == it[1])
+//        }
+//        if (obstacleX) {
+//
+//            if (currentPosition.direction == '+x') {
+//                def x = obstacleX.collect() { Math.abs(it[0]) }
+//                def min = x.min()
+//                newPosition = new Position(min - 1, currentPosition.y, 90, '+x')
+//            } else if (currentPosition.direction == '-x') {
+//                def x = obstacleX.collect() {
+//                    Math.abs(it[0])
+//                }
+//                def min = x.max()
+//                newPosition = new Position(min + 1, currentPosition.y, -90, '-x')
+//            }
+//        }
+//        def obstacleY = maze.findAll() {it -> ((currentPosition.direction == '+y' && currentPosition.y < it[1] && it[1] <= newPosition.y)||
+//                (currentPosition.direction == '-y' && currentPosition.y > it[1] && it[1] >= newPosition.y)) && (currentPosition.x == it[0])}
+//        if (obstacleY) {
+//
+//            if (currentPosition.direction == '+y') {
+//                def y = obstacleY.collect() { Math.abs(it[1]) }
+//                def minY = y.min()
+//                newPosition = new Position(currentPosition.x, minY - 1, 0, '+y')
+//            } else if (currentPosition.direction == '-y') {
+//                def y = obstacleY.collect() { Math.abs(it[1]) }
+//                def minY = y.max()
+//                newPosition = new Position(currentPosition.x, minY + 1, 180, '-y')
+//            }
+//        }
 
         steps.add(newPosition)
         currentPosition = newPosition

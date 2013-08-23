@@ -7,15 +7,15 @@
     }
 }(this, function () {
 
-    return function (canvas, config, initial) {
+    return function (canvas, walls, gridSize) {
         var pixels = 200;
         var ctx = canvas.getContext('2d');
         var width = canvas.width;
         var height = canvas.height;
-        var grid = config.grid;
+        var grid = gridSize;
         var wstep = width / (grid + 1);
         var hstep = height / (grid + 1);
-        var current = initial;
+        var current = walls;
 
         // Drawing
         var clean = function () {
@@ -52,15 +52,6 @@
 
         };
 
-        var drawSimpleWall = function (x, y, rotation) {
-            ctx.save();
-            ctx.translate((x + 1) * wstep, (grid - y) * hstep);
-            ctx.rotate(rotation);
-            ctx.strokeStyle = 'green';
-            ctx.fillRect(-wstep/2, -hstep/2, wstep, hstep);
-            ctx.restore();
-        };
-
         // Animate from frame to frame
         var animate = function () {
             var name;
@@ -69,11 +60,8 @@
             ctx.save();
             ctx.scale(canvas.width / pixels, canvas.height / pixels);
 
-            for (name in current) {
-                if (current.hasOwnProperty(name)) {
-                    item = current[name];
-                    drawWall(item.x, (grid - item.y) - 1, 0);
-                }
+            for (var i = 0; i < current.length; i++) {
+                drawWall(current[i][0], (grid - current[i][1]) - 1, 0);
             }
 
             ctx.restore();
@@ -81,20 +69,6 @@
 
         // Draw initial frame
         animate();
-
-        var animateSimple = function () {
-            var name;
-            var item;
-            clean();
-
-            for (name in current) {
-                if (current.hasOwnProperty(name)) {
-                    item = current[name];
-                    drawSimpleWall(item.x, item.y, 0);
-                }
-            }
-        };
-        //animateSimple();
 
     };
 }));
