@@ -24,3 +24,46 @@ http://www.youtube.com/watch?v=jvVeWHvmG2I&feature=player_embedded
 
 Mathieu, Fabrice, Martyn and Corinne are the coders behind it.
 
+How to deploy to Heroku
+=======================
+
+##Prerequesite
+1. Have Heroku account
+2. Have heroku installed [Heroku install]()
+3. Have heroku-deploy plugin install
+
+```c
+heroku plugins:install https://github.com/heroku/heroku-deploy
+```
+
+4. Have Grail app prod war
+
+```c
+grails prod war
+```
+
+Optionally you can minify JS/CSS before running. You should have npm and grunt installed.
+
+```c
+grunt
+```
+
+## Create app
+```c
+heroku create dslprez
+```
+
+## Deploy app
+```c
+heroku deploy:war --war dslprez-0.1.war --app dslprez
+```
+## Read log
+```c
+heroku logs
+```
+
+## Heroku Options
+
+```c
+heroku config:set WEBAPP_RUNNER_OPT="--enable-compression" --app dslprez
+```
