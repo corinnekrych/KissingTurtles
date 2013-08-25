@@ -27,16 +27,21 @@ Mathieu, Fabrice, Martyn and Corinne are the coders behind it.
 How to deploy to Heroku
 =======================
 
-##Prerequesite
-1. Have Heroku account
-2. Have heroku installed [Heroku install]()
-3. Have heroku-deploy plugin install
+## Pre-requesite
+* Have Heroku account
+* Have Heroku installed [Heroku install](https://toolbelt.heroku.com/standalone)
+
+```c
+wget -qO- https://toolbelt.heroku.com/install.sh | sh
+```
+
+* Have heroku-deploy plugin installed
 
 ```c
 heroku plugins:install https://github.com/heroku/heroku-deploy
 ```
 
-4. Have Grail app prod war
+* Have Grails app prod war
 
 ```c
 grails prod war
