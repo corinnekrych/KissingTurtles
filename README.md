@@ -41,17 +41,20 @@ wget -qO- https://toolbelt.heroku.com/install.sh | sh
 heroku plugins:install https://github.com/heroku/heroku-deploy
 ```
 
+* Hhave npm and grunt installed.
+* Minify JS/CSS before running. 
+
+```c
+grunt
+```
+
 * Have Grails app prod war
 
 ```c
 grails prod war
 ```
 
-Optionally you can minify JS/CSS before running. You should have npm and grunt installed.
 
-```c
-grunt
-```
 
 ## Create app
 ```c
