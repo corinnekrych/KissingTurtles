@@ -25,3 +25,4 @@ target-eclipse
 lib
 
 /node_modules
+/dist
