@@ -26,7 +26,7 @@ class GameController {
 
     /* Transforms walls into an int[][] array for scala conversion */
     def contains(walls, i,j) {
-        walls.any {(it.x == i) && (it.y == j)}
+        walls.any {(it[0] == i) && (it[1] == j)}
     }
 
     def getScalaWalls(walls, size) {
@@ -34,15 +34,43 @@ class GameController {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 if (contains(walls,i,j)) scalaWall[i][j]=1 else scalaWall[i][j]=0
-            }
+                }
+          }
+       scalaWall
+   }
+   /* End of Helper */
+
+   static def scalaTurtles = [:]
+   
+   def getTurtle(localParams,game) {
+     if(scalaTurtles[localParams.role]==null) {
+         def mazeDefinition = JSON.parse(game.mazeDefinition)
+     
+         def franklinX = mazeDefinition['turtles']['position']['franklin'][0]
+         def franklinY = mazeDefinition['turtles']['position']['franklin'][1]
+         def emilyX = mazeDefinition['turtles']['position']['emily'][0]
+         def emilyY = mazeDefinition['turtles']['position']['emily'][1]
+        
+         def franklinStartPosition = dslprez.scala.game.Position.getPosition(franklinX, franklinY, "+x")
+         def emilyStartPosition = dslprez.scala.game.Position.getPosition(emilyX, emilyY, "+x")
+
+         def walls = mazeDefinition['walls']
+         def scalaWalls = getScalaWalls(walls,15)
+
+         def userInteract = new UserInteraction(this, localParams.gameId, localParams.userIdNotification, localParams.user, localParams.role)
+         
+         def turtle
+         if (localParams.role == "franklin") {
+            turtle = new dslprez.scala.game.Turtle("franklin", "image", franklinStartPosition, scalaWalls, userInteract)
+         } else {
+            turtle = new dslprez.scala.game.Turtle("emily", "image", emilyStartPosition, scalaWalls, userInteract)
+         }    
+         scalaTurtles[localParams.role]=turtle
         }
-        scalaWall
+        scalaTurtles[localParams.role]
     }
-    /* End of Helper */
-
-    static def scalaNotifiers = [:]
-
-    def executeScala(game) {
+       
+   def executeScala(game) {
         // Ugly search how to do better
         def cp = System.getProperty("java.class.path")
         if (!cp.contains("scala")) {
@@ -54,8 +82,8 @@ class GameController {
         def stream = new ByteArrayOutputStream()
         def printStream = new PrintStream(stream, true, encoding)
 
-
-        def turtle
+        def turtle = getTurtle(params,game)
+        
         def result = ""
         def stacktrace = ""
 
@@ -73,29 +101,7 @@ class GameController {
                 evaluator.withPluginOption("dslplugin:blacklistFile:anyfile")
             }
             */
-
-            def userInteract = new UserInteraction(this, params.gameId, params.userIdNotification, params.user, params.role)
-
-            def scalaFranklinDir = game.franklinDir //getScalaDir(game.franklinDir)
-            def scalaEmilyDir = game.emilyDir //getScalaDir(game.emilyDir)
-            def franklinPosition = dslprez.scala.game.Position.getPosition(game.franklinX, game.franklinY, game.franklinRot, scalaFranklinDir)
-            def emilyPosition = dslprez.scala.game.Position.getPosition(game.emilyX, game.emilyY, game.emilyRot, scalaEmilyDir)
-
-            def walls = JSON.parse(game.mazeDefinition)['walls']['steps'][0].values()
-            def scalaWalls = getScalaWalls(walls,15)
-
-            def userInteraction = new dslprez.scala.game.Notifier(userInteract,null)
-            println("My notifier for "+params.role+" = "+userInteraction)
-            scalaNotifiers[params.role] = userInteraction
-
-            if (game.role1 == params.role) {
-                turtle = new dslprez.scala.game.Turtle("franklin", "image", franklinPosition, scalaWalls, userInteraction)
-            } else {
-                turtle = new dslprez.scala.game.Turtle("emily", "image", emilyPosition, scalaWalls, userInteraction)
-            }
-
-            userInteraction.setTurtle(turtle)
-
+     
             evaluator.addImport("dslprez.scala.game._")
             evaluator.addImport("dslprez.scala.game.Turtle.end")
 
@@ -106,7 +112,6 @@ class GameController {
             def finalScript = "Turtle startDsl {\n"+params.content+"\nend\n}\n"
 
             result = evaluator.eval(finalScript)
-
         } finally {
             if (evaluator != null) evaluator.close()
         }
@@ -117,7 +122,7 @@ class GameController {
 
     def run() {
         def conf
-        def lang = "groovy" //params.lang
+        def lang = "groovym " //params.lang
         def game = Game.findById(params.gameId)
 
         if (lang == "scala") {
@@ -179,16 +184,18 @@ class GameController {
     }
 
     def answer() {
-        //println("Answer")
-        if (false) { //scala) {
-            def userInteraction =  scalaNotifiers[params.role]
-            println("My notifier for "+params.role+" = "+userInteraction)
-            userInteraction.notify(params.content.toString())
-        } else {
-            UserInteraction userInteraction = new UserInteraction(this, params.gameId, "", params.user, params.role)
-            userInteraction.notifyResponse(params.content)
-        }
-        render "{\"userIdNotification\":\"" + params.userIdNotification + "\"}"
+      if (false) { //scala) {
+        def targetTurtle = ""
+        if (params.role == "franklin") targetTurtle = "emily"
+        if (params.role == "emily") targetTurtle = "franklin"
+
+        def turtle = getTurtle(['role': targetTurtle],null)
+        turtle.answer(params.content.toString())
+      } else {           
+         UserInteraction userInteraction = new UserInteraction(this, params.gameId, "", params.user, params.role)
+         userInteraction.notifyResponse(params.content)
+      }
+      render "{\"userIdNotification\":\"" + params.userIdNotification + "\"}"
     }
 
     def index() {
