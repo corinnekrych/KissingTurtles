@@ -23,3 +23,5 @@ target-eclipse
 */.DS_Store
 
 lib
+
+/node_modules

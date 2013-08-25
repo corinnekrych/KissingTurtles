@@ -8,8 +8,9 @@ grails.project.source.level = 1.6
 grails.project.dependency.resolution = {
 
     inherits("global") {
+        //excludes "atmosphere-runtime"
     }
-    log "error" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
+    log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
     checksums true // Whether to verify checksums on resolve
 
     repositories {
@@ -24,9 +25,10 @@ grails.project.dependency.resolution = {
         mavenRepo "https://oss.sonatype.org/content/repositories/snapshots/"
     }
     dependencies {
-        compile('org.atmosphere:atmosphere-runtime:1.0.15') {
-            excludes 'slf4j-api', 'atmosphere-ping'
-        }
+//        compile('org.atmosphere:atmosphere-runtime:1.1.0.RC4') {
+//            excludes 'slf4j-api', 'atmosphere-ping'
+//        }
+        runtime 'postgresql:postgresql:8.4-702.jdbc3'
     }
 
     plugins {
@@ -38,8 +40,8 @@ grails.project.dependency.resolution = {
         // plugins needed at runtime but not for compilation
         runtime ":hibernate:3.6.10.M5" // or ":hibernate4:4.1.11.M2"
         runtime ":jquery:1.10.2"
-        runtime ":resources:1.2"
-        //compile ":ui-performance:1.2.2"
+//        runtime ":resources:1.2"
+//        compile ":ui-performance:1.2.2"
 //        runtime ":zipped-resources:1.0.1"
 //        runtime ":cached-resources:1.1"
 //        runtime ":yui-minify-resources:0.1.5"

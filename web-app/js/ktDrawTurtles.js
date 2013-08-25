@@ -184,7 +184,6 @@
             var max = Math.ceil((Math.max(Math.max(grid - x, x), Math.max(grid - y, y)) / speed) + 2);
             var i = 0;
             var iteration = function () {
-                console.log("win " + x + ":" + y);
                 if (i < max) {
                     dist = i * speed;
                     var obj = {}

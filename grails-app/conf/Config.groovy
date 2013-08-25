@@ -91,6 +91,10 @@ log4j = {
            'net.sf.ehcache.hibernate'
 }
 
+grails.war.resources = { stagingDir ->
+    println "Coucou"
+}
+
 // Uncomment and edit the following lines to start using Grails encoding & escaping improvements
 
 /* remove this line 
