@@ -93,12 +93,24 @@ class Turtle {
             }
         }]
     }
+
     def propertyMissing(def propertyName) {
         propertyName
     }
 
+    Turtle kiss() {
+        println "<3 <3"
+        Position kissingPosition = new Position(currentPosition.x, currentPosition.y, 0, '+x')
+        kissingPosition.k = 1
+        steps.add(kissingPosition)
+        this
+    }
+
 
 }
+
+
+
 enum Direction {
     left, right, up, down
 }

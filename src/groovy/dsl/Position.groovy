@@ -5,6 +5,7 @@ class Position {
     int y
     int rotation
     String direction
+    int k
 
     Position move(Integer step) {
         Position newPosition

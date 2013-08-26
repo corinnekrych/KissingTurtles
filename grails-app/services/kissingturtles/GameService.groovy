@@ -14,9 +14,9 @@ class GameService {
         def steps = []
         result.steps.each(){
             if (it instanceof String) {
-                it = JSON.parse(it)
+                    it = JSON.parse(it)
             }
-            steps << [it.x, it.y]
+            steps << [it.x, it.y, it.k]
         }
 
         def obj

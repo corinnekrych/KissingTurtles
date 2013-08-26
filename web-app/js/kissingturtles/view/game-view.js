@@ -215,6 +215,9 @@ kissingturtles.view.gameview = function (model, elements) {
                     });
                 }
             });
+
+
+
         }
     });
 

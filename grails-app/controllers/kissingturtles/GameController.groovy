@@ -122,7 +122,7 @@ class GameController {
 
     def run() {
         def conf
-        def lang = "groovym " //params.lang
+        def lang = "groovy " //params.lang
         def game = Game.findById(params.gameId)
 
         if (lang == "scala") {
@@ -145,6 +145,8 @@ class GameController {
 
     def executeGroovy(game) {
         binding = new Binding()
+
+
         def userInteraction = new UserInteraction(this, params.gameId, params.userIdNotification, params.user, params.role)
 
         def mazeDefinition = JSON.parse(game.mazeDefinition)
@@ -170,9 +172,9 @@ class GameController {
         binding.setVariable("by", turtle.&by)
         binding.setVariable("ask", turtle.&ask)
         binding.setVariable("to", turtle.&to)
-
         def config = new CompilerConfiguration()
         config.addCompilationCustomizers(new GameCustomizer())
+        config.scriptBaseClass = GameScript.class.name
 
         def shell = new GroovyShell(this.class.classLoader,
                 binding,

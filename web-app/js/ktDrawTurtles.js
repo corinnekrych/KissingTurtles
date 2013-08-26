@@ -75,11 +75,16 @@
             ctx.clearRect(0, 0, width, height);
         };
 
-        var drawImage = function (name, x, y, rotation) {
+        var drawImage = function (name, x, y, rotation, isKiss) {
             ctx.save();
             ctx.translate((x + 1) * wstep, (grid - y) * hstep);
             ctx.rotate(rotation);
             ctx.drawImage(images[name], -wstep/2, -hstep/2, wstep, hstep);
+            if (isKiss) {
+                fetchImages({'kiss': 'heart.png'});
+                ctx.drawImage(images['kiss'], -wstep/2 + 1, -hstep/2 + 1, wstep, hstep);
+            }
+
             ctx.restore();
         };
 
@@ -106,7 +111,7 @@
                         var progress = 1 - ((animation.end - timestamp) / config.stepDuration);
                         var currentx = computeProgress(animation.from[0], animation.to[0], progress);
                         var currenty = computeProgress(animation.from[1], animation.to[1], progress);
-                        drawImage(name, currentx, currenty, 0);//Can handle rotation too
+                        drawImage(name, currentx, currenty, 0, animation.to[2]);//Can handle rotation too
                     }
                 }
             }
