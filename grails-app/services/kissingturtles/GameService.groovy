@@ -29,7 +29,11 @@ class GameService {
                     franklin: steps
             ]
         }
-
+        if (result.meeting) {
+            mazeDefinition.turtles.position.tree1[0] = result.meeting[0]
+            mazeDefinition.turtles.position.tree1[1] = result.meeting[1]
+            obj['tree1'] = [result.meeting];
+        }
         def last = steps.size() == 0 ? null :  steps.last()
         boolean win = false
         if (last) {
@@ -52,6 +56,8 @@ class GameService {
             }
         }
 
+
+
         game.mazeDefinition = mazeDefinition
 
         def images = [
@@ -70,7 +76,7 @@ class GameService {
                 user1: game.user1,
                 user2: game.user2,
                 id: game.id,
-                winningAnimation: [treeInitialPosition.x, treeInitialPosition.y]
+                winningAnimation: [treeInitialPosition.x, treeInitialPosition.y],
         ]
     }
 

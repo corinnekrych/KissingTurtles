@@ -11,6 +11,7 @@ class Turtle {
     def maze
     def i = 1;
     def asks =[]
+    def meeting = []
 
     UserInteraction userInteraction
 
@@ -18,7 +19,8 @@ class Turtle {
         name = myName
         image = myImage
         currentPosition = start
-        result = ['name': name, 'image': image, 'steps': steps, 'asks': asks]
+        meeting = []
+        result = ['name': name, 'image': image, 'steps': steps, 'asks': asks, 'meeting':meeting]
         maze = walls
         userInteraction = userInterac
     }
@@ -103,6 +105,12 @@ class Turtle {
         Position kissingPosition = new Position(currentPosition.x, currentPosition.y, 0, '+x')
         kissingPosition.k = 1
         steps.add(kissingPosition)
+        this
+    }
+
+    def meet(points) {
+        meeting[0] = points.x
+        meeting[1] = points.y
         this
     }
 

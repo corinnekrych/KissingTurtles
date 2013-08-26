@@ -172,6 +172,8 @@ class GameController {
         binding.setVariable("by", turtle.&by)
         binding.setVariable("ask", turtle.&ask)
         binding.setVariable("to", turtle.&to)
+        binding.setVariable("meet", turtle.&meet)
+
         def config = new CompilerConfiguration()
         config.addCompilationCustomizers(new GameCustomizer())
         config.scriptBaseClass = GameScript.class.name
@@ -182,6 +184,7 @@ class GameController {
         shell.evaluate(script)
 
         def result = binding.getVariable('turtle').result
+
         gameService.runFormatting(game, mazeDefinition, turtle, result, params.userIdNotification)
     }
 
