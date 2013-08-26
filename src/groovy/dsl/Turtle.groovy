@@ -7,6 +7,7 @@ class Turtle {
     def image
     def steps = []
     def currentPosition
+    def previousPosition
     def result = [:]
     def maze
     def i = 1;
@@ -37,14 +38,36 @@ class Turtle {
             newPosition = currentPosition.down()
         }
         currentPosition = newPosition
+        byDefault(1)
         this
     }
 
-
-    Turtle by(Integer step) {
+    Turtle byDefault(Integer step) {
         Position newPosition = currentPosition.move(step)
 
-        def obstacleX = maze.findAll() {it ->
+        newPosition = obstacleResolution(newPosition)
+
+        steps.add(newPosition)
+        previousPosition = currentPosition
+        currentPosition = newPosition
+
+        this
+    }
+
+    Turtle by(Integer step) {
+        steps.pop()
+        currentPosition = previousPosition
+        Position newPosition = currentPosition.move(step)
+
+        newPosition = obstacleResolution(newPosition)
+
+        steps.add(newPosition)
+        currentPosition = newPosition
+        this
+    }
+
+     Position obstacleResolution(Position newPosition) {
+        def obstacleX = maze.findAll() { it ->
             ((currentPosition.direction == '+x' && currentPosition.x < it[0] && it[0] <= newPosition.x) ||
                     (currentPosition.direction == '-x' && currentPosition.x > it[0] && it[0] >= newPosition.x)) && (currentPosition.y == it[1])
         }
@@ -62,8 +85,10 @@ class Turtle {
                 newPosition = new Position(min + 1, currentPosition.y, -90, '-x')
             }
         }
-        def obstacleY = maze.findAll() {it -> ((currentPosition.direction == '+y' && currentPosition.y < it[1] && it[1] <= newPosition.y)||
-                (currentPosition.direction == '-y' && currentPosition.y > it[1] && it[1] >= newPosition.y)) && (currentPosition.x == it[0])}
+        def obstacleY = maze.findAll() { it ->
+            ((currentPosition.direction == '+y' && currentPosition.y < it[1] && it[1] <= newPosition.y) ||
+                    (currentPosition.direction == '-y' && currentPosition.y > it[1] && it[1] >= newPosition.y)) && (currentPosition.x == it[0])
+        }
         if (obstacleY) {
 
             if (currentPosition.direction == '+y') {
@@ -76,10 +101,7 @@ class Turtle {
                 newPosition = new Position(currentPosition.x, minY + 1, 180, '-y')
             }
         }
-
-        steps.add(newPosition)
-        currentPosition = newPosition
-        this
+        newPosition
     }
 
     def ask(question) {
