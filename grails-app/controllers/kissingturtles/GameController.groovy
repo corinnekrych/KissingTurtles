@@ -181,7 +181,7 @@ class GameController {
         def shell = new GroovyShell(this.class.classLoader,
                 binding,
                 config)
-        shell.evaluate(script)
+        shell.evaluate("use(StepCategory) {" + script + "}")
 
         def result = binding.getVariable('turtle').result
 
