@@ -29,6 +29,7 @@ Done
 Groovy DSL
 ==========
 ask "How are you?" assign to response
+move right by 2.steps
 move left by 2
 move up
 meet x:10, y:2

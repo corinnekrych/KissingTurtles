@@ -8,7 +8,7 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 
 class GameService {
 
-    def runFormatting(game, mazeDefinition, turtle, result, idNotification) {
+    def runFormatting(game, mazeDefinition, turtle, result, ex, idNotification) {
         Position treeInitialPosition = new Position(mazeDefinition.turtles.position.tree1[0], mazeDefinition.turtles.position.tree1[1], 0, '+x')
 
         def steps = []
@@ -77,6 +77,7 @@ class GameService {
                 user2: game.user2,
                 id: game.id,
                 winningAnimation: [treeInitialPosition.x, treeInitialPosition.y],
+                exception: ex
         ]
     }
 
