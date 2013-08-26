@@ -3,6 +3,7 @@ DslPrez TODO list
 | Item        | Priority           | Status  |
 | ------------- |:-------------:| -----:|
 | Heroku support for Scala editor|1||
+| Heroku classpath ext for Groovy TypeChecked editor|1||
 | Sandbox Groovy.eval/Scal.eval|1||
 | css responsive|||
 | bug: click on chat and ui get frozen whenit's your turn to do script|||
