@@ -4,7 +4,7 @@ DslPrez TODO list
 | ------------- |:-------------:| -----:|
 | Heroku support for Scala editor|1||
 | Sandbox Groovy.eval/Scal.eval|1||
-| Kiss animation in JS: flying hearts|3||
+| Kiss animation in JS: flying hearts|||
 | css responsive|||
 | bug: click on chat and ui get frozen whenit's your turn to do script|||
 | add all groovy dsl: move/ask/kids/meet|||
@@ -17,6 +17,9 @@ DslPrez TODO list
 | redesign ui for create new game: one  central button rather than bottom one?|||
 | yellow background on canvas|||
 | bug: your partner gave up|||
+| add help/explantion on which command available in Scala/Groovy|||
+| Same in readme on githu:add help/explantion on which command available in Scala/Groovy|||
+
 
 
 
