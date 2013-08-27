@@ -67,10 +67,9 @@
     </div>
 
     <div class="center-wrapper" data-role="content" id="start-presentation">
-        <!--<canvas id="canvas2" width="300" height="300" style='width:300px;height:300px'></canvas>-->
         <div>
-            <img width="20%" src="images/game/turtle.png"/>
-            <img width="20%" src="images/game/pig.png"/>
+            <img width="10%" src="images/game/turtle.png"/>
+            <img width="10%" src="images/game/pig.png"/>
         </div>
         <div data-theme="a" class="center-wrapper" data-content-theme="a">
             <textarea readonly>Franklin and Emily have a rendez-vous. Help them to meet at the love tree. Use up, down, left, right buttons or tell them: "move up by 2"</textarea></div>
@@ -255,21 +254,20 @@
 </section>
 
 <section  data-role="page" id="section-show-game" >
-    <div style="max-width:1200px;margin-left: auto;margin-right: auto">
-        <div style="width:80%; margin-left: 2em">
+    <div class="container">
+        <div class="title">
             <h1>Kissing Turtles</h1>
-            <div  readonly id="error">
+            <div readonly id="error">
 
             </div>
         </div>
         <div style="display:inline-block;float:left;width:2%">&nbsp;</div> <br/>
-
-        <div style="display:inline-block;float:left;width:60%; position:relative">
-            <canvas id="canvasGrid" width="1000" height="1000" style="max-height:800px;max-width:800px;width: 100%;z-index: 1;position:absolute;left:0px;top:0px;"></canvas>
-            <canvas id="canvasWalls" width="1000" height="1000" style="max-height:800px;max-width:800px;width: 100%;z-index: 2;position:absolute;left:0px;top:0px;"></canvas>
-            <canvas id="canvasTurtles" width="1000" height="1000" style="max-height:800px;max-width:800px;width: 100%;z-index: 3;position:absolute;left:0px;top:0px;"></canvas>
+        <div id="blockCanvas">
+            <canvas id="canvasGrid" width="1000" height="1000"></canvas>
+            <canvas id="canvasWalls" width="1000" height="1000"></canvas>
+            <canvas id="canvasTurtles" width="1000" height="1000"></canvas>
         </div>
-        <div style="display:inline-block;float:right;position:relative;max-height: 800px;width:38%">
+        <div id="blockScriptChat">
             <div data-role="collapsible" id="script">
                 <h4><span>Script</span>
                     <span style="float:right"><img id="belldsl" width="25px" src="images/redhat_games.png"/></span></h4>

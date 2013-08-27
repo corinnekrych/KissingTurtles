@@ -1,4 +1,38 @@
 /* =====================================================================================================================
+* Game layout
+===================================================================================================================== */
+#blockScriptChat {
+    display:inline-block;
+    float:right;
+    position:relative;
+    max-height: 800px;width:38%
+}
+
+#blockCanvas {
+    display:inline-block;
+    float:left;
+    width:60%;
+    position:relative;
+}
+
+.container {
+    max-width:1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.title {
+    width:80%;
+    margin-left: 2em;
+}
+
+#error {
+    color: darkred;
+    max-height: 1em;
+    height: 1em;
+}
+
+/* =====================================================================================================================
 * Square border in jqm
 ===================================================================================================================== */
 .ui-corner-all {
@@ -21,11 +55,27 @@
 /* =====================================================================================================================
 * Turtle canvas
 ===================================================================================================================== */
-#canvas {
+canvas {
     display: block;
     margin: 0 auto;
     max-height: 800px;
     max-width: 800px;
+    width: 100%;
+    position:absolute;
+    left:0px;
+    top:0px;
+}
+
+#canvasGrid {
+    z-index: 1;
+}
+
+#canvasWalls {
+    z-index: 2;
+}
+
+#canvasTurtles {
+    z-index: 3;
 }
 
 .center-wrapper {
@@ -61,4 +111,69 @@
 }
 .CodeMirror-foldgutter-folded:after {
     content: "\25B8";
+}
+
+
+/* ==================================================================================================================
+   For Tablets
+   For small than 850 px
+===================================================================================================================== */
+@media only screen and (max-width: 1000px) {
+
+    #blockScriptChat {
+        display:block;
+        float:none;
+        width: 75%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #blockCanvas {
+        display:block;
+        float:none;
+
+        height: 45em;
+        width: 75%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+}
+
+@media only screen and (max-width: 850px) {
+    #blockCanvas {
+        height: 38em;
+    }
+
+}
+
+@media only screen and (max-width: 650px) {
+    #blockCanvas {
+        height: 30em;
+    }
+
+}
+@media only screen and (max-width: 550px) {
+    #blockCanvas {
+        height: 32em;
+        width: 95%;
+    }
+    #blockScriptChat {
+
+        width: 95%;
+    }
+
+}
+@media only screen and (max-width: 400px) {
+    #blockCanvas {
+        height: 23em;
+        width: 97%;
+    }
+    #blockScriptChat {
+        width: 97%;
+    }
+    #error {
+        font-size:0.71em;
+    }
+
 }
