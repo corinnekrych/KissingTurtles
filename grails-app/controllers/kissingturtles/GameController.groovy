@@ -196,6 +196,8 @@ class GameController {
           shell.evaluate(script)
         } catch(e) {
            ex = e.message;
+           if (e.message.contains("Limit of allowed statements exceeded!"))
+               ex = " Limit of allowed statements exceeded!"
            println e.stackTrace + "\n>>message=" + e.message + ">>cause" + e.cause
         }
         def result = binding.getVariable('turtle').result

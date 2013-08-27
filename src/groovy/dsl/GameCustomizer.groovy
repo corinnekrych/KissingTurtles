@@ -38,7 +38,7 @@ public class GameCustomizer extends CompilationCustomizer {
         methodCallVisitor.visitBlockStatement(gameScript)
 
         if (methodCallVisitor.i > 3) {
-            throw new Throwable("Limit of allowed statements exceeded!")
+            throw new Exception("Limit of allowed statements exceeded!")
         }
     }
 
@@ -54,7 +54,7 @@ class MethodCallVisitor extends ClassCodeVisitorSupport {
 
     @Override
     public void visitMethodCallExpression(MethodCallExpression expression) {
-        if(expression.getMethodAsString() in ["move", "ask"] ) {
+        if(expression.getMethodAsString() in ["move", "ask", "kiss", "meet"] ) {
            i++
         }
         super.visitMethodCallExpression(expression)
