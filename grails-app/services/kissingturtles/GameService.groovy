@@ -14,7 +14,7 @@ class GameService {
         def steps = []
         result.steps.each(){
             if (it instanceof String) {
-                    it = JSON.parse(it)
+                it = JSON.parse(it)
             }
             steps << [it.x, it.y, it.k]
         }
@@ -65,20 +65,34 @@ class GameService {
                 emily: 'turtle2.png',
                 tree1: 'tree.png'
         ]
-
-        [
-                images: images,
-                position: obj,
-                grid: 15,
-                stepDuration: 1000,
-                asks: result.asks,
-                win: win,
-                user1: game.user1,
-                user2: game.user2,
-                id: game.id,
-                winningAnimation: [treeInitialPosition.x, treeInitialPosition.y],
-                exception: ex
-        ]
+        if (ex) {
+            return [
+                    images: images,
+                    position: obj,
+                    grid: 15,
+                    stepDuration: 1000,
+                    asks: result.asks,
+                    win: win,
+                    user1: game.user1,
+                    user2: game.user2,
+                    id: game.id,
+                    winningAnimation: [treeInitialPosition.x, treeInitialPosition.y],
+                    exception: ex
+            ]
+        } else {
+            return [
+                    images: images,
+                    position: obj,
+                    grid: 15,
+                    stepDuration: 1000,
+                    asks: result.asks,
+                    win: win,
+                    user1: game.user1,
+                    user2: game.user2,
+                    id: game.id,
+                    winningAnimation: [treeInitialPosition.x, treeInitialPosition.y]
+            ]
+        }
     }
 
     def createFormatting(walls, franklinPosition, treePosition) {

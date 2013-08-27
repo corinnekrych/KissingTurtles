@@ -189,7 +189,7 @@ class GameController {
           shell.evaluate(script)
         } catch(e) {
            ex = e
-            println e.stackTrace + "\n>>message=" + e.message + ">>cause" + e.cause
+           println e.stackTrace + "\n>>message=" + e.message + ">>cause" + e.cause
         }
         def result = binding.getVariable('turtle').result
 

@@ -165,15 +165,26 @@ kissingturtles.view.gameview = function (model, elements) {
     //    Callback to display the maze after execute method
     //----------------------------------------------------------------------------------------
     that.model.executed.attach(function (data, event) {
+        $('#error').html('');
         // only for my game
         if (that.gameId == data.item.id) {
             // refresh me if it's not myself pls
             var myGameObject = data.item;
             if (!data.item.NOTIFIED) {
+
+                if (myGameObject.exception) {
+                    var error = myGameObject.exception.message && myGameObject.exception.message.split('-') && myGameObject.exception.message.split('-')[1]
+                    $('#error').html(error);
+                    $('#input-move-name').html(myGameObject.script);
+                } else {
+                    toggle('#submit-game');
+                }
+
                 var otherPlayer = data.item.user1;
                 if (that.user == data.item.user1) {
                     otherPlayer = data.item.user2
                 }
+
                 if (myGameObject.asks) {
                     $.each(myGameObject.asks, function(key, value) {
                         $.each(value, function(innerKey, innerValue) {
@@ -189,16 +200,15 @@ kissingturtles.view.gameview = function (model, elements) {
                     });
                 }
             } else {
-                toggle('#submit-game');
+                if (!myGameObject.exception)
+                    toggle('#submit-game');
             }
-            if (myGameObject.exception) {
-               var error = myGameObject.exception.message && myGameObject.exception.message.split('-') && myGameObject.exception.message.split('-')[1]
-                $('#error').append(error);
-            }
+
             if (data.item.win) {
                 $('#input-move-name').val('');
                 $('#input-move-name').textinput('disable')
                 $('#response').val('');
+                $('#interaction').val('');
                 $('#response').textinput('disable');
                 $('#submit-game').button('disable');
                 $('#answer').button('disable');
@@ -449,7 +459,7 @@ kissingturtles.view.gameview = function (model, elements) {
     $('#submit-game').on('vclick', function(event) {
         var dslInput = $('#input-move-name').val();
         var gameId = that.gameId;
-        toggle('#submit-game');
+        //toggle('#submit-game');
         var lang = 'groovy';
         if (that.role == 'emily') {
             lang = 'scala';
