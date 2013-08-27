@@ -5,6 +5,18 @@ grails.project.test.reports.dir = "target/test-reports"
 grails.project.target.level = 1.6
 grails.project.source.level = 1.6
 
+//grails.war.resources = { stagingDir, args ->
+//
+//    copy(file: "ext/TurtleExtension.groovy",
+//            tofile: "${stagingDir}/WEB-INF/TurtleExtension.groovy")
+//
+//    copy(file: "ext/TurtleExtension.groovy",
+//            tofile: "${stagingDir}/WEB-INF/ext/TurtleExtension.groovy")
+//
+//    copy(file: "ext/TurtleExtension.groovy",
+//            tofile: "${stagingDir}/ext/TurtleExtension.groovy")
+//}
+
 grails.project.dependency.resolution = {
 
     inherits("global") {

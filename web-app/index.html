@@ -254,44 +254,51 @@
     </div>
 </section>
 
-<section data-role="page" id="section-show-game" >
+<section  data-role="page" id="section-show-game" >
+    <div style="max-width:1200px;margin-left: auto;margin-right: auto">
+        <div style="width:80%; margin-left: 2em">
+            <h1>Kissing Turtles</h1>
+            <div  readonly id="error">
 
-    <div style="display:inline-block;float:left;width:60%; position:relative">
-        <canvas id="canvasGrid" width="1000" height="1000" style="max-height:800px;width: 100%;z-index: 1;position:absolute;left:0px;top:0px;"></canvas>
-        <canvas id="canvasWalls" width="1000" height="1000" style="max-height:800px;width: 100%;z-index: 2;position:absolute;left:0px;top:0px;"></canvas>
-        <canvas id="canvasTurtles" width="1000" height="1000" style="max-height:800px;width: 100%;z-index: 3;position:absolute;left:0px;top:0px;"></canvas>
-    </div>
-    <div style="display:inline-block;float:right;position:relative;max-height: 800px;width:38%">
-        <div data-role="collapsible" id="script">
-            <h4><span>Script</span>
-                <span style="float:right"><img id="belldsl" width="25px" src="images/redhat_games.png"/></span></h4>
-            <ul data-role="listview" data-inset="true">
-                <li style="" id="dsl-text" data-role="fieldcontain">
-                    <textarea style="width:100%;height:300px;max-width:100%;max-height:300px"
-                              name="name" id="input-move-name"
-                              placeholder="move left by 2">ask "question" assign to me</textarea>
-                    <button data-transition="slide" id="submit-game">Execute</button>
-                </li>
-            </ul>
+            </div>
         </div>
-        <div data-role="collapsible" id="chat" >
-            <h4><span>Chat</span>
-                <span style="float:right"><img id="bell" width="25px" src="images/ringtone.png"/></span></h4>
-            <ul data-role="listview" data-inset="true">
-                <li style="" id="chat-text" data-role="fieldcontain">
-                    <div style="width:100%" id="interaction2">
-                        <textarea style="width:100%;height:300px; max-width:100%;max-height:300px" readonly id="interaction"></textarea>
-                        <br/><br/>
-                        <input disabled="true" style="width:100%;" id="response" placeholder="Place your answer here"></input>
-                        <button disabled="true" data-transition="slide" id="answer">Answer</button>
-                    </div>
-                </li>
-            </ul>
+        <div style="display:inline-block;float:left;width:2%">&nbsp;</div> <br/>
+
+        <div style="display:inline-block;float:left;width:60%; position:relative">
+            <canvas id="canvasGrid" width="1000" height="1000" style="max-height:800px;max-width:800px;width: 100%;z-index: 1;position:absolute;left:0px;top:0px;"></canvas>
+            <canvas id="canvasWalls" width="1000" height="1000" style="max-height:800px;max-width:800px;width: 100%;z-index: 2;position:absolute;left:0px;top:0px;"></canvas>
+            <canvas id="canvasTurtles" width="1000" height="1000" style="max-height:800px;max-width:800px;width: 100%;z-index: 3;position:absolute;left:0px;top:0px;"></canvas>
         </div>
+        <div style="display:inline-block;float:right;position:relative;max-height: 800px;width:38%">
+            <div data-role="collapsible" id="script">
+                <h4><span>Script</span>
+                    <span style="float:right"><img id="belldsl" width="25px" src="images/redhat_games.png"/></span></h4>
+                <ul data-role="listview" data-inset="true">
+                    <li style="" id="dsl-text" data-role="fieldcontain">
+                        <textarea style="width:100%;height:300px;max-width:100%;max-height:300px"
+                                  name="name" id="input-move-name"
+                                  placeholder="move left by 2"></textarea>
+                        <button data-transition="slide" id="submit-game">Execute</button>
+                    </li>
+                </ul>
+            </div>
+            <div data-role="collapsible" id="chat" >
+                <h4><span>Chat</span>
+                    <span style="float:right"><img id="bell" width="25px" src="images/ringtone.png"/></span></h4>
+                <ul data-role="listview" data-inset="true">
+                    <li style="" id="chat-text" data-role="fieldcontain">
+                        <div style="width:100%" id="interaction2">
+                            <textarea style="width:100%;height:300px; max-width:100%;max-height:300px" readonly id="interaction"></textarea>
+                            <br/><br/>
+                            <input disabled="true" style="width:100%;" id="response" placeholder="Place your answer here"></input>
+                            <button disabled="true" data-transition="slide" id="answer">Answer</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
 
+        </div>
     </div>
-    <div style="display:inline-block;float:left;width:2%">&nbsp;</div>
-
     <input type="hidden" name="id" id="input-game-id"/>
     <input type="hidden" name="user-id" id="input-user1-move"/>
     <input type="hidden" name="version" id="input-game-version"/>
@@ -304,11 +311,11 @@
         <!--<div style="display:inline-block;float:right"  id="status">ddd</div>-->
         <!--<div  style="display:inline-block;float:right" data-role="controlgroup" data-type="horizontal">-->
 
-            <!--&lt;!&ndash;<a href="" id="left" data-role="button" data-icon="arrow-l" data-iconpos="notext">Left</a>&ndash;&gt;-->
-            <!--&lt;!&ndash;<a href="" id="up" data-role="button" data-icon="arrow-u" data-iconpos="notext">Up</a>&ndash;&gt;-->
-            <!--&lt;!&ndash;<a href="" id="down" data-role="button" data-icon="arrow-d" data-iconpos="notext">Down</a>&ndash;&gt;-->
-            <!--&lt;!&ndash;<a href="" id="right" data-role="button" data-icon="arrow-r" data-iconpos="notext">Right</a>&ndash;&gt;-->
-            <!--&lt;!&ndash;<a href="" id="dsl" data-role="button" data-icon="plus" data-iconpos="notext">DSL</a>&ndash;&gt;-->
+        <!--&lt;!&ndash;<a href="" id="left" data-role="button" data-icon="arrow-l" data-iconpos="notext">Left</a>&ndash;&gt;-->
+        <!--&lt;!&ndash;<a href="" id="up" data-role="button" data-icon="arrow-u" data-iconpos="notext">Up</a>&ndash;&gt;-->
+        <!--&lt;!&ndash;<a href="" id="down" data-role="button" data-icon="arrow-d" data-iconpos="notext">Down</a>&ndash;&gt;-->
+        <!--&lt;!&ndash;<a href="" id="right" data-role="button" data-icon="arrow-r" data-iconpos="notext">Right</a>&ndash;&gt;-->
+        <!--&lt;!&ndash;<a href="" id="dsl" data-role="button" data-icon="plus" data-iconpos="notext">DSL</a>&ndash;&gt;-->
         <!--</div>-->
     </div>
 </section>
@@ -326,23 +333,23 @@
 
 <div data-role="dialog" id="game-left" data-theme="c" data-dismissible="false" data-close-btn="none" style="text-align: center">
     <div data-role="header" data-theme="a" >
-        <h1 id="header-left">You won !!!</h1>
+        <h1 id="header-left">Too bad</h1>
     </div>
     <div data-role="content" data-theme="d">
-        <h3 class="ui-title" id="content-left">Your partner gave up</h3>
-        <p>Let's do a new game</p>
-        <a href="#start-game" data-role="button" data-inline="true" data-theme="c">GO !</a>
+        <h3 class="ui-title" id="content-left">Your partner left the room</h3>
+        <p>Do you want to play again?</p>
+        <a href="#start-game" data-role="button" data-inline="true" data-theme="c">Play Again!</a>
     </div>
 </div>
 
 <div data-role="dialog" id="won" data-theme="c" data-dismissible="false" data-close-btn="none" style="text-align: center">
     <div data-role="header" data-theme="a" >
-        <h1>You won !!!</h1>
+        <h1 id="header-left">Happy Ending!</h1>
     </div>
     <div data-role="content" data-theme="d">
-        <h3 class="ui-title">Your partner and you won !!!</h3>
-        <p>Let's do a new game</p>
-        <a href="#start-game" data-role="button" data-inline="true" data-theme="c">GO !</a>
+        <h3 class="ui-title" id="content-left">Emily and Franklin met.</h3>
+        <p>And they lived happily ever after...</p>
+        <a href="#start-game" data-role="button" data-inline="true" data-theme="c">Play Again!</a>
     </div>
 </div>
 

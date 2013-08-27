@@ -5,8 +5,10 @@ import dsl.UserInteraction
 import dslprez.scala.eval.Evaluator
 import grails.converters.JSON
 import grails.validation.ValidationErrors
+import groovy.transform.TypeChecked
 import org.codehaus.groovy.control.CompilerConfiguration
 import groovy.json.JsonBuilder
+import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer
 import org.codehaus.groovy.grails.web.json.JSONObject
 import dsl.DslScript
 import dsl.Turtle
@@ -172,17 +174,26 @@ class GameController {
         binding.setVariable("by", turtle.&by)
         binding.setVariable("ask", turtle.&ask)
         binding.setVariable("to", turtle.&to)
+        binding.setVariable("meet", turtle.&meet)
+
         def config = new CompilerConfiguration()
-        config.addCompilationCustomizers(new GameCustomizer())
+        config.addCompilationCustomizers(new GameCustomizer(), new ASTTransformationCustomizer(TypeChecked, extensions:['TurtleExtension.groovy']))
         config.scriptBaseClass = GameScript.class.name
 
         def shell = new GroovyShell(this.class.classLoader,
                 binding,
                 config)
-        shell.evaluate(script)
-
+        //shell.evaluate("use(StepCategory) {" + script + "}")
+        def ex
+        try {
+          shell.evaluate(script)
+        } catch(e) {
+           ex = e
+           println e.stackTrace + "\n>>message=" + e.message + ">>cause" + e.cause
+        }
         def result = binding.getVariable('turtle').result
-        gameService.runFormatting(game, mazeDefinition, turtle, result, params.userIdNotification)
+
+        gameService.runFormatting(game, mazeDefinition, turtle, result, ex, params.userIdNotification)
     }
 
     def answer() {
