@@ -32,6 +32,10 @@
     height: 1em;
 }
 
+.turtle {
+    width: 10%;
+}
+
 /* =====================================================================================================================
 * Square border in jqm
 ===================================================================================================================== */
@@ -144,12 +148,19 @@ canvas {
     #blockCanvas {
         height: 38em;
     }
+    .turtle {
+        width: 20%;
+    }
+
 
 }
 
 @media only screen and (max-width: 650px) {
     #blockCanvas {
         height: 30em;
+    }
+    .turtle {
+        width: 20%;
     }
 
 }
@@ -159,8 +170,10 @@ canvas {
         width: 95%;
     }
     #blockScriptChat {
-
         width: 95%;
+    }
+    .turtle {
+        width: 25%;
     }
 
 }
@@ -174,6 +187,9 @@ canvas {
     }
     #error {
         font-size:0.71em;
+    }
+    .turtle {
+        width: 25%;
     }
 
 }
