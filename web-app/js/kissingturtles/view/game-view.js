@@ -25,12 +25,6 @@ kissingturtles.view.gameview = function (model, elements) {
         } else if (data.item.message) {
             alert('Ooops something wrong happens');
         } else {
-            // clear all left-over u=input
-            $('#input-move-name').val('');
-            $('#interaction').val('');
-            $('#error').val('');
-
-
             if (!data.item.NOTIFIED) {
                 that.currentMaze = data.item.mazeDefinition;
                 // take local config to customize Franklin's picture
