@@ -1,14 +1,14 @@
 import org.codehaus.groovy.control.messages.SimpleMessage
 
 unresolvedVariable { var ->
-    if (var.name in ['left', 'right', 'up', 'down']) {
-        storeType(var, classNodeFor(dslprez.Direction))
+    if (var.name in ['left', 'right', 'up', 'down', 'kiss']) {
+        storeType(var, classNodeFor(dsl.Direction))
         handled = true
     }
 }
 methodNotFound { receiver, name, argList, argTypes, call ->
-    if (name in ['by', 'move']) {
-       return newMethod(name, classNodeFor(dslprez.Turtle))
+    if (name in ['by', 'move', 'meet']) {
+       return newMethod(name, classNodeFor(dsl.Turtle))
     }
 }
 

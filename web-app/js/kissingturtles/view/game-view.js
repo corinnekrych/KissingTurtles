@@ -191,7 +191,10 @@ kissingturtles.view.gameview = function (model, elements) {
             } else {
                 toggle('#submit-game');
             }
-
+            if (myGameObject.exception) {
+               var error = myGameObject.exception.message && myGameObject.exception.message.split('-') && myGameObject.exception.message.split('-')[1]
+                $('#error').append(error);
+            }
             if (data.item.win) {
                 $('#input-move-name').val('');
                 $('#input-move-name').textinput('disable')
