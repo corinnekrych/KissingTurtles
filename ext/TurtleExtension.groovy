@@ -1,14 +1,23 @@
 import org.codehaus.groovy.control.messages.SimpleMessage
 
 unresolvedVariable { var ->
-    if (var.name in ['left', 'right', 'up', 'down', 'kiss']) {
+    if (var.name in ['left', 'right', 'up', 'down', 'to', 'kiss']) {
         storeType(var, classNodeFor(dsl.Direction))
         handled = true
     }
+//    if (isDynamic(var)) {
+//        println "isdynamic"
+//        storeType(var, STRING_TYPE)
+//        handled = true
+//    }
+
 }
 methodNotFound { receiver, name, argList, argTypes, call ->
     if (name in ['by', 'move', 'meet']) {
        return newMethod(name, classNodeFor(dsl.Turtle))
+    }
+    if (name in ['ask', 'assign']) {
+        return newMethod(name, LIST_TYPE)
     }
 }
 

@@ -1,7 +1,5 @@
 package dsl
 
-import kissingturtles.WallGeneratorService
-
 class Turtle {
     def name
     def image
