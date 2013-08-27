@@ -90,6 +90,7 @@ class GameController {
         def stacktrace = ""
 
         def evaluator
+        def ex
         try {
             evaluator = new Evaluator(printStream).withContinuations().withPluginsDir("lib/plugins")
 
@@ -113,18 +114,24 @@ class GameController {
 
             def finalScript = "Turtle startDsl {\n"+params.content+"\nend\n}\n"
 
-            result = evaluator.eval(finalScript)
+            try {
+                result = evaluator.eval(finalScript)
+            }
+            catch (e) {
+                ex = stream.toString()
+                println ex
+            }
         } finally {
             if (evaluator != null) evaluator.close()
         }
 
-        gameService.runScalaFormatting(game, turtle, params.userIdNotification)
+        gameService.runScalaFormatting(game, turtle, ex, params.userIdNotification)
 
     }
 
     def run() {
         def conf
-        def lang = "scala" //params.lang
+        def lang = params.lang
         def game = Game.findById(params.gameId)
 
         if (lang == "scala") {
@@ -188,7 +195,7 @@ class GameController {
         try {
           shell.evaluate(script)
         } catch(e) {
-           ex = e
+           ex = e.message;
            println e.stackTrace + "\n>>message=" + e.message + ">>cause" + e.cause
         }
         def result = binding.getVariable('turtle').result

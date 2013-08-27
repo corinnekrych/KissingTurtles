@@ -133,7 +133,7 @@ class GameService {
         mazeDefinition
     }
         
-    def runScalaFormatting(game,turtle, idNotification) {
+    def runScalaFormatting(game,turtle, ex, idNotification) {
         def mazeDefinition = JSON.parse(game.mazeDefinition)
         Position treeInitialPosition = new Position(mazeDefinition.turtles.position.tree1[0], mazeDefinition.turtles.position.tree1[1], 0, '+x')
 
@@ -196,7 +196,8 @@ class GameService {
                 user1: game.user1,
                 user2: game.user2,
                 id: game.id,
-                winningAnimation: [treeInitialPosition.x, treeInitialPosition.y]
+                winningAnimation: [treeInitialPosition.x, treeInitialPosition.y],
+                exception: ex
         ]
     }
 

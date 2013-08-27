@@ -173,7 +173,7 @@ kissingturtles.view.gameview = function (model, elements) {
             if (!data.item.NOTIFIED) {
 
                 if (myGameObject.exception) {
-                    var error = myGameObject.exception.message && myGameObject.exception.message.split('-') && myGameObject.exception.message.split('-')[1]
+                    var error = myGameObject.exception;
                     $('#error').html(error);
                     $('#input-move-name').html(myGameObject.script);
                 } else {
