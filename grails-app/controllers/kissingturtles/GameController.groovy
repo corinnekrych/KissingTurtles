@@ -122,7 +122,7 @@ class GameController {
 
     def run() {
         def conf
-        def lang = "groovy " //params.lang
+        def lang = "scala" //params.lang
         def game = Game.findById(params.gameId)
 
         if (lang == "scala") {
@@ -186,12 +186,14 @@ class GameController {
     }
 
     def answer() {
-      if (false) { //scala) {
+      if (true) { //scala) {
+        def game = Game.findById(params.gameId)
+
         def targetTurtle = ""
         if (params.role == "franklin") targetTurtle = "emily"
         if (params.role == "emily") targetTurtle = "franklin"
 
-        def turtle = getTurtle(['role': targetTurtle],null)
+        def turtle = getTurtle(['role': targetTurtle],game)
         turtle.answer(params.content.toString())
       } else {           
          UserInteraction userInteraction = new UserInteraction(this, params.gameId, "", params.user, params.role)
