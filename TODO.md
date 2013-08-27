@@ -3,10 +3,7 @@ DslPrez TODO list
 | Item        | Priority           | Status  |
 | ------------- |:-------------:| -----:|
 | css responsive||Corinne|
-| bug: click on chat and ui get frozen whenit's your turn to do script||corinne|
 | Scala:implement game rule: only 3 move/ask/meet/kiss per script||Pascal|
-| error handling: compile time display to user||corinne|
-| runtime error|||
 | implement meet at 10x, 4y: Scala||Pascal|
 | bug: your partner gave up, after 10mins of inactivity||Fabrice|
 | add help/explantion on which command available in Scala/Groovy|||
@@ -23,18 +20,11 @@ Nice to have
 | redesign ui for create new game: one  central button rather than bottom one?|||
 | yellow background on canvas|||
 
-Done
-=====
-| Item        | Priority           | Status  |
-| ------------- |:-------------:| -----:|
-| Kiss animation in JS: flying hearts|||
-| implement meet at 10x, 4y: Groovy|||
-| add all groovy dsl: move/ask/kids/meet|||
+
 
 Groovy DSL
 ==========
 ask "How are you?" assign to response
-move right by 2.steps
 move left by 2
 move up
 meet x:10, y:2
