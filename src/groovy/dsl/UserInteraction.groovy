@@ -19,16 +19,27 @@ class UserInteraction {
 
     String waitForAnswer(question) {
         gameController.event topic: "ask-game", data: "{\"question\": \"$question\", \"gameId\": \"" + this.gameId + "\", \"user\" : \"" + this.user + "\", \"role\" : \"" + this.role +"\", \"userIdNotification\":\"" + this.userIdNotification+ "\"}"
-        def sharedResponse = sharedContext.get(gameId)
-        if (sharedResponse == null) sharedResponse = sharedContext.addToGames(gameId)
-        def f = new File("/tmp/userinteract_"+role+".txt")
-        f << "wait for answer for "+question+" "+sharedResponse+"\n"
+        def sharedResponse = sharedContext.addToGames(gameId)
         synchronized(sharedResponse) {
             sharedResponse.wait()
         }
-        //sharedContext.get(gameId).response
+
         return sharedContext.remove(gameId)
     }
+
+// TODO Pascal
+//    String waitForAnswer(question) {
+//        gameController.event topic: "ask-game", data: "{\"question\": \"$question\", \"gameId\": \"" + this.gameId + "\", \"user\" : \"" + this.user + "\", \"role\" : \"" + this.role +"\", \"userIdNotification\":\"" + this.userIdNotification+ "\"}"
+//        def sharedResponse = sharedContext.get(gameId)
+//        if (sharedResponse == null) sharedResponse = sharedContext.addToGames(gameId)
+//        def f = new File("/tmp/userinteract_"+role+".txt")
+//        f << "wait for answer for "+question+" "+sharedResponse+"\n"
+//        synchronized(sharedResponse) {
+//            sharedResponse.wait()
+//        }
+//        //sharedContext.get(gameId).response
+//        return sharedContext.remove(gameId)
+//    }
     
     def end() {/*
      if (sharedContext.get(gameId) != null) {
@@ -41,9 +52,6 @@ class UserInteraction {
 
     def notifyResponse(String myResponse) {
         def sharedResponse = sharedContext.get(gameId)
-        def f = new File("/tmp/userinteract_"+role+".txt")
-        f << "Response = "+myResponse+" "+sharedResponse+"\n"
-        
         synchronized(sharedResponse) {
             sharedResponse.response = myResponse
             sharedResponse.notify()

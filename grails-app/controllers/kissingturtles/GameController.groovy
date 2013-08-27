@@ -131,7 +131,7 @@ class GameController {
 
     def run() {
         def conf
-        def lang = params.lang
+        def lang = "groovy"//params.lang
         def game = Game.findById(params.gameId)
 
         if (lang == "scala") {
@@ -204,7 +204,7 @@ class GameController {
     }
 
     def answer() {
-      if (true) { //scala) {
+      if (false) {
         def game = Game.findById(params.gameId)
 
         def targetTurtle = ""
