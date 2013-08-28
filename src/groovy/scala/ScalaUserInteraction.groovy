@@ -1,6 +1,8 @@
-package dsl
+package scala
 
-class UserInteraction {
+import dsl.SharedContext
+
+class ScalaUserInteraction {
 
     final def sharedContext = SharedContext.getInstance()
     def gameController
@@ -9,7 +11,7 @@ class UserInteraction {
     def user
     def role
 
-    def UserInteraction(gameController, gameId, userIdNotification, user, role) {
+    def ScalaUserInteraction(gameController, gameId, userIdNotification, user, role) {
         this.gameController = gameController
         this.gameId = gameId
         this.userIdNotification = userIdNotification
@@ -19,12 +21,18 @@ class UserInteraction {
 
     String waitForAnswer(question) {
         gameController.event topic: "ask-game", data: "{\"question\": \"$question\", \"gameId\": \"" + this.gameId + "\", \"user\" : \"" + this.user + "\", \"role\" : \"" + this.role +"\", \"userIdNotification\":\"" + this.userIdNotification+ "\"}"
-        def sharedResponse = sharedContext.addToGames(gameId)
+        def sharedResponse = sharedContext.get(gameId)
+        if (sharedResponse == null) sharedResponse = sharedContext.addToGames(gameId)
         synchronized(sharedResponse) {
             sharedResponse.wait()
         }
-
-        return sharedContext.remove(gameId)
+        return sharedContext.get(gameId)
+    }
+    
+    def end() {/*
+     if (sharedContext.get(gameId) != null) {
+      sharedContext.remove(gameId)
+      }*/
     }
 
     def notifyResponse(String myResponse) {

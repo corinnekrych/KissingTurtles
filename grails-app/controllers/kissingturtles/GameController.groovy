@@ -42,10 +42,11 @@ class GameController {
    }
    /* End of Helper */
 
-   static def scalaTurtles = [:]
+   static def scalaTurtlesPerGame = [:]
    
    def getTurtle(localParams,game) {
-     if(scalaTurtles[localParams.role]==null) {
+     if (scalaTurtlesPerGame[localParams.gameId] == null) scalaTurtlesPerGame[localParams.gameId]=[:] 
+     if(scalaTurtlesPerGame[localParams.gameId][localParams.role]==null) {
          def mazeDefinition = JSON.parse(game.mazeDefinition)
      
          def franklinX = mazeDefinition['turtles']['position']['franklin'][0]
@@ -59,7 +60,7 @@ class GameController {
          def walls = mazeDefinition['walls']
          def scalaWalls = getScalaWalls(walls,15)
 
-         def userInteract = new UserInteraction(this, localParams.gameId, localParams.userIdNotification, localParams.user, localParams.role)
+         def userInteract = new scala.ScalaUserInteraction(this, localParams.gameId, localParams.userIdNotification, localParams.user, localParams.role)
          
          def turtle
          if (localParams.role == "franklin") {
@@ -67,9 +68,9 @@ class GameController {
          } else {
             turtle = new dslprez.scala.game.Turtle("emily", "image", emilyStartPosition, scalaWalls, userInteract)
          }    
-         scalaTurtles[localParams.role]=turtle
+         scalaTurtlesPerGame[localParams.gameId][localParams.role]=turtle
         }
-        scalaTurtles[localParams.role]
+        scalaTurtlesPerGame[localParams.gameId][localParams.role]
     }
        
    def executeScala(game) {
@@ -94,16 +95,16 @@ class GameController {
         try {
             evaluator = new Evaluator(printStream).withContinuations().withPluginsDir("lib/plugins")
 
-            /*
+            
             // Temporary solution
-            if (params.scalaTimer != null) {
-                dslprez.timer.MyTimer.reinit()
-                evaluator.withPluginOption("dslplugin:timerValue:"+params.scalaTimer)
-            }
-            if (params.scalaSecurity != null) {
+            //if (params.scalaTimer != null) {
+                dslprez.scala.timer.MyTimer.reinit()
+                evaluator.withPluginOption("dslplugin:timerValue:"+10) //params.scalaTimer)
+            //}
+            //if (params.scalaSecurity != null) {
                 evaluator.withPluginOption("dslplugin:blacklistFile:anyfile")
-            }
-            */
+            //}
+            
      
             evaluator.addImport("dslprez.scala.game._")
             evaluator.addImport("dslprez.scala.game.Turtle.end")
@@ -129,9 +130,11 @@ class GameController {
 
     }
 
+    def mode = "groovy" //"scala"
+    
     def run() {
         def conf
-        def lang = "groovy"//params.lang
+        def lang = mode//params.lang
         def game = Game.findById(params.gameId)
 
         if (lang == "scala") {
@@ -206,7 +209,7 @@ class GameController {
     }
 
     def answer() {
-      if (false) {
+      if (mode == "scala") {
         def game = Game.findById(params.gameId)
 
         def targetTurtle = ""
