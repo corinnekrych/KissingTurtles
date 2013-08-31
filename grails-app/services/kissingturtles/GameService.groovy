@@ -154,7 +154,7 @@ class GameService {
         }
       
         def obj
-        if (turtle.name == "emily") {
+        if (turtle.getName() == "emily") {
             obj = [
                     emily: steps
             ]

@@ -71,7 +71,7 @@ class GameController {
        def franklinStartPosition = dslprez.scala.game.Position.getPosition(franklinX, franklinY, "+x")
        def userInteract = new scala.ScalaUserInteraction(this, game.id+"", userIdNotification, game.user1, role)
 
-       turtle = new dslprez.scala.game.Turtle("franklin", "image", franklinStartPosition, scalaWalls, userInteract)
+       turtle = dslprez.scala.game.Turtle.getTurtle("franklin", "image", franklinStartPosition, scalaWalls, userInteract)
      }
      
      if (role == "emily") {
