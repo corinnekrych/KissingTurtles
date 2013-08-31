@@ -297,8 +297,8 @@ kissingturtles.view.gameview = function (model, elements) {
             renderList();
             if (data.item.NOTIFIED && that.gameId == data.item.id) {
                 if (data.item.userIdNotification == 'server') {
-                    $('#header-left').text('Snifff');
-                    $('#content-left').text('Nobody wants to join');
+                    $('#header-left').text('Too bad');
+                    $('#content-left').text('Nobody is playing');
                 }
                 $.mobile.changePage( '#game-left');
             }

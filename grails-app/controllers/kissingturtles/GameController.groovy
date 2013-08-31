@@ -16,8 +16,9 @@ import dsl.Position
 
 class GameController {
 
-    int delay = 600000   // delay for 5 sec.
-    int period = 600000  // repeat every sec.
+    int delay = 600000   // delay for 10 min to join gme
+    int period = 60000  // check every 1 min
+    int inactivityTime = 300000 // 5 mins
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
@@ -261,7 +262,7 @@ class GameController {
             ValidationErrors validationErrors = gameInstance.errors
             render validationErrors as JSON
         }
-        timer.scheduleAtFixedRate(new CleanGameTask(gameInstance.id, this), delay, period)
+        timer.scheduleAtFixedRate(new CleanGameTask(gameInstance.id, this, inactivityTime), delay, period)
 
         // notify when first turtle create a new game
         event topic: "save-game", data: [userIdNotification: params.userIdNotification, instance:[id:gameInstance.id, version: gameInstance.version, user1: gameInstance.user1]]

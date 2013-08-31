@@ -50,12 +50,12 @@ class MethodCallVisitor extends ClassCodeVisitorSupport {
     @Override
     protected SourceUnit getSourceUnit() {
         return null
-}
+    }
 
     @Override
     public void visitMethodCallExpression(MethodCallExpression expression) {
         if(expression.getMethodAsString() in ["move", "ask", "kiss", "meet"] ) {
-           i++
+            i++
         }
         super.visitMethodCallExpression(expression)
     }
