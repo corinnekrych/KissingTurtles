@@ -80,7 +80,7 @@ class GameController {
 
        def emilyStartPosition = dslprez.scala.game.Position.getPosition(emilyX, emilyY, "+x")
        def userInteract = new scala.ScalaUserInteraction(this, game.id+"", userIdNotification, game.user2, role)
-       turtle = new dslprez.scala.game.Turtle("emily", "image", emilyStartPosition, scalaWalls, userInteract)
+       turtle = dslprez.scala.game.Turtle.getTurtle("emily", "image", emilyStartPosition, scalaWalls, userInteract)
      }
            
      scalaTurtlesPerGame[game.id+""][role]=turtle
@@ -110,8 +110,8 @@ class GameController {
             evaluator = new Evaluator(printStream).withContinuations().withPluginsDir("lib/plugins")
 
             // Compiler Plugins
-            dslprez.scala.timer.MyTimer.reinit()
-            evaluator.withPluginOption("dslplugin:timerValue:"+15) //15S
+            //dslprez.scala.timer.MyTimer.reinit()
+            //evaluator.withPluginOption("dslplugin:timerValue:"+15) //15S
             evaluator.withPluginOption("dslplugin:blacklistFile:anyfile")
             //evaluator.withPluginOption("dslplugin:maxNumberCalls:3")
      
@@ -155,7 +155,8 @@ class GameController {
         def lang = mode//params.lang
         def game = Game.findById(params.gameId)
 
-        if (lang == "scala") {
+        if (params.role == "emily") {
+        //if (lang == "scala") {
             conf = executeScala(game)
         } else {
             conf = executeGroovy(game)
@@ -226,8 +227,8 @@ class GameController {
     }
 
     def answer() {
-      if (mode == "scala") {
-
+      //if (mode == "scala") {
+      if (params.role == "franklin") {
         def targetTurtle = ""
         if (params.role == "franklin") targetTurtle = "emily"
         if (params.role == "emily") targetTurtle = "franklin"
