@@ -257,11 +257,16 @@ class GameController {
         def gameInstance = Game.get(jsonObject.gameId)
     }
 
+    //static def wallStatic
+    
     def save() {
         def size = 15
 
         // generate walls
         def walls = wallGeneratorService.getWalls()
+        
+        // Test
+        //wallStatic = walls
 
         // generate position for Franklin and the meeting point
         Position franklinPosition = new Position().random(size, walls)
@@ -327,6 +332,11 @@ class GameController {
         event topic: "update-game", data: [userIdNotification: params.userIdNotification, instance:[id:gameInstance.id, version: gameInstance.version, user1: gameInstance.user1, user2: gameInstance.user2, turtles: mazeDefinition['turtles']]]
 
         if (mode == "scala") initTurtle("emily",gameInstance,params.userIdNotification)
+        
+        //def t = new PathHelper(wallStatic,[mazeDefinition['turtles']['position']['emily'][0],mazeDefinition['turtles']['position']['emily'][1]],
+                               [mazeDefinition['turtles']['position']['franklin'][0], mazeDefinition['turtles']['position']['franklin'][1]])  
+                               
+        println("Test = "+t.findMinPath())
         
         def oooo = [
                 id : gameInstance.id,
