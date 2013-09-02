@@ -27,6 +27,14 @@ class GameController {
     Binding binding
     Timer timer = new Timer()
 
+    /****************************************************************/
+    /****************************************************************/
+    /*                                                              */
+    /*                        Scala part                            */
+    /*                                                              */
+    /****************************************************************/
+    /****************************************************************/
+    
     /* Transforms walls into an int[][] array for scala conversion */
     def contains(walls, i,j) {
         walls.any {(it[0] == i) && (it[1] == j)}
@@ -43,37 +51,43 @@ class GameController {
    }
    /* End of Helper */
 
+
+   /* Scala turtles */
    static def scalaTurtlesPerGame = [:]
    
-   def getTurtle(localParams,game) {
-     if (scalaTurtlesPerGame[localParams.gameId] == null) scalaTurtlesPerGame[localParams.gameId]=[:] 
-     if(scalaTurtlesPerGame[localParams.gameId][localParams.role]==null) {
-         def mazeDefinition = JSON.parse(game.mazeDefinition)
+   /* Init Scala turtles */
+   def initTurtle(role,game,userIdNotification) {
+     if (scalaTurtlesPerGame[game.id+""] == null) scalaTurtlesPerGame[game.id+""]=[:] 
      
-         def franklinX = mazeDefinition['turtles']['position']['franklin'][0]
-         def franklinY = mazeDefinition['turtles']['position']['franklin'][1]
-         def emilyX = mazeDefinition['turtles']['position']['emily'][0]
-         def emilyY = mazeDefinition['turtles']['position']['emily'][1]
-        
-         def franklinStartPosition = dslprez.scala.game.Position.getPosition(franklinX, franklinY, "+x")
-         def emilyStartPosition = dslprez.scala.game.Position.getPosition(emilyX, emilyY, "+x")
+     def mazeDefinition = JSON.parse(game.mazeDefinition)
+     def walls = mazeDefinition['walls']
+     def scalaWalls = getScalaWalls(walls,15)
 
-         def walls = mazeDefinition['walls']
-         def scalaWalls = getScalaWalls(walls,15)
+     def turtle
 
-         def userInteract = new scala.ScalaUserInteraction(this, localParams.gameId, localParams.userIdNotification, localParams.user, localParams.role)
-         
-         def turtle
-         if (localParams.role == "franklin") {
-            turtle = new dslprez.scala.game.Turtle("franklin", "image", franklinStartPosition, scalaWalls, userInteract)
-         } else {
-            turtle = new dslprez.scala.game.Turtle("emily", "image", emilyStartPosition, scalaWalls, userInteract)
-         }    
-         scalaTurtlesPerGame[localParams.gameId][localParams.role]=turtle
-        }
-        scalaTurtlesPerGame[localParams.gameId][localParams.role]
-    }
+     if (role == "franklin") {
+       def franklinX = mazeDefinition['turtles']['position']['franklin'][0]
+       def franklinY = mazeDefinition['turtles']['position']['franklin'][1]
+
+       def franklinStartPosition = dslprez.scala.game.Position.getPosition(franklinX, franklinY, "+x")
+       def userInteract = new scala.ScalaUserInteraction(this, game.id+"", userIdNotification, game.user1, role)
+
+       turtle = dslprez.scala.game.Turtle.getTurtle("franklin", "image", franklinStartPosition, scalaWalls, userInteract)
+     }
+     
+     if (role == "emily") {
+       def emilyX = mazeDefinition['turtles']['position']['emily'][0]
+       def emilyY = mazeDefinition['turtles']['position']['emily'][1]
+
+       def emilyStartPosition = dslprez.scala.game.Position.getPosition(emilyX, emilyY, "+x")
+       def userInteract = new scala.ScalaUserInteraction(this, game.id+"", userIdNotification, game.user2, role)
+       turtle = dslprez.scala.game.Turtle.getTurtle("emily", "image", emilyStartPosition, scalaWalls, userInteract)
+     }
+           
+     scalaTurtlesPerGame[game.id+""][role]=turtle
+   }
        
+   /* Execute DSL */
    def executeScala(game) {
         // Ugly search how to do better
         def cp = System.getProperty("java.class.path")
@@ -86,7 +100,7 @@ class GameController {
         def stream = new ByteArrayOutputStream()
         def printStream = new PrintStream(stream, true, encoding)
 
-        def turtle = getTurtle(params,game)
+        def turtle = scalaTurtlesPerGame[game.id+""][params.role]
         
         def result = ""
         def stacktrace = ""
@@ -96,24 +110,20 @@ class GameController {
         try {
             evaluator = new Evaluator(printStream).withContinuations().withPluginsDir("lib/plugins")
 
-            
-            // Temporary solution
-            //if (params.scalaTimer != null) {
-                dslprez.scala.timer.MyTimer.reinit()
-                evaluator.withPluginOption("dslplugin:timerValue:"+10) //params.scalaTimer)
-            //}
-            //if (params.scalaSecurity != null) {
-                evaluator.withPluginOption("dslplugin:blacklistFile:anyfile")
-            //}
-            
+            // Compiler Plugins
+            //dslprez.scala.timer.MyTimer.reinit()
+            //evaluator.withPluginOption("dslplugin:timerValue:"+15) //15S
+            evaluator.withPluginOption("dslplugin:blacklistFile:anyfile")
+            //evaluator.withPluginOption("dslplugin:maxNumberCalls:3")
      
             evaluator.addImport("dslprez.scala.game._")
             evaluator.addImport("dslprez.scala.game.Turtle.end")
 
-
             evaluator.bind("turtleInstance","dslprez.scala.game.Turtle",turtle)
+            //evaluator.bind("meet","(Int,Int)=>Stream[AbstractPosition]",turtle.meet _)
             evaluator.eval("implicit val I = turtleInstance")
-
+            evaluator.eval("def meet = I.meet _")
+            
             def finalScript = "Turtle startDsl {\n"+params.content+"\nend\n}\n"
 
             try {
@@ -131,14 +141,23 @@ class GameController {
 
     }
 
-    def mode = "groovy" //"scala"
+    /****************************************************************/
+    /****************************************************************/
+    /*                                                              */
+    /*                      End Scala part                          */
+    /*                                                              */
+    /****************************************************************/
+    /****************************************************************/
+
+    def mode = "scala" //"scala"
     
     def run() {
         def conf
         def lang = mode//params.lang
         def game = Game.findById(params.gameId)
 
-        if (lang == "scala") {
+        if (params.role == "emily") {
+        //if (lang == "scala") {
             conf = executeScala(game)
         } else {
             conf = executeGroovy(game)
@@ -158,7 +177,6 @@ class GameController {
 
     def executeGroovy(game) {
         binding = new Binding()
-
 
         def userInteraction = new UserInteraction(this, params.gameId, params.userIdNotification, params.user, params.role)
 
@@ -210,15 +228,15 @@ class GameController {
     }
 
     def answer() {
-      if (mode == "scala") {
-        def game = Game.findById(params.gameId)
-
+      //if (mode == "scala") {
+      if (params.role == "franklin") {
         def targetTurtle = ""
         if (params.role == "franklin") targetTurtle = "emily"
         if (params.role == "emily") targetTurtle = "franklin"
 
-        def turtle = getTurtle(['role': targetTurtle],game)
+        def turtle = scalaTurtlesPerGame[params.gameId+""][targetTurtle]
         turtle.answer(params.content.toString())
+        
       } else {           
          UserInteraction userInteraction = new UserInteraction(this, params.gameId, "", params.user, params.role)
          userInteraction.notifyResponse(params.content)
@@ -267,6 +285,8 @@ class GameController {
         // notify when first turtle create a new game
         event topic: "save-game", data: [userIdNotification: params.userIdNotification, instance:[id:gameInstance.id, version: gameInstance.version, user1: gameInstance.user1]]
 
+        if (mode == "scala") initTurtle("franklin",gameInstance,params.userIdNotification)
+        
         def oooo = [
                 id : gameInstance.id,
                 version : gameInstance.version,
@@ -307,6 +327,8 @@ class GameController {
         // notify when first turtle create a new game
         event topic: "update-game", data: [userIdNotification: params.userIdNotification, instance:[id:gameInstance.id, version: gameInstance.version, user1: gameInstance.user1, user2: gameInstance.user2, turtles: mazeDefinition['turtles']]]
 
+        if (mode == "scala") initTurtle("emily",gameInstance,params.userIdNotification)
+        
         def oooo = [
                 id : gameInstance.id,
                 version : gameInstance.version,

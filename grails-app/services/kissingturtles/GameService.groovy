@@ -141,12 +141,20 @@ class GameService {
         def scalaAsks = turtle.getNewAsksAsJavaList()
         
         def steps = []
-        result.each(){
-            steps << [it['x'], it['y']]
+         result.each(){
+              steps << [it['x'], it['y'],0]
+         } 
+        
+        def meeting_ = turtle.getMeetPointAsJavaMap()
+        def meeting = null
+        if (meeting_.keySet().size() > 0) {
+           meeting = []
+           meeting[0] = meeting_['x']
+           meeting[1] = meeting_['y']
         }
-
+      
         def obj
-        if (turtle.name == "emily") {
+        if (turtle.getName() == "emily") {
             obj = [
                     emily: steps
             ]
@@ -155,7 +163,11 @@ class GameService {
                     franklin: steps
             ]
         }
-
+        if (meeting != null) {
+            mazeDefinition.turtles.position.tree1[0] = meeting[0]
+            mazeDefinition.turtles.position.tree1[1] = meeting[1]
+            obj['tree1'] = [meeting];
+        }
         def last = steps.size() == 0 ? null :  steps.last()
         boolean win = false
         if (last) {
@@ -185,20 +197,34 @@ class GameService {
                 emily: 'turtle2.png',
                 tree1: 'tree.png'
         ]
-
-        [
-                images: images,
-                position: obj,
-                grid: 15,
-                stepDuration: 1000,
-                asks: scalaAsks,
-                win: win,
-                user1: game.user1,
-                user2: game.user2,
-                id: game.id,
-                winningAnimation: [treeInitialPosition.x, treeInitialPosition.y],
-                exception: ex
-        ]
+        if (ex) {
+            return [
+                    images: images,
+                    position: obj,
+                    grid: 15,
+                    stepDuration: 1000,
+                    asks: scalaAsks,
+                    win: win,
+                    user1: game.user1,
+                    user2: game.user2,
+                    id: game.id,
+                    winningAnimation: [treeInitialPosition.x, treeInitialPosition.y],
+                    exception: ex
+            ]
+        } else {
+            return [
+                    images: images,
+                    position: obj,
+                    grid: 15,
+                    stepDuration: 1000,
+                    asks: scalaAsks,
+                    win: win,
+                    user1: game.user1,
+                    user2: game.user2,
+                    id: game.id,
+                    winningAnimation: [treeInitialPosition.x, treeInitialPosition.y]
+            ]
+        }
     }
 
 }
