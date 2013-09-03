@@ -110,11 +110,8 @@ class GameController {
             evaluator = new Evaluator(printStream).withContinuations().withPluginsDir("lib/plugins")
 
             // Compiler Plugins
-            //dslprez.scala.timer.MyTimer.reinit()
-            //evaluator.withPluginOption("dslplugin:timerValue:"+15) //15S
             evaluator.withPluginOption("dslplugin:blacklistFile:anyfile")
-            //evaluator.withPluginOption("dslplugin:maxNumberCalls:3")
-     
+        
             evaluator.addImport("dslprez.scala.game._")
             evaluator.addImport("dslprez.scala.game.Turtle.end")
 
@@ -129,7 +126,8 @@ class GameController {
                 result = evaluator.eval(finalScript)
             }
             catch (e) {
-                ex = stream.toString()
+                ex = e.message+"\n\n"+stream.toString(encoding)
+                //e.getMessage() //stream.toString()
                 println ex
             }
         } finally {
@@ -334,9 +332,9 @@ class GameController {
         if (mode == "scala") initTurtle("emily",gameInstance,params.userIdNotification)
         
         //def t = new PathHelper(wallStatic,[mazeDefinition['turtles']['position']['emily'][0],mazeDefinition['turtles']['position']['emily'][1]],
-                               [mazeDefinition['turtles']['position']['franklin'][0], mazeDefinition['turtles']['position']['franklin'][1]])  
+        //                       [mazeDefinition['turtles']['position']['franklin'][0], mazeDefinition['turtles']['position']['franklin'][1]])  
                                
-        println("Test = "+t.findMinPath())
+        //println("Test = "+t.findMinPath())
         
         def oooo = [
                 id : gameInstance.id,

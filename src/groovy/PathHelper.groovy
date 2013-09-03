@@ -31,11 +31,11 @@ public class PathHelper {
    }
 
    def isAtStart(position) {
-      isAtPosition(position,start)
+      isAtPosition(position,startPosition)
    }
 
    def isAtEnd(position) {
-      isAtPosition(position,start)
+      isAtPosition(position,endPosition)
    }
 
    def validMove(position) {
@@ -54,6 +54,8 @@ public class PathHelper {
 
    def newStepsOfPath(path) {
       def newPaths = []
+      if (isAtEnd(path.last())) return [path]
+      
       def options = validMove(path.last())
       if (options.size() >0) {
          options.each { option -> if (!path.contains(option)) {
