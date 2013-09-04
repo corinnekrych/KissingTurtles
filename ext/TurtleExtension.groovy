@@ -5,7 +5,7 @@ unresolvedVariable { var ->
         storeType(var, classNodeFor(dsl.Direction))
         handled = true
     }
-//    if (isDynamic(var)) {
+//    if (isDynamic(var) && var.name.contains('resp')) {
 //        println "isdynamic"
 //        storeType(var, STRING_TYPE)
 //        handled = true

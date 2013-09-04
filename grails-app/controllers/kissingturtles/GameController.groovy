@@ -19,7 +19,7 @@ class GameController {
     int delay = 600000   // delay for 10 min to join gme
     int period = 60000  // check every 1 min
     int inactivityTime = 300000 // 5 mins
-
+    def directory
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
     def gameService
@@ -90,11 +90,30 @@ class GameController {
    /* Execute DSL */
    def executeScala(game) {
         // Ugly search how to do better
-        def cp = System.getProperty("java.class.path")
-        if (!cp.contains("scala")) {
-            cp = "lib/scaladsl.jar:lib/scalainterpreter.jar:lib/scala-reflect.jar:lib/scala-compiler.jar:lib/scala-library.jar:lib/lift-json.jar:target/classes:"+cp
-            System.setProperty("java.class.path", cp)
-        }
+//        def cp = System.getProperty("java.class.path")
+//        if (!cp.contains("scala")) {
+//            cp = "lib/scaladsl.jar:lib/scalainterpreter.jar:lib/scala-reflect.jar:lib/scala-compiler.jar:lib/scala-library.jar:lib/lift-json.jar:target/classes:"+cp
+//            System.setProperty("java.class.path", cp)
+//        }
+       def cp = System.getProperty("java.class.path")
+       if (!cp.contains("scala")) {
+           cp = "lib/scaladsl.jar:lib/scalainterpreter.jar:lib/scala-reflect.jar:lib/scala-compiler.jar:lib/scala-library.jar:lib/lift-json.jar:" + cp
+           System.setProperty("java.class.path", cp)
+           System.getProperty("java.class.path", ".").tokenize(File.pathSeparator).each {
+               println it
+           }
+
+           def compilerPath = java.lang.Class.forName("scala.tools.nsc.Interpreter").getProtectionDomain().getCodeSource().getLocation().getPath()
+           //println " >>>>>>>>> " + compilerPath
+           def evaluatorPath = java.lang.Class.forName("dslprez.scala.eval.Evaluator").getProtectionDomain().getCodeSource().getLocation().getPath()
+           def libraryPath = java.lang.Class.forName("scala.App").getProtectionDomain().getCodeSource().getLocation().getPath()
+           def reflectPath = java.lang.Class.forName("scala.reflect.api.Annotations").getProtectionDomain().getCodeSource().getLocation().getPath()
+           def jsonPath = java.lang.Class.forName("net.liftweb.json.JsonParser").getProtectionDomain().getCodeSource().getLocation().getPath()
+           def dslPath = java.lang.Class.forName("dslprez.scala.slides.Position").getProtectionDomain().getCodeSource().getLocation().getPath()
+           System.setProperty("java.class.path", evaluatorPath + ":" + libraryPath + ":" + compilerPath + ":" + reflectPath + ":" + jsonPath + ":" + dslPath + ":" + cp)
+
+           //println ">>>>>>> $directory"
+       }
 
         def encoding = 'UTF-8'
         def stream = new ByteArrayOutputStream()
@@ -108,7 +127,13 @@ class GameController {
         def evaluator
         def ex
         try {
-            evaluator = new Evaluator(printStream).withContinuations().withPluginsDir("lib/plugins")
+            if (directory == null) {
+                def compilerPath = java.lang.Class.forName("scala.tools.nsc.Interpreter").getProtectionDomain().getCodeSource().getLocation().getPath()
+                directory = compilerPath.toString() - "lib/scala-compiler.jar"
+            }
+            //println ">>>>>>++++++++++++++++      Plug in Dir      ++++++++++>>>>>>>>>>>>>>>>>>> $directory" + "lib"
+            evaluator = new Evaluator(printStream).withContinuations().withPluginsDir(directory + "lib")
+            //evaluator = new Evaluator(printStream).withContinuations().withPluginsDir("lib/plugins")
 
             // Compiler Plugins
             evaluator.withPluginOption("dslplugin:blacklistFile:anyfile")
