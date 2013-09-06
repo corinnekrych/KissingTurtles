@@ -213,8 +213,8 @@ kissingturtles.view.gameview = function (model, elements) {
                 $('#submit-game').button('disable');
                 $('#answer').button('disable');
                 setTimeout(function() {
-                    $.mobile.changePage( '#wlost');
-                }, 4000);
+                    $.mobile.changePage( '#lost');
+                }, 11000);   // 11 steps for Birdy at worst == 11 seconds
             }
 
             if (data.item.win) {

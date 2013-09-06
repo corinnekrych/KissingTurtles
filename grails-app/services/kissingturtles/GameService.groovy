@@ -19,15 +19,12 @@ class GameService {
             steps << [it.x, it.y, it.k]
         }
 
-
+        def obj = []
         // Change meeting point
         if (result.meeting) {
             mazeDefinition.turtles.position.tree1[0] = result.meeting[0]
             mazeDefinition.turtles.position.tree1[1] = result.meeting[1]
-            obj['tree1'] = [result.meeting];
         }
-
-        def obj
 
         // Move birdy
         // Calculate winning path for Birdy
@@ -38,7 +35,7 @@ class GameService {
         mazeDefinition.winningPath = winningPathForBird
 
         def randomMe = new Random()
-        def randomNumberOfMoves = randomMe.nextInt(10)
+        def randomNumberOfMoves = randomMe.nextInt(10) + 1 // max of 11 steps in a raw
         def birdMoves = []
         def lost = false
         for (int i =0; i < randomNumberOfMoves; i++) {
@@ -52,7 +49,11 @@ class GameService {
 
         // update new position for Birdy
         if (birdMoves) {
-            mazeDefinition['turtles']['position']['bird'] = birdMoves.last()
+            def lastMove = birdMoves.last()
+            JSONArray array = new JSONArray()
+            array.add(lastMove[0])
+            array.add(lastMove[1])
+            mazeDefinition.turtles.position.bird = array
         }
 
         if (turtle.name == "emily") {
@@ -66,7 +67,9 @@ class GameService {
                     bird: birdMoves
             ]
         }
-
+        if (result.meeting) {
+            obj['tree1'] = [result.meeting];
+        }
         def last = steps.size() == 0 ? null :  steps.last()
         boolean win = false
         if (last) {
@@ -169,7 +172,6 @@ class GameService {
         array.add(emilyPosition.y)
 
         mazeDefinition.turtles.position.emily = array
-        //mazeDefinition.winningPath = winningPath
         mazeDefinition
     }
         
@@ -192,14 +194,11 @@ class GameService {
            meeting[0] = meeting_['x']
            meeting[1] = meeting_['y']
         }
-
+        def obj = []
         if (meeting != null) {
             mazeDefinition.turtles.position.tree1[0] = meeting[0]
             mazeDefinition.turtles.position.tree1[1] = meeting[1]
-            obj['tree1'] = [meeting];
         }
-
-        def obj
 
         // Move birdy
         // Calculate winning path for Birdy
@@ -210,7 +209,7 @@ class GameService {
         mazeDefinition.winningPath = winningPathForBird
 
         def randomMe = new Random()
-        def randomNumberOfMoves = randomMe.nextInt(10)
+        def randomNumberOfMoves = randomMe.nextInt(10) + 1 //max of 11 steps in a raw
         def birdMoves = []
         def lost = false
         for (int i =0; i < randomNumberOfMoves; i++) {
@@ -223,7 +222,11 @@ class GameService {
         mazeDefinition.winningPath =  winningPathForBird - birdMoves
         // update new position for Birdy
         if (birdMoves) {
-            mazeDefinition.turtles.position.bird = birdMoves.last()
+            def lastMove = birdMoves.last()
+            JSONArray array = new JSONArray()
+            array.add(lastMove[0])
+            array.add(lastMove[1])
+            mazeDefinition.turtles.position.bird = array
         }
         if (turtle.name == "emily") {
             obj = [
@@ -235,6 +238,9 @@ class GameService {
                     franklin: steps,
                     bird: birdMoves
             ]
+        }
+        if (meeting != null) {
+            obj['tree1'] = [meeting];
         }
 
         def last = steps.size() == 0 ? null :  steps.last()
