@@ -13,32 +13,20 @@ class Path {
 
 public class PathHelper {
    def walls
-   def startPosition
-   def endPosition
 
-   public PathHelper(walls_,start_,end_) {
+   public PathHelper(walls_) {
       this.walls = walls_
-      this.startPosition = start_
-      this.endPosition = end_
    }
 
-   def contains(position) {
+   private def contains(position) {
      walls.any {isAtPosition(it,position)}   
    }
 
-   def isAtPosition(position,reference) {
+   private def isAtPosition(position,reference) {
       (position[0] == reference[0] && (position[1] == reference[1]))
    }
 
-   def isAtStart(position) {
-      isAtPosition(position,startPosition)
-   }
-
-   def isAtEnd(position) {
-      isAtPosition(position,endPosition)
-   }
-
-   def validMove(position) {
+   private def validMove(position) {
       def result = []
       def positionUp = [position[0],position[1]+1]
       def positionDown = [position[0],position[1]-1]
@@ -52,9 +40,9 @@ public class PathHelper {
       result
    }
 
-   def newStepsOfPath(path) {
+   private def newStepsOfPath(path,endPosition) {
       def newPaths = []
-      if (isAtEnd(path.last())) return [path]
+      if (isAtPosition(path.last(),endPosition)) return [path]
       
       def options = validMove(path.last())
       if (options.size() >0) {
@@ -63,21 +51,21 @@ public class PathHelper {
                                newPaths << newPath
                             }
                 }
-         newSteps(newPaths)
+         newSteps(newPaths,endPosition)
       } else {
          []
       }
    }
 
-   def newSteps(paths) {
+   private def newSteps(paths,endPosition) {
       def newPaths = []
-      paths.each { p -> def newsteps = newStepsOfPath(p); if (newsteps.size()>0) newsteps.each { newPaths << it} else newPaths << p }
+      paths.each { p -> def newsteps = newStepsOfPath(p,endPosition); if (newsteps.size()>0) newsteps.each { newPaths << it} else newPaths << p }
       newPaths
    }
 
-   def findMinPath() {
+   def findMinPath(startPosition,endPosition) {
       def path = [new Path(startPosition)]
-      def allPaths = newSteps(path)
+      def allPaths = newSteps(path,endPosition)
       def possiblePaths = []
       allPaths.each { if (it.contains(endPosition)) possiblePaths<<it}
       possiblePaths.min { it.length() }

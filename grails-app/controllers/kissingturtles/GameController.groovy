@@ -17,7 +17,7 @@ import dsl.Position
 
 class GameController {
 
-    int delay = 600000   // delay for 10 min to join gme
+    int delay = 600000   // delay for 10 min to join game
     int period = 60000  // check every 1 min
     int inactivityTime = 300000 // 5 mins
     def directory
@@ -122,7 +122,6 @@ class GameController {
         def printStream = new PrintStream(stream, true, encoding)
 
         def turtle = scalaTurtlesPerGame[game.id+""][params.role]
-        
         def result = ""
         def stacktrace = ""
 
