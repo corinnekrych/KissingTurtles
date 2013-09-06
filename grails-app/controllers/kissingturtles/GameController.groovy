@@ -9,6 +9,7 @@ import groovy.transform.TypeChecked
 import org.codehaus.groovy.control.CompilerConfiguration
 import groovy.json.JsonBuilder
 import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer
+import org.codehaus.groovy.grails.web.json.JSONArray
 import org.codehaus.groovy.grails.web.json.JSONObject
 import dsl.DslScript
 import dsl.Turtle
@@ -20,6 +21,7 @@ class GameController {
     int period = 60000  // check every 1 min
     int inactivityTime = 300000 // 5 mins
     def directory
+
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
     def gameService
@@ -295,9 +297,10 @@ class GameController {
         // generate position for Franklin and the meeting point
         Position franklinPosition = new Position().random(size, walls)
         Position treePosition = new Position().random(size, walls)
+        Position birdPosition = new Position().random(size, walls)
 
         // format into json like
-        def mazeDefinition = gameService.createFormatting(walls, franklinPosition, treePosition)
+        def mazeDefinition = gameService.createFormatting(walls, franklinPosition, treePosition, birdPosition)
 
         // create new Game
         Game gameInstance = new Game()
@@ -339,29 +342,25 @@ class GameController {
             render flash as JSON
         }
 
+
         // generate position for Emily (anywhere except on the walls)
         def mazeDefinition = gameService.updateFormatting(gameInstance)
 
         gameInstance.user2 = jsonObject.get("user2")
         gameInstance.lastModified = new Date().getTime()
         gameInstance.mazeDefinition = mazeDefinition
+
         // save game
         if (!gameInstance.save(flush: true)) {
             ValidationErrors validationErrors = gameInstance.errors
             render validationErrors as JSON
         }
 
-
         // notify when first turtle create a new game
         event topic: "update-game", data: [userIdNotification: params.userIdNotification, instance:[id:gameInstance.id, version: gameInstance.version, user1: gameInstance.user1, user2: gameInstance.user2, turtles: mazeDefinition['turtles']]]
 
         if (mode == "scala") initTurtle("emily",gameInstance,params.userIdNotification)
-        
-        //def t = new PathHelper(wallStatic,[mazeDefinition['turtles']['position']['emily'][0],mazeDefinition['turtles']['position']['emily'][1]],
-        //                       [mazeDefinition['turtles']['position']['franklin'][0], mazeDefinition['turtles']['position']['franklin'][1]])  
-                               
-        //println("Test = "+t.findMinPath())
-        
+
         def oooo = [
                 id : gameInstance.id,
                 version : gameInstance.version,

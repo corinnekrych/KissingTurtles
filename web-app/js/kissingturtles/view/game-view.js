@@ -1,4 +1,4 @@
-    var kissingturtles = kissingturtles || {};
+var kissingturtles = kissingturtles || {};
 kissingturtles.view = kissingturtles.view || {};
 
 kissingturtles.view.gameview = function (model, elements) {
@@ -202,6 +202,19 @@ kissingturtles.view.gameview = function (model, elements) {
             } else {
                 if (!myGameObject.exception)
                     toggle('#submit-game');
+            }
+
+            if (data.item.lost) {
+                $('#input-move-name').val('');
+                $('#input-move-name').textinput('disable')
+                $('#response').val('');
+                $('#interaction').val('');
+                $('#response').textinput('disable');
+                $('#submit-game').button('disable');
+                $('#answer').button('disable');
+                setTimeout(function() {
+                    $.mobile.changePage( '#wlost');
+                }, 4000);
             }
 
             if (data.item.win) {

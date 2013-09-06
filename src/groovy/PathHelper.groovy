@@ -8,7 +8,7 @@ class Path {
    def contains(position) { steps.contains(position) }
    def length() { steps.size() }
  
-   String toString() { "Path = <<"+steps+">>\n" }
+   //String toString() { "Path = <<"+steps+">>\n" }
 }
 
 public class PathHelper {

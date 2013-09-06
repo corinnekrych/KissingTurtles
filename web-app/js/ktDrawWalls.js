@@ -48,19 +48,19 @@
                     }
                 }
             }
-            
-	    ctx.font = Math.max(2,Math.floor(pixels / (2 * grid)*0.8)) + 'pt arial';
-	    ctx.textAlign = 'center';
-	    ctx.textBaseline = 'middle';
-            for (var i = 2; i < grid; i++) {
-	      
-	      if ( (4*i/grid) < 1)  ctx.fillStyle = 'pink';
-              else if ( 4*i/grid) < 2) ctx.fillStyle = 'blue';
-	      else if ( (4*i/grid) < 3) ctx.fillStyle = 'yellow';
-  	      else if ( (4*i/grid) < 4) ctx.fillStyle = 'red';
 
-	       ctx.fillText(i - 1, pixels / (grid + 1) * i, pixels - pixels / (grid + 1));
-	       ctx.fillText(i - 1, pixels / (grid + 1), pixels - pixels / (grid + 1) * i);   
+            ctx.font = Math.max(2,Math.floor(pixels / (2 * grid)*0.6)) + 'pt arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            for (var i = 2; i < grid; i++) {
+                ctx.fillStyle = 'black';
+//                if ( (4*i/grid) < 1)  ctx.fillStyle = 'pink';
+//                else if ( (4*i/grid) < 2) ctx.fillStyle = 'blue';
+//                else if ( (4*i/grid) < 3) ctx.fillStyle = 'yellow';
+//                else if ( (4*i/grid) < 4) ctx.fillStyle = 'red';
+
+                ctx.fillText(i - 1, pixels / (grid + 1) * i, pixels - pixels / (grid + 1));
+                ctx.fillText(i - 1, pixels / (grid + 1), pixels - pixels / (grid + 1) * i);
             }
 
         };

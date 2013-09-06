@@ -19,21 +19,54 @@ class GameService {
             steps << [it.x, it.y, it.k]
         }
 
-        def obj
-        if (turtle.name == "emily") {
-            obj = [
-                    emily: steps
-            ]
-        } else {
-            obj = [
-                    franklin: steps
-            ]
-        }
+
+        // Change meeting point
         if (result.meeting) {
             mazeDefinition.turtles.position.tree1[0] = result.meeting[0]
             mazeDefinition.turtles.position.tree1[1] = result.meeting[1]
             obj['tree1'] = [result.meeting];
         }
+
+        def obj
+
+        // Move birdy
+        // Calculate winning path for Birdy
+        def winningPathResolver = new PathHelper(mazeDefinition.walls,
+                [mazeDefinition['turtles']['position']['bird'][0], mazeDefinition['turtles']['position']['bird'][1]],
+                [mazeDefinition['turtles']['position']['tree1'][0], mazeDefinition['turtles']['position']['tree1'][1]])
+        def winningPathForBird = winningPathResolver.findMinPath().steps
+        mazeDefinition.winningPath = winningPathForBird
+
+        def randomMe = new Random()
+        def randomNumberOfMoves = randomMe.nextInt(10)
+        def birdMoves = []
+        def lost = false
+        for (int i =0; i < randomNumberOfMoves; i++) {
+            if (winningPathForBird[i]) {
+                birdMoves << winningPathForBird[i]
+            }  else {
+                lost = true
+            }
+        }
+        mazeDefinition.winningPath =  winningPathForBird - birdMoves
+
+        // update new position for Birdy
+        if (birdMoves) {
+            mazeDefinition['turtles']['position']['bird'] = birdMoves.last()
+        }
+
+        if (turtle.name == "emily") {
+            obj = [
+                    emily: steps,
+                    bird: birdMoves
+            ]
+        } else {
+            obj = [
+                    franklin: steps,
+                    bird: birdMoves
+            ]
+        }
+
         def last = steps.size() == 0 ? null :  steps.last()
         boolean win = false
         if (last) {
@@ -56,8 +89,6 @@ class GameService {
             }
         }
 
-
-
         game.mazeDefinition = mazeDefinition
 
         def images = [
@@ -73,6 +104,7 @@ class GameService {
                     stepDuration: 1000,
                     asks: result.asks,
                     win: win,
+                    lost: lost,
                     user1: game.user1,
                     user2: game.user2,
                     id: game.id,
@@ -87,6 +119,7 @@ class GameService {
                     stepDuration: 1000,
                     asks: result.asks,
                     win: win,
+                    lost: lost,
                     user1: game.user1,
                     user2: game.user2,
                     id: game.id,
@@ -95,12 +128,13 @@ class GameService {
         }
     }
 
-    def createFormatting(walls, franklinPosition, treePosition) {
+    def createFormatting(walls, franklinPosition, treePosition, birdPosition) {
 
         def images = [
                 franklin: 'turtle.png',
                 emily: 'turtle2.png',
-                tree1: 'tree.png'
+                tree1: 'tree.png',
+                bird: 'bird.png'
         ]
         def fObj = []
         fObj << franklinPosition.x
@@ -108,9 +142,13 @@ class GameService {
         def tObj = []
         tObj << treePosition.x
         tObj << treePosition.y
+        def bObj = []
+        bObj << birdPosition.x
+        bObj << birdPosition.y
         def obj = [
                 franklin: fObj,
-                tree1: tObj
+                tree1: tObj,
+                bird: bObj
         ]
 
         def root = [
@@ -129,7 +167,9 @@ class GameService {
         JSONArray array = new JSONArray()
         array.add(emilyPosition.x)
         array.add(emilyPosition.y)
+
         mazeDefinition.turtles.position.emily = array
+        //mazeDefinition.winningPath = winningPath
         mazeDefinition
     }
         
@@ -152,22 +192,51 @@ class GameService {
            meeting[0] = meeting_['x']
            meeting[1] = meeting_['y']
         }
-      
-        def obj
-        if (turtle.getName() == "emily") {
-            obj = [
-                    emily: steps
-            ]
-        } else {
-            obj = [
-                    franklin: steps
-            ]
-        }
+
         if (meeting != null) {
             mazeDefinition.turtles.position.tree1[0] = meeting[0]
             mazeDefinition.turtles.position.tree1[1] = meeting[1]
             obj['tree1'] = [meeting];
         }
+
+        def obj
+
+        // Move birdy
+        // Calculate winning path for Birdy
+        def winningPathResolver = new PathHelper(mazeDefinition.walls,
+                [mazeDefinition.turtles.position.bird[0], mazeDefinition.turtles.position.bird[1]],
+                [mazeDefinition.turtles.position.tree1[0], mazeDefinition.turtles.position.tree1[1]])
+        def winningPathForBird = winningPathResolver.findMinPath().steps
+        mazeDefinition.winningPath = winningPathForBird
+
+        def randomMe = new Random()
+        def randomNumberOfMoves = randomMe.nextInt(10)
+        def birdMoves = []
+        def lost = false
+        for (int i =0; i < randomNumberOfMoves; i++) {
+            if (winningPathForBird[i]) {
+                birdMoves << winningPathForBird[i]
+            }  else {
+                lost = true
+            }
+        }
+        mazeDefinition.winningPath =  winningPathForBird - birdMoves
+        // update new position for Birdy
+        if (birdMoves) {
+            mazeDefinition.turtles.position.bird = birdMoves.last()
+        }
+        if (turtle.name == "emily") {
+            obj = [
+                    emily: steps,
+                    bird: birdMoves
+            ]
+        } else {
+            obj = [
+                    franklin: steps,
+                    bird: birdMoves
+            ]
+        }
+
         def last = steps.size() == 0 ? null :  steps.last()
         boolean win = false
         if (last) {
@@ -205,6 +274,7 @@ class GameService {
                     stepDuration: 1000,
                     asks: scalaAsks,
                     win: win,
+                    lost: lost,
                     user1: game.user1,
                     user2: game.user2,
                     id: game.id,
@@ -219,6 +289,7 @@ class GameService {
                     stepDuration: 1000,
                     asks: scalaAsks,
                     win: win,
+                    lost: lost,
                     user1: game.user1,
                     user2: game.user2,
                     id: game.id,
