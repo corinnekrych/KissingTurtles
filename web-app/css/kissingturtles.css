@@ -36,6 +36,14 @@
     width: 10%;
 }
 
+.groovy {
+    background-color: rgba(247,251,253,1);
+}
+
+.scala {
+    background-color: #f0ced2;
+}
+
 /* =====================================================================================================================
 * Square border in jqm
 ===================================================================================================================== */
@@ -90,39 +98,12 @@ canvas {
     margin: 0 auto;
 }
 
-
-/* =====================================================================================================================
-* Code mirror folding code
-===================================================================================================================== */
-.CodeMirror {border-top: 1px solid black; border-bottom: 1px solid black;}
-.CodeMirror-foldmarker {
-    color: blue;
-    text-shadow: #b9f 1px 1px 2px, #b9f -1px -1px 2px, #b9f 1px -1px 2px, #b9f -1px 1px 2px;
-    font-family: arial;
-    line-height: .3;
-    cursor: pointer;
-}
-.CodeMirror-foldgutter {
-    width: .7em;
-}
-.CodeMirror-foldgutter-open,
-.CodeMirror-foldgutter-folded {
-    color: #555;
-    cursor: pointer;
-}
-.CodeMirror-foldgutter-open:after {
-    content: "\25BE";
-}
-.CodeMirror-foldgutter-folded:after {
-    content: "\25B8";
-}
-
-
 /* ==================================================================================================================
    For Tablets
-   For small than 850 px
+   For small than 650 px
 ===================================================================================================================== */
-@media only screen and (max-width: 1000px) {
+
+@media only screen and (max-width: 650px) {
 
     #blockScriptChat {
         display:block;
@@ -136,29 +117,12 @@ canvas {
         display:block;
         float:none;
 
-        height: 45em;
+        height: 30em;
         width: 75%;
         margin-left: auto;
         margin-right: auto;
     }
 
-}
-
-@media only screen and (max-width: 850px) {
-    #blockCanvas {
-        height: 38em;
-    }
-    .turtle {
-        width: 20%;
-    }
-
-
-}
-
-@media only screen and (max-width: 650px) {
-    #blockCanvas {
-        height: 30em;
-    }
     .turtle {
         width: 20%;
     }
