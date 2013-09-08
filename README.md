@@ -1,4 +1,4 @@
-KissingTurtles is a collaborative game for 2 players. Emily the little pis wnat to  meet Franklin to kiss :)
+KissingTurtles is a collaborative game for 2 players. Emily the little pig wants to  meet Franklin to kiss :)
 Helps Emily/Franklin to move the tyrtle/pig around the maze. You will need to use a langgue to give instructions. 
 DSL (Domain Specific Language) is:
 
