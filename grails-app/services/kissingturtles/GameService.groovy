@@ -9,7 +9,6 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 class GameService {
 
     def runFormatting(game, mazeDefinition, turtle, result, ex, idNotification) {
-        Position treeInitialPosition = new Position(mazeDefinition.turtles.position.tree1[0], mazeDefinition.turtles.position.tree1[1], 0, '+x')
 
         def steps = []
         result.steps.each(){
@@ -51,8 +50,6 @@ class GameService {
             array.add(lastMove[0])
             array.add(lastMove[1])
             mazeDefinition.turtles.position.bird = array
-//            mazeDefinition['turtles']['position']['bird'][0] = birdMoves.last()[0]
-//            mazeDefinition['turtles']['position']['bird'][1] = birdMoves.last()[1]
         }
         
         def obj
@@ -76,7 +73,7 @@ class GameService {
         boolean win = false
         if (last) {
             if (turtle.name == "franklin") {
-                if ((last[0] == treeInitialPosition.x) && (last[1] == treeInitialPosition.y) && (mazeDefinition.turtles.position.emily[0] == treeInitialPosition.x) && (mazeDefinition.turtles.position.emily[1] == treeInitialPosition.y)) {
+                if ((last[0] == mazeDefinition.turtles.position.tree1[0]) && (last[1] == mazeDefinition.turtles.position.tree1[1]) && (mazeDefinition.turtles.position.emily[0] == mazeDefinition.turtles.position.tree1[0]) && (mazeDefinition.turtles.position.emily[1] == mazeDefinition.turtles.position.tree1[1])) {
                     win = true
                 }
                 JSONArray array = new JSONArray()
@@ -84,7 +81,7 @@ class GameService {
                 array.add(last[1])
                 mazeDefinition.turtles.position.franklin = array
             } else if (turtle.name == "emily") {
-                if ((last[0] == treeInitialPosition.x) && (last[1] == treeInitialPosition.y) && (mazeDefinition.turtles.position.franklin[0] == treeInitialPosition.x) && (mazeDefinition.turtles.position.franklin[1] == treeInitialPosition.y)) {
+                if ((last[0] == mazeDefinition.turtles.position.tree1[0]) && (last[1] == mazeDefinition.turtles.position.tree1[1]) && (mazeDefinition.turtles.position.franklin[0] == mazeDefinition.turtles.position.tree1[0]) && (mazeDefinition.turtles.position.franklin[1] == mazeDefinition.turtles.position.tree1[1])) {
                     win = true
                 }
                 JSONArray array = new JSONArray()
@@ -113,7 +110,7 @@ class GameService {
                     user1: game.user1,
                     user2: game.user2,
                     id: game.id,
-                    winningAnimation: [treeInitialPosition.x, treeInitialPosition.y],
+                    winningAnimation: [mazeDefinition.turtles.position.tree1[0], mazeDefinition.turtles.position.tree1[1]],
                     exception: ex
             ]
         } else {
@@ -128,7 +125,7 @@ class GameService {
                     user1: game.user1,
                     user2: game.user2,
                     id: game.id,
-                    winningAnimation: [treeInitialPosition.x, treeInitialPosition.y]
+                    winningAnimation: [mazeDefinition.turtles.position.tree1[0], mazeDefinition.turtles.position.tree1[1]]
             ]
         }
     }
@@ -179,7 +176,6 @@ class GameService {
         
     def runScalaFormatting(game,turtle, ex, idNotification) {
         def mazeDefinition = JSON.parse(game.mazeDefinition)
-        Position treeInitialPosition = new Position(mazeDefinition.turtles.position.tree1[0], mazeDefinition.turtles.position.tree1[1], 0, '+x')
 
         def result = turtle.getNewStepsAsJavaList()
         def scalaAsks = turtle.getNewAsksAsJavaList()
@@ -228,8 +224,6 @@ class GameService {
             array.add(lastMove[0])
             array.add(lastMove[1])
             mazeDefinition.turtles.position.bird = array
-//            mazeDefinition['turtles']['position']['bird'][0] = birdMoves.last()[0]
-//            mazeDefinition['turtles']['position']['bird'][1] = birdMoves.last()[1]
         }
 
          def obj
@@ -254,7 +248,7 @@ class GameService {
         boolean win = false
         if (last) {
             if (turtle.name == "franklin") {
-                if ((last[0] == treeInitialPosition.x) && (last[1] == treeInitialPosition.y) && (mazeDefinition.turtles.position.emily[0] == treeInitialPosition.x) && (mazeDefinition.turtles.position.emily[1] == treeInitialPosition.y)) {
+                if ((last[0] == mazeDefinition.turtles.position.tree1[0]) && (last[1] == mazeDefinition.turtles.position.tree1[1]) && (mazeDefinition.turtles.position.emily[0] == mazeDefinition.turtles.position.tree1[0]) && (mazeDefinition.turtles.position.emily[1] == mazeDefinition.turtles.position.tree1[1])) {
                     win = true
                 }
                 JSONArray array = new JSONArray()
@@ -262,7 +256,7 @@ class GameService {
                 array.add(last[1])
                 mazeDefinition.turtles.position.franklin = array
             } else if (turtle.name == "emily") {
-                if ((last[0] == treeInitialPosition.x) && (last[1] == treeInitialPosition.y) && (mazeDefinition.turtles.position.franklin[0] == treeInitialPosition.x) && (mazeDefinition.turtles.position.franklin[1] == treeInitialPosition.y)) {
+                if ((last[0] == mazeDefinition.turtles.position.tree1[0]) && (last[1] == mazeDefinition.turtles.position.tree1[1]) && (mazeDefinition.turtles.position.franklin[0] == mazeDefinition.turtles.position.tree1[0]) && (mazeDefinition.turtles.position.franklin[1] == mazeDefinition.turtles.position.tree1[1])) {
                     win = true
                 }
                 JSONArray array = new JSONArray()
@@ -291,7 +285,7 @@ class GameService {
                     user1: game.user1,
                     user2: game.user2,
                     id: game.id,
-                    winningAnimation: [treeInitialPosition.x, treeInitialPosition.y],
+                    winningAnimation: [mazeDefinition.turtles.position.tree1[0], mazeDefinition.turtles.position.tree1[1]],
                     exception: ex
             ]
         } else {
@@ -306,7 +300,7 @@ class GameService {
                     user1: game.user1,
                     user2: game.user2,
                     id: game.id,
-                    winningAnimation: [treeInitialPosition.x, treeInitialPosition.y]
+                    winningAnimation: [mazeDefinition.turtles.position.tree1[0], mazeDefinition.turtles.position.tree1[1]]
             ]
         }
     }

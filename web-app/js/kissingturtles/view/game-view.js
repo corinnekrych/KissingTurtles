@@ -242,7 +242,7 @@ kissingturtles.view.gameview = function (model, elements) {
                         }
                         if (myGameObject.lost && !isWinAnimated) {
                             isWinAnimated = true;
-                            that.drawTurtles.win(myGameObject.winningAnimation[0], myGameObject.winningAnimation[1], function() {
+                            that.drawTurtles.lost(myGameObject.winningAnimation[0], myGameObject.winningAnimation[1], function() {
                                 $.mobile.changePage( '#lost');
                             });
                         }
