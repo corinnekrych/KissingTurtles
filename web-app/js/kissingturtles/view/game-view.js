@@ -495,7 +495,11 @@ kissingturtles.view.gameview = function (model, elements) {
         var newElement = {
             user1: localStorage.getItem('KissingTurtles.UserId')
         };
+        cleanCanvas();
+        that.createButtonClicked.notify(newElement, event);
+    });
 
+    var cleanCanvas = function() {
         var canvas = document.getElementById('canvasGrid');
         var context = canvas.getContext('2d');
         context.clearRect(0, 0, canvas.width, canvas.height);
@@ -505,14 +509,10 @@ kissingturtles.view.gameview = function (model, elements) {
         canvas = document.getElementById('canvasTurtles');
         context = canvas.getContext('2d');
         context.clearRect(0, 0, canvas.width, canvas.height);
-
         that.drawGrid = undefined;
         that.drawWalls = undefined;
         that.drawTurtles = undefined;
-
-        that.createButtonClicked.notify(newElement, event);
-    });
-
+    }
     //----------------------------------------------------------------------------------------
     //   Rendering methods
     //----------------------------------------------------------------------------------------
@@ -559,20 +559,7 @@ kissingturtles.view.gameview = function (model, elements) {
     var clickGame = function(event) {
         var gameId = $(event.currentTarget).attr('data-id');
         if(gameId) {
-            var canvas = document.getElementById('canvasGrid');
-            var context = canvas.getContext('2d');
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            canvas = document.getElementById('canvasWalls');
-            context = canvas.getContext('2d');
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            canvas = document.getElementById('canvasTurtles');
-            context = canvas.getContext('2d');
-            context.clearRect(0, 0, canvas.width, canvas.height);
-
-            that.drawGrid = undefined;
-            that.drawWalls = undefined;
-            that.drawTurtles = undefined;
-
+            cleanCanvas();
             var obj = {user2: localStorage.getItem('KissingTurtles.UserId'), gameId: gameId};
             var newElement = {
                 game: JSON.stringify(obj)
