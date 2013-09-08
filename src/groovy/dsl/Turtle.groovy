@@ -14,6 +14,7 @@ class Turtle {
 
     UserInteraction userInteraction
 
+
     Turtle(myName, myImage, Position start, walls, userInterac) {
         name = myName
         image = myImage
@@ -22,6 +23,10 @@ class Turtle {
         result = ['name': name, 'image': image, 'steps': steps, 'asks': asks, 'meeting':meeting]
         maze = walls
         userInteraction = userInterac
+    }
+
+    Turtle(Position start) {
+        this(null, null, start, null, null)
     }
 
     Turtle move(Direction dir) {
