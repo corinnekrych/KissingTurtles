@@ -20,6 +20,7 @@ kissingturtles.view.gameview = function (model, elements) {
     //   Callback after first player create a new game. First player will play as Franklin.
     //----------------------------------------------------------------------------------------
     that.model.createdItem.attach(function (data, event) {
+        $('#error').html('');
         if (data.item.errors) {
             alert('Ooops something wrong happens');
         } else if (data.item.message) {
@@ -64,6 +65,7 @@ kissingturtles.view.gameview = function (model, elements) {
 
             if (!data.item.NOTIFIED) {
                 $.mobile.changePage($('#section-show-game'));
+                $('#input-move-name').addClass("groovy");
                 $('#input-move-name').textinput('enable')
                 $('#input-move-name').val('');
                 $('#response').val('');
@@ -78,6 +80,7 @@ kissingturtles.view.gameview = function (model, elements) {
     //   Callback after joining the game
     //----------------------------------------------------------------------------------------
     that.model.updatedItem.attach(function (data, event) {
+        $('#error').html('');
         // Display error for third fellow. Only 2 players game.
         if (data.item.errors) {
             alert('Ooops something wrong happens');
@@ -110,6 +113,7 @@ kissingturtles.view.gameview = function (model, elements) {
                 that.gameId = data.item.id;
                 $.mobile.changePage($('#section-show-game'));
                 $('#input-move-name').val('');
+                $('#input-move-name').addClass('scala')
                 $('#response').val('');
                 $('#submit-game').button('disable');
                 $('#script').trigger('collapse');
