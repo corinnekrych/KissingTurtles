@@ -204,7 +204,7 @@ kissingturtles.view.gameview = function (model, elements) {
                     toggle('#submit-game');
             }
 
-            if (data.item.lost) {
+            if (myGameObject.lost) {
                 $('#input-move-name').val('');
                 $('#input-move-name').textinput('disable')
                 $('#response').val('');
@@ -212,12 +212,9 @@ kissingturtles.view.gameview = function (model, elements) {
                 $('#response').textinput('disable');
                 $('#submit-game').button('disable');
                 $('#answer').button('disable');
-                setTimeout(function() {
-                    $.mobile.changePage( '#lost');
-                }, 11000);   // 11 steps for Birdy at worst == 11 seconds
             }
 
-            if (data.item.win) {
+            if (myGameObject.win) {
                 $('#input-move-name').val('');
                 $('#input-move-name').textinput('disable')
                 $('#response').val('');
@@ -225,18 +222,25 @@ kissingturtles.view.gameview = function (model, elements) {
                 $('#response').textinput('disable');
                 $('#submit-game').button('disable');
                 $('#answer').button('disable');
-                setTimeout(function() {
-                    $.mobile.changePage( '#won');
-                }, 4000);
             }
 
+            var isWinAnimated = false;
             $.each(myGameObject.position, function(key, value) {
                 for (var i= 0; i < value.length; i++) {
                     var obj= {};
                     obj[key] = value[i];
                     that.drawTurtles(obj, function () {
-                        if (myGameObject.win) {
-                            that.drawTurtles.win(myGameObject.winningAnimation[0], myGameObject.winningAnimation[1]);
+                        if (myGameObject.win && !isWinAnimated) {
+                            isWinAnimated = true;
+                            that.drawTurtles.win(myGameObject.winningAnimation[0], myGameObject.winningAnimation[1], function() {
+                                $.mobile.changePage( '#won');
+                            });
+                        }
+                        if (myGameObject.lost && !isWinAnimated) {
+                            isWinAnimated = true;
+                            that.drawTurtles.win(myGameObject.winningAnimation[0], myGameObject.winningAnimation[1], function() {
+                                $.mobile.changePage( '#lost');
+                            });
                         }
                     });
                 }
@@ -487,6 +491,21 @@ kissingturtles.view.gameview = function (model, elements) {
         var newElement = {
             user1: localStorage.getItem('KissingTurtles.UserId')
         };
+
+        var canvas = document.getElementById('canvasGrid');
+        var context = canvas.getContext('2d');
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        canvas = document.getElementById('canvasWalls');
+        context = canvas.getContext('2d');
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        canvas = document.getElementById('canvasTurtles');
+        context = canvas.getContext('2d');
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        that.drawGrid = undefined;
+        that.drawWalls = undefined;
+        that.drawTurtles = undefined;
+
         that.createButtonClicked.notify(newElement, event);
     });
 
@@ -536,6 +555,20 @@ kissingturtles.view.gameview = function (model, elements) {
     var clickGame = function(event) {
         var gameId = $(event.currentTarget).attr('data-id');
         if(gameId) {
+            var canvas = document.getElementById('canvasGrid');
+            var context = canvas.getContext('2d');
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            canvas = document.getElementById('canvasWalls');
+            context = canvas.getContext('2d');
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            canvas = document.getElementById('canvasTurtles');
+            context = canvas.getContext('2d');
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
+            that.drawGrid = undefined;
+            that.drawWalls = undefined;
+            that.drawTurtles = undefined;
+
             var obj = {user2: localStorage.getItem('KissingTurtles.UserId'), gameId: gameId};
             var newElement = {
                 game: JSON.stringify(obj)

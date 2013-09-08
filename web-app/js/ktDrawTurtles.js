@@ -40,6 +40,7 @@
         var current = config;
         var animations = {};
         var paused = true;
+        var stop = false;
 
         // Launch images loading in parallel
         var images = {};
@@ -189,6 +190,9 @@
             var max = Math.ceil((Math.max(Math.max(grid - x, x), Math.max(grid - y, y)) / speed) + 2);
             var i = 0;
             var iteration = function () {
+                if (stop) {
+                    return;
+                }
                 if (i < max) {
                     dist = i * speed;
                     var obj = {}
@@ -201,9 +205,16 @@
                         dirs[j] = nextDir(dirs[j]);
                     }
                 }
-                if (i == max) {
+                if (i >= max) {
                     if (callback) {
+                        for (name in animations) {
+                            if (animations.hasOwnProperty(name)) {
+                                    delete animations[name];
+                            }
+                        }
+                        delete animations;
                         setTimeout(callback, 0);
+                        stop = true;
                     }
                 }
                 i++;

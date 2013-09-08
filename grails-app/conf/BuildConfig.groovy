@@ -40,7 +40,7 @@ grails.project.dependency.resolution = {
 //        compile('org.atmosphere:atmosphere-runtime:1.1.0.RC4') {
 //            excludes 'slf4j-api', 'atmosphere-ping'
 //        }
-        runtime 'postgresql:postgresql:8.4-702.jdbc3'
+//        runtime 'postgresql:postgresql:8.4-702.jdbc3'
     }
 
     plugins {
