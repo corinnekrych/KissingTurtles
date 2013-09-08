@@ -16,7 +16,13 @@ kissingturtles.view.gameview = function (model, elements) {
         renderList();
     });
 
-    //----------------------------------------------------------------------------------------
+    $( "#section-show-game" ).on( "pageshow", function( event, ui ) {
+        if (!that.pageinitialized ) {
+            $.mobile.changePage( '#start-game');
+        }
+    });
+
+        //----------------------------------------------------------------------------------------
     //   Callback after first player create a new game. First player will play as Franklin.
     //----------------------------------------------------------------------------------------
     that.model.createdItem.attach(function (data, event) {
@@ -65,6 +71,7 @@ kissingturtles.view.gameview = function (model, elements) {
 
             if (!data.item.NOTIFIED) {
                 $.mobile.changePage($('#section-show-game'));
+                that.pageinitialized = true;
                 $('#input-move-name').addClass("groovy");
                 $('#input-move-name').textinput('enable')
                 $('#input-move-name').val('');
@@ -370,7 +377,7 @@ kissingturtles.view.gameview = function (model, elements) {
         $(options[index]).attr('disabled', 'disabled');
         select1.selectmenu('refresh', true );
         select2.selectmenu('refresh', true );
-    }
+    };
 
     var changeSelected = function(selectValue, cartoon) {
         var select  = $('#' + selectValue);
@@ -383,7 +390,7 @@ kissingturtles.view.gameview = function (model, elements) {
         });
         select.val(selectedIndex);
         $(options[selectedIndex]).attr('selected', 'selected');
-    }
+    };
 
 
     //----------------------------------------------------------------------------------------
@@ -512,7 +519,8 @@ kissingturtles.view.gameview = function (model, elements) {
         that.drawGrid = undefined;
         that.drawWalls = undefined;
         that.drawTurtles = undefined;
-    }
+    };
+
     //----------------------------------------------------------------------------------------
     //   Rendering methods
     //----------------------------------------------------------------------------------------
