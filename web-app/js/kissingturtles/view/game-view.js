@@ -237,6 +237,9 @@ kissingturtles.view.gameview = function (model, elements) {
             var animating = 0;
             $.each(myGameObject.position, function(key, value) {
                 var obj;
+                if (value.length == 0) {
+                    return;
+                }
                 animating++;
                 for (var i= 0; i < value.length - 1; i++) {
                     obj = {};

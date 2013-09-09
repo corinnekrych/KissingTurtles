@@ -177,14 +177,14 @@
             return oneMoreStep;
         };
 
-        oneMoreStep.win = function (x, y, callback) {
+        oneMoreStep.end = function (x, y, callback, png) {
             var dist;
             var speed = 3;
             fetchImages({
-                'winningHeart1': 'heart.png',
-                'winningHeart2': 'heart.png',
-                'winningHeart3': 'heart.png',
-                'winningHeart4': 'heart.png'
+                'winningHeart1': png,
+                'winningHeart2': png,
+                'winningHeart3': png,
+                'winningHeart4': png
             });
             var dirs = ['+x', '-x', '+y', '-y'];
             var max = Math.ceil((Math.max(Math.max(grid - x, x), Math.max(grid - y, y)) / speed) + 2);
@@ -220,6 +220,14 @@
                 i++;
             };
             oneMoreStep({}, iteration);
+        };
+
+        oneMoreStep.win = function (x, y, callback) {
+            oneMoreStep.end(x, y, callback, 'heart.png')
+        };
+
+        oneMoreStep.lost = function (x, y, callback) {
+            oneMoreStep.end(x, y, callback, 'Broken-Heart.png')
         };
 
         return oneMoreStep;

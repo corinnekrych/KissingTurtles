@@ -8,131 +8,6 @@ import org.codehaus.groovy.grails.web.json.JSONObject
 
 class GameService {
 
-    def runFormatting(game, mazeDefinition, turtle, result, ex, idNotification) {
-        Position treeInitialPosition = new Position(mazeDefinition.turtles.position.tree1[0], mazeDefinition.turtles.position.tree1[1], 0, '+x')
-
-        def steps = []
-        result.steps.each(){
-            if (it instanceof String) {
-                it = JSON.parse(it)
-            }
-            steps << [it.x, it.y, it.k]
-        }
-
-        // Change meeting point
-        if (result.meeting) {
-            mazeDefinition.turtles.position.tree1[0] = result.meeting[0]
-            mazeDefinition.turtles.position.tree1[1] = result.meeting[1]
-        }
-
-        // Move birdy
-        // Calculate path for Birdy
-        def winningPathResolver = new PathHelper(mazeDefinition.walls)
-        def birdPosition = [mazeDefinition['turtles']['position']['bird'][0], mazeDefinition['turtles']['position']['bird'][1]]
-        def meetPosition  = [mazeDefinition['turtles']['position']['tree1'][0], mazeDefinition['turtles']['position']['tree1'][1]]
-        def winningPathForBird = winningPathResolver.findMinPath(birdPosition,meetPosition).steps
-        
-        def randomMe = new Random()
-        def randomNumberOfMoves = randomMe.nextInt(10) + 1 // max of 11 steps in a raw
-        def birdMoves = []
-        def lost = false
-        for (int i =0; i < randomNumberOfMoves; i++) {
-            if (winningPathForBird[i]) {
-                birdMoves << winningPathForBird[i]
-            }  else {
-                lost = true
-            }
-        }
-
-        // update new position for Birdy
-        if (birdMoves) {
-            def lastMove = birdMoves.last()
-            JSONArray array = new JSONArray()
-            array.add(lastMove[0])
-            array.add(lastMove[1])
-            mazeDefinition.turtles.position.bird = array
-//            mazeDefinition['turtles']['position']['bird'][0] = birdMoves.last()[0]
-//            mazeDefinition['turtles']['position']['bird'][1] = birdMoves.last()[1]
-        }
-        
-        def obj
-        
-        if (turtle.name == "emily") {
-            obj = [
-                    emily: steps,
-                    bird: birdMoves
-            ]
-        } else {
-            obj = [
-                    franklin: steps,
-                    bird: birdMoves
-            ]
-        }
-        if (result.meeting) {
-            obj['tree1'] = [result.meeting];
-        }
-
-        def last = steps.size() == 0 ? null :  steps.last()
-        boolean win = false
-        if (last) {
-            if (turtle.name == "franklin") {
-                if ((last[0] == treeInitialPosition.x) && (last[1] == treeInitialPosition.y) && (mazeDefinition.turtles.position.emily[0] == treeInitialPosition.x) && (mazeDefinition.turtles.position.emily[1] == treeInitialPosition.y)) {
-                    win = true
-                }
-                JSONArray array = new JSONArray()
-                array.add(last[0])
-                array.add(last[1])
-                mazeDefinition.turtles.position.franklin = array
-            } else if (turtle.name == "emily") {
-                if ((last[0] == treeInitialPosition.x) && (last[1] == treeInitialPosition.y) && (mazeDefinition.turtles.position.franklin[0] == treeInitialPosition.x) && (mazeDefinition.turtles.position.franklin[1] == treeInitialPosition.y)) {
-                    win = true
-                }
-                JSONArray array = new JSONArray()
-                array.add(last[0])
-                array.add(last[1])
-                mazeDefinition.turtles.position.emily = array
-            }
-        }
-
-        game.mazeDefinition = mazeDefinition
-
-        def images = [
-                franklin: 'turtle.png',
-                emily: 'turtle2.png',
-                tree1: 'tree.png'
-        ]
-        if (ex) {
-            return [
-                    images: images,
-                    position: obj,
-                    grid: 15,
-                    stepDuration: 1000,
-                    asks: result.asks,
-                    win: win,
-                    lost: lost,
-                    user1: game.user1,
-                    user2: game.user2,
-                    id: game.id,
-                    winningAnimation: [treeInitialPosition.x, treeInitialPosition.y],
-                    exception: ex
-            ]
-        } else {
-            return [
-                    images: images,
-                    position: obj,
-                    grid: 15,
-                    stepDuration: 1000,
-                    asks: result.asks,
-                    win: win,
-                    lost: lost,
-                    user1: game.user1,
-                    user2: game.user2,
-                    id: game.id,
-                    winningAnimation: [treeInitialPosition.x, treeInitialPosition.y]
-            ]
-        }
-    }
-
     def createFormatting(walls, franklinPosition, treePosition, birdPosition) {
 
         def images = [
@@ -176,28 +51,11 @@ class GameService {
         mazeDefinition.turtles.position.emily = array
         mazeDefinition
     }
-        
-    def runScalaFormatting(game,turtle, ex, idNotification) {
-        def mazeDefinition = JSON.parse(game.mazeDefinition)
-        Position treeInitialPosition = new Position(mazeDefinition.turtles.position.tree1[0], mazeDefinition.turtles.position.tree1[1], 0, '+x')
 
-        def result = turtle.getNewStepsAsJavaList()
-        def scalaAsks = turtle.getNewAsksAsJavaList()
-        
-        def steps = []
-         result.each(){
-              steps << [it['x'], it['y'],0]
-         } 
-        
-        def meeting_ = turtle.getMeetPointAsJavaMap()
-        def meeting = null
-        if (meeting_.keySet().size() > 0) {
-           meeting = []
-           meeting[0] = meeting_['x']
-           meeting[1] = meeting_['y']
-        }
+    def commonFormatting(name, game, mazeDefinition, steps, meeting, asks, ex, idNotification) {        
 
-        if (meeting != null) {
+        // Change meeting point
+        if (meeting) {
             mazeDefinition.turtles.position.tree1[0] = meeting[0]
             mazeDefinition.turtles.position.tree1[1] = meeting[1]
         }
@@ -210,7 +68,7 @@ class GameService {
         def winningPathForBird = winningPathResolver.findMinPath(birdPosition,meetPosition).steps
         
         def randomMe = new Random()
-        def randomNumberOfMoves = randomMe.nextInt(10) + 1 //max of 11 steps in a raw
+        def randomNumberOfMoves = randomMe.nextInt(10) + 1 // max of 11 steps in a raw
         def birdMoves = []
         def lost = false
         for (int i =0; i < randomNumberOfMoves; i++) {
@@ -228,13 +86,11 @@ class GameService {
             array.add(lastMove[0])
             array.add(lastMove[1])
             mazeDefinition.turtles.position.bird = array
-//            mazeDefinition['turtles']['position']['bird'][0] = birdMoves.last()[0]
-//            mazeDefinition['turtles']['position']['bird'][1] = birdMoves.last()[1]
         }
-
-         def obj
-
-        if (turtle.name == "emily") {
+        
+        def obj
+        
+        if (name == "emily") {
             obj = [
                     emily: steps,
                     bird: birdMoves
@@ -245,24 +101,23 @@ class GameService {
                     bird: birdMoves
             ]
         }
-
-        if (meeting != null) {
+        if (meeting) {
             obj['tree1'] = [meeting];
         }
 
         def last = steps.size() == 0 ? null :  steps.last()
         boolean win = false
         if (last) {
-            if (turtle.name == "franklin") {
-                if ((last[0] == treeInitialPosition.x) && (last[1] == treeInitialPosition.y) && (mazeDefinition.turtles.position.emily[0] == treeInitialPosition.x) && (mazeDefinition.turtles.position.emily[1] == treeInitialPosition.y)) {
+            if (name == "franklin") {
+                if ((last[0] == mazeDefinition.turtles.position.tree1[0]) && (last[1] == mazeDefinition.turtles.position.tree1[1]) && (mazeDefinition.turtles.position.emily[0] == mazeDefinition.turtles.position.tree1[0]) && (mazeDefinition.turtles.position.emily[1] == mazeDefinition.turtles.position.tree1[1])) {
                     win = true
                 }
                 JSONArray array = new JSONArray()
                 array.add(last[0])
                 array.add(last[1])
                 mazeDefinition.turtles.position.franklin = array
-            } else if (turtle.name == "emily") {
-                if ((last[0] == treeInitialPosition.x) && (last[1] == treeInitialPosition.y) && (mazeDefinition.turtles.position.franklin[0] == treeInitialPosition.x) && (mazeDefinition.turtles.position.franklin[1] == treeInitialPosition.y)) {
+            } else if (name == "emily") {
+                if ((last[0] == mazeDefinition.turtles.position.tree1[0]) && (last[1] == mazeDefinition.turtles.position.tree1[1]) && (mazeDefinition.turtles.position.franklin[0] == mazeDefinition.turtles.position.tree1[0]) && (mazeDefinition.turtles.position.franklin[1] == mazeDefinition.turtles.position.tree1[1])) {
                     win = true
                 }
                 JSONArray array = new JSONArray()
@@ -285,13 +140,13 @@ class GameService {
                     position: obj,
                     grid: 15,
                     stepDuration: 1000,
-                    asks: scalaAsks,
+                    asks: asks,
                     win: win,
                     lost: lost,
                     user1: game.user1,
                     user2: game.user2,
                     id: game.id,
-                    winningAnimation: [treeInitialPosition.x, treeInitialPosition.y],
+                    winningAnimation: [mazeDefinition.turtles.position.tree1[0], mazeDefinition.turtles.position.tree1[1]],
                     exception: ex
             ]
         } else {
@@ -300,15 +155,49 @@ class GameService {
                     position: obj,
                     grid: 15,
                     stepDuration: 1000,
-                    asks: scalaAsks,
+                    asks: asks,
                     win: win,
                     lost: lost,
                     user1: game.user1,
                     user2: game.user2,
                     id: game.id,
-                    winningAnimation: [treeInitialPosition.x, treeInitialPosition.y]
+                    winningAnimation: [mazeDefinition.turtles.position.tree1[0], mazeDefinition.turtles.position.tree1[1]]
             ]
         }
+    }
+    
+    def runFormatting(game, mazeDefinition, turtle, result, ex, idNotification) {
+
+        def steps = []
+        result.steps.each(){
+            if (it instanceof String) {
+                it = JSON.parse(it)
+            }
+            steps << [it.x, it.y, it.k]
+        }
+
+        return commonFormatting(turtle.name, game, mazeDefinition, steps, result.meeting,result.asks, ex,idNotification)        
+    }
+        
+    def runScalaFormatting(game, mazeDefinition, turtle, ex, idNotification) {
+
+        def result = turtle.getNewStepsAsJavaList()
+        def scalaAsks = turtle.getNewAsksAsJavaList()
+        
+        def steps = []
+         result.each(){
+              steps << [it['x'], it['y'],0]
+         } 
+        
+        def meeting_ = turtle.getMeetPointAsJavaMap()
+        def meeting = null
+        if (meeting_.keySet().size() > 0) {
+           meeting = []
+           meeting[0] = meeting_['x']
+           meeting[1] = meeting_['y']
+        }
+
+        return commonFormatting(turtle.name, game, mazeDefinition, steps,meeting,scalaAsks, ex,idNotification)        
     }
 
 }
