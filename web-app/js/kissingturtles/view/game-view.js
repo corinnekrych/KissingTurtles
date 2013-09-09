@@ -365,6 +365,18 @@ kissingturtles.view.gameview = function (model, elements) {
         $('#franklin-img').attr({src: 'images/game/' + value + '.png'});
     });
 
+      $('#select-franklin-lang').on('change', function(event) {
+        var value = $('#select-franklin-lang').val();
+        localStorage.setItem('kissingturtles.settings.franklin-lang', value);
+	$('#franklin-lang-img').attr({src: 'images/' + value + '.jpg'});
+    });
+
+    $('#select-emily-lang').on('change', function(event) {
+        var value = $('#select-emily-lang').val();
+        localStorage.setItem('kissingturtles.settings.emily-lang', value);
+	$('#emily-lang-img').attr({src: 'images/' + value + '.jpg'});
+    });
+
 
     var changeDisabled = function(select1Value, select2Value) {
         var select1 = $('#' + select1Value);
@@ -488,20 +500,23 @@ kissingturtles.view.gameview = function (model, elements) {
         var dslInput = $('#input-move-name').val();
         var gameId = that.gameId;
         //toggle('#submit-game');
-        var lang = 'groovy';
-        if (that.role == 'emily') {
-            lang = 'scala';
-        }
-        that.executeButtonClicked.notify({title: 'KissingTurtles', lang: lang, content: dslInput, gameId: gameId, user: that.user, role: that.role});
+//        var lang = 'groovy';
+//        if (that.role == 'emily') {
+//            lang = 'scala';
+//        }
+        that.executeButtonClicked.notify({title: 'KissingTurtles', content: dslInput, gameId: gameId, user: that.user, role: that.role});
     });
 
     //----------------------------------------------------------------------------------------
     //   Click on 'Create your own game' brings you here
     //----------------------------------------------------------------------------------------
     $('#create-game').on('vclick', function (event) {
+        var user1_language = localStorage.getItem('kissingturtles.settings.franklin-lang');
+	if (user1_language == null) user1_language = 'groovy';
         var newElement = {
-            user1: localStorage.getItem('KissingTurtles.UserId')
-        };
+            user1: localStorage.getItem('KissingTurtles.UserId'),
+   	    language: user1_language 
+	   };
         cleanCanvas();
         that.createButtonClicked.notify(newElement, event);
     });
@@ -568,7 +583,12 @@ kissingturtles.view.gameview = function (model, elements) {
         var gameId = $(event.currentTarget).attr('data-id');
         if(gameId) {
             cleanCanvas();
-            var obj = {user2: localStorage.getItem('KissingTurtles.UserId'), gameId: gameId};
+	    var user2_language = localStorage.getItem('kissingturtles.settings.emily-lang');
+	if (user2_language == null) user2_language = 'scala';
+            var obj = {
+	      user2: localStorage.getItem('KissingTurtles.UserId'),
+	      language: user2_language,
+	      gameId: gameId};
             var newElement = {
                 game: JSON.stringify(obj)
             };
