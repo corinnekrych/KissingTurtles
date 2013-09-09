@@ -22,7 +22,7 @@ kissingturtles.view.gameview = function (model, elements) {
         }
     });
 
-        //----------------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------------
     //   Callback after first player create a new game. First player will play as Franklin.
     //----------------------------------------------------------------------------------------
     that.model.createdItem.attach(function (data, event) {
@@ -234,31 +234,33 @@ kissingturtles.view.gameview = function (model, elements) {
                 $('#submit-game').button('disable');
                 $('#answer').button('disable');
             }
-
-            var isWinAnimated = false;
+            var animating = 0;
             $.each(myGameObject.position, function(key, value) {
-                for (var i= 0; i < value.length; i++) {
-                    var obj= {};
+                var obj;
+                animating++;
+                for (var i= 0; i < value.length - 1; i++) {
+                    obj = {};
                     obj[key] = value[i];
-                    that.drawTurtles(obj, function () {
-                        if (myGameObject.win && !isWinAnimated) {
-                            isWinAnimated = true;
+                    that.drawTurtles(obj);
+                }
+                obj = {};
+                obj[key] = value[value.length - 1];
+                that.drawTurtles(obj, function () {
+                    animating--;
+                    if (animating == 0) {
+                        if (myGameObject.win) {
                             that.drawTurtles.win(myGameObject.winningAnimation[0], myGameObject.winningAnimation[1], function() {
                                 $.mobile.changePage( '#won');
                             });
                         }
-                        if (myGameObject.lost && !isWinAnimated) {
-                            isWinAnimated = true;
-                            that.drawTurtles.win(myGameObject.winningAnimation[0], myGameObject.winningAnimation[1], function() {
+                        if (myGameObject.lost) {
+                            that.drawTurtles.lost(myGameObject.winningAnimation[0], myGameObject.winningAnimation[1], function() {
                                 $.mobile.changePage( '#lost');
                             });
                         }
-                    });
-                }
+                    }
+                });
             });
-
-
-
         }
     });
 
