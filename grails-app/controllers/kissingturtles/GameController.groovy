@@ -161,7 +161,7 @@ class GameController {
             if (evaluator != null) evaluator.close()
         }
 
-        gameService.runScalaFormatting(game, turtle, ex, params.userIdNotification)
+        gameService.runScalaFormatting(game, JSON.parse(game.mazeDefinition), turtle, ex, params.userIdNotification)
 
     }
 
