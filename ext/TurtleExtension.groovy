@@ -1,17 +1,41 @@
-import org.codehaus.groovy.control.messages.SimpleMessage
+import org.codehaus.groovy.ast.ClassCodeVisitorSupport
+import org.codehaus.groovy.ast.expr.ConstantExpression
+import org.codehaus.groovy.control.SourceUnit
+
+class MyVisitor extends ClassCodeVisitorSupport {
+    def var
+    def ignore = false
+    MyVisitor(var) {
+        this.var = var
+    }
+    @Override
+    protected SourceUnit getSourceUnit() {
+        return null
+    }
+
+    // Assign to a an array seen as
+    @Override
+    public void visitConstantExpression(ConstantExpression expression) {
+        if (var.name == expression.text) {
+            ignore = true
+        }
+    }
+
+}
 
 unresolvedVariable { var ->
     if (var.name in ['left', 'right', 'up', 'down', 'to', 'kiss']) {
         storeType(var, classNodeFor(dsl.Direction))
         handled = true
     }
-//    if (isDynamic(var) && var.name.contains('resp')) {
-//        println "isdynamic"
-//        storeType(var, STRING_TYPE)
-//        handled = true
-//    }
-
+    def myVisitor = new MyVisitor(var)
+    context.source.AST.statementBlock.visit(myVisitor)
+    if (myVisitor.ignore) {
+        storeType(var, STRING_TYPE)
+        handled = true
+    }
 }
+
 methodNotFound { receiver, name, argList, argTypes, call ->
     if (name in ['by', 'move', 'meet']) {
        return newMethod(name, classNodeFor(dsl.Turtle))
