@@ -186,7 +186,7 @@ class GameService {
         
         def steps = []
          result.each(){
-              steps << [it['x'], it['y'],0]
+              steps << [it['x'], it['y'],it['k']]
          } 
         
         def meeting_ = turtle.getMeetPointAsJavaMap()
