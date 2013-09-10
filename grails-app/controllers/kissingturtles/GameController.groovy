@@ -122,6 +122,7 @@ class GameController {
         def printStream = new PrintStream(stream, true, encoding)
 
         def turtle = scalaTurtlesPerGame[game.id+""][params.role]
+        
         def result = ""
         def stacktrace = ""
 
@@ -161,7 +162,7 @@ class GameController {
             if (evaluator != null) evaluator.close()
         }
 
-        gameService.runScalaFormatting(game, turtle, ex, params.userIdNotification)
+        gameService.runScalaFormatting(game, JSON.parse(game.mazeDefinition), turtle, ex, params.userIdNotification)
 
     }
 
@@ -172,16 +173,21 @@ class GameController {
     /*                                                              */
     /****************************************************************/
     /****************************************************************/
-
-    def mode = "scala" //"scala"
-    
+   
     def run() {
         def conf
-        def lang = mode//params.lang
         def game = Game.findById(params.gameId)
 
+        def lang = 'groovy'
+        
         if (params.role == "emily") {
-        //if (lang == "scala") {
+           lang = game.user2_language
+        }
+        if (params.role == "franklin") {
+           lang = game.user1_language
+        }
+        
+        if (lang == "scala") {
             conf = executeScala(game)
         } else {
             conf = executeGroovy(game)
@@ -252,12 +258,20 @@ class GameController {
     }
 
     def answer() {
-      //if (mode == "scala") {
-      if (params.role == "franklin") {
-        def targetTurtle = ""
-        if (params.role == "franklin") targetTurtle = "emily"
-        if (params.role == "emily") targetTurtle = "franklin"
+        def gameInstance = Game.get(params.gameId)
 
+        def targetTurtle_language = "groovy"
+        def targetTurtle = ""
+        if (params.role == "franklin") {
+           targetTurtle = 'emily'
+           targetTurtle_language  = gameInstance.user2_language //Emily language
+        }
+        if (params.role == "emily") {
+           targetTurtle = 'franklin'
+           targetTurtle_language  = gameInstance.user1_language //Franklin langauge
+        }
+          
+      if (targetTurtle_language == 'scala') {
         def turtle = scalaTurtlesPerGame[params.gameId+""][targetTurtle]
         turtle.answer(params.content.toString())
         
@@ -281,8 +295,6 @@ class GameController {
         JSONObject jsonObject = JSON.parse(params.game)
         def gameInstance = Game.get(jsonObject.gameId)
     }
-
-    //static def wallStatic
     
     def save() {
         def size = 15
@@ -290,9 +302,6 @@ class GameController {
         // generate walls
         def walls = wallGeneratorService.getWalls()
         
-        // Test
-        //wallStatic = walls
-
         // generate position for Franklin and the meeting point
         Position franklinPosition = new Position().random(size, walls)
         Position treePosition = new Position().random(size, walls)
@@ -315,8 +324,9 @@ class GameController {
         // notify when first turtle create a new game
         event topic: "save-game", data: [userIdNotification: params.userIdNotification, instance:[id:gameInstance.id, version: gameInstance.version, user1: gameInstance.user1]]
 
-        if (mode == "scala") initTurtle("franklin",gameInstance,params.userIdNotification)
-        
+        if (params.language == "scala") initTurtle("franklin",gameInstance,params.userIdNotification)
+        gameInstance.user1_language = params.language
+
         def oooo = [
                 id : gameInstance.id,
                 version : gameInstance.version,
@@ -329,6 +339,7 @@ class GameController {
     def update() {
         JSONObject jsonObject = JSON.parse(params.game)
         def gameInstance = Game.get(jsonObject.gameId)
+        def language = jsonObject.language
 
         if (!gameInstance) {
             flash.message = message(code: 'default.not.found.message', args: [message(code: 'game.label', default: 'Game'), params.id])
@@ -358,7 +369,8 @@ class GameController {
         // notify when first turtle create a new game
         event topic: "update-game", data: [userIdNotification: params.userIdNotification, instance:[id:gameInstance.id, version: gameInstance.version, user1: gameInstance.user1, user2: gameInstance.user2, turtles: mazeDefinition['turtles']]]
 
-        if (mode == "scala") initTurtle("emily",gameInstance,params.userIdNotification)
+        if (language == "scala") initTurtle("emily",gameInstance,params.userIdNotification)
+        gameInstance.user2_language = language
 
         def oooo = [
                 id : gameInstance.id,

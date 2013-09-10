@@ -22,7 +22,7 @@ kissingturtles.view.gameview = function (model, elements) {
         }
     });
 
-        //----------------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------------
     //   Callback after first player create a new game. First player will play as Franklin.
     //----------------------------------------------------------------------------------------
     that.model.createdItem.attach(function (data, event) {
@@ -234,31 +234,36 @@ kissingturtles.view.gameview = function (model, elements) {
                 $('#submit-game').button('disable');
                 $('#answer').button('disable');
             }
-
-            var isWinAnimated = false;
+            var animating = 0;
             $.each(myGameObject.position, function(key, value) {
-                for (var i= 0; i < value.length; i++) {
-                    var obj= {};
+                var obj;
+                if (value.length == 0) {
+                    return;
+                }
+                animating++;
+                for (var i= 0; i < value.length - 1; i++) {
+                    obj = {};
                     obj[key] = value[i];
-                    that.drawTurtles(obj, function () {
-                        if (myGameObject.win && !isWinAnimated) {
-                            isWinAnimated = true;
+                    that.drawTurtles(obj);
+                }
+                obj = {};
+                obj[key] = value[value.length - 1];
+                that.drawTurtles(obj, function () {
+                    animating--;
+                    if (animating == 0) {
+                        if (myGameObject.win) {
                             that.drawTurtles.win(myGameObject.winningAnimation[0], myGameObject.winningAnimation[1], function() {
                                 $.mobile.changePage( '#won');
                             });
                         }
-                        if (myGameObject.lost && !isWinAnimated) {
-                            isWinAnimated = true;
+                        if (myGameObject.lost) {
                             that.drawTurtles.lost(myGameObject.winningAnimation[0], myGameObject.winningAnimation[1], function() {
                                 $.mobile.changePage( '#lost');
                             });
                         }
-                    });
-                }
+                    }
+                });
             });
-
-
-
         }
     });
 
@@ -363,6 +368,18 @@ kissingturtles.view.gameview = function (model, elements) {
         var value = $('#select-franklin').val();
         localStorage.setItem('kissingturtles.settings.franklin', value);
         $('#franklin-img').attr({src: 'images/game/' + value + '.png'});
+    });
+
+      $('#select-franklin-lang').on('change', function(event) {
+        var value = $('#select-franklin-lang').val();
+        localStorage.setItem('kissingturtles.settings.franklin-lang', value);
+	$('#franklin-lang-img').attr({src: 'images/' + value + '.jpg'});
+    });
+
+    $('#select-emily-lang').on('change', function(event) {
+        var value = $('#select-emily-lang').val();
+        localStorage.setItem('kissingturtles.settings.emily-lang', value);
+	$('#emily-lang-img').attr({src: 'images/' + value + '.jpg'});
     });
 
 
@@ -488,20 +505,23 @@ kissingturtles.view.gameview = function (model, elements) {
         var dslInput = $('#input-move-name').val();
         var gameId = that.gameId;
         //toggle('#submit-game');
-        var lang = 'groovy';
-        if (that.role == 'emily') {
-            lang = 'scala';
-        }
-        that.executeButtonClicked.notify({title: 'KissingTurtles', lang: lang, content: dslInput, gameId: gameId, user: that.user, role: that.role});
+//        var lang = 'groovy';
+//        if (that.role == 'emily') {
+//            lang = 'scala';
+//        }
+        that.executeButtonClicked.notify({title: 'KissingTurtles', content: dslInput, gameId: gameId, user: that.user, role: that.role});
     });
 
     //----------------------------------------------------------------------------------------
     //   Click on 'Create your own game' brings you here
     //----------------------------------------------------------------------------------------
     $('#create-game').on('vclick', function (event) {
+        var user1_language = localStorage.getItem('kissingturtles.settings.franklin-lang');
+	if (user1_language == null) user1_language = 'groovy';
         var newElement = {
-            user1: localStorage.getItem('KissingTurtles.UserId')
-        };
+            user1: localStorage.getItem('KissingTurtles.UserId'),
+   	    language: user1_language 
+	   };
         cleanCanvas();
         that.createButtonClicked.notify(newElement, event);
     });
@@ -568,7 +588,12 @@ kissingturtles.view.gameview = function (model, elements) {
         var gameId = $(event.currentTarget).attr('data-id');
         if(gameId) {
             cleanCanvas();
-            var obj = {user2: localStorage.getItem('KissingTurtles.UserId'), gameId: gameId};
+	    var user2_language = localStorage.getItem('kissingturtles.settings.emily-lang');
+	if (user2_language == null) user2_language = 'scala';
+            var obj = {
+	      user2: localStorage.getItem('KissingTurtles.UserId'),
+	      language: user2_language,
+	      gameId: gameId};
             var newElement = {
                 game: JSON.stringify(obj)
             };
