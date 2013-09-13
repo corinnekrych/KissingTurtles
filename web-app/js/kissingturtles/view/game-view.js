@@ -16,17 +16,11 @@ kissingturtles.view.gameview = function (model, elements) {
         renderList();
     });
 
-    $( "#section-show-game" ).on( "pageshow", function( event, ui ) {
-        if (!that.pageinitialized ) {
-            $.mobile.changePage( '#start-game');
-        }
-    });
-
     //----------------------------------------------------------------------------------------
     //   Callback after first player create a new game. First player will play as Franklin.
     //----------------------------------------------------------------------------------------
     that.model.createdItem.attach(function (data, event) {
-        $('#error').html('');
+        reset();
         if (data.item.errors) {
             alert('Ooops something wrong happens');
         } else if (data.item.message) {
@@ -71,23 +65,31 @@ kissingturtles.view.gameview = function (model, elements) {
 
             if (!data.item.NOTIFIED) {
                 $.mobile.changePage($('#section-show-game'));
-                that.pageinitialized = true;
                 $('#input-move-name').addClass("groovy");
-                $('#input-move-name').textinput('enable')
-                $('#input-move-name').val('');
-                $('#response').val('');
-                $('#submit-game').button('disable');
+                $('#interaction').addClass('groovy');
                 $('#script').trigger('expand');
                 $('#chat').trigger('collapse');
+                $('#input-move-name').textinput('enable')
+                $('#submit-game').button('disable');
             }
         }
     });
+    var reset = function () {
 
+        $('#input-move-name').val('');
+        $('#response').val('');
+        $('#interaction').html('');
+        $('#error').html('');
+        $('#input-move-name').removeClass('scala');
+        $('#input-move-name').removeClass('groovy');
+        $('#interaction').removeClass('scala');
+        $('#interaction').removeClass('groovy');
+    };
     //----------------------------------------------------------------------------------------
     //   Callback after joining the game
     //----------------------------------------------------------------------------------------
     that.model.updatedItem.attach(function (data, event) {
-        $('#error').html('');
+
         // Display error for third fellow. Only 2 players game.
         if (data.item.errors) {
             alert('Ooops something wrong happens');
@@ -119,9 +121,10 @@ kissingturtles.view.gameview = function (model, elements) {
                 that.role = 'emily';
                 that.gameId = data.item.id;
                 $.mobile.changePage($('#section-show-game'));
-                $('#input-move-name').val('');
-                $('#input-move-name').addClass('scala')
-                $('#response').val('');
+                reset();
+                $('#input-move-name').addClass('scala');
+                $('#interaction').addClass('scala');
+                $('#input-move-name').textinput('enable')
                 $('#submit-game').button('disable');
                 $('#script').trigger('collapse');
                 $('#chat').trigger('expand');
@@ -214,17 +217,6 @@ kissingturtles.view.gameview = function (model, elements) {
                 if (!myGameObject.exception)
                     toggle('#submit-game');
             }
-
-            if (myGameObject.lost) {
-                $('#input-move-name').val('');
-                $('#input-move-name').textinput('disable')
-                $('#response').val('');
-                $('#interaction').val('');
-                $('#response').textinput('disable');
-                $('#submit-game').button('disable');
-                $('#answer').button('disable');
-            }
-
             if (myGameObject.win) {
                 $('#input-move-name').val('');
                 $('#input-move-name').textinput('disable')
@@ -233,7 +225,16 @@ kissingturtles.view.gameview = function (model, elements) {
                 $('#response').textinput('disable');
                 $('#submit-game').button('disable');
                 $('#answer').button('disable');
+            } else if (myGameObject.lost) {
+                $('#input-move-name').val('');
+                $('#input-move-name').textinput('disable')
+                $('#response').val('');
+                $('#interaction').val('');
+                $('#response').textinput('disable');
+                $('#submit-game').button('disable');
+                $('#answer').button('disable');
             }
+
             var animating = 0;
             $.each(myGameObject.position, function(key, value) {
                 var obj;
@@ -255,8 +256,7 @@ kissingturtles.view.gameview = function (model, elements) {
                             that.drawTurtles.win(myGameObject.winningAnimation[0], myGameObject.winningAnimation[1], function() {
                                 $.mobile.changePage( '#won');
                             });
-                        }
-                        if (myGameObject.lost) {
+                        } else if (myGameObject.lost) {
                             that.drawTurtles.lost(myGameObject.winningAnimation[0], myGameObject.winningAnimation[1], function() {
                                 $.mobile.changePage( '#lost');
                             });
