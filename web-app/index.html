@@ -23,6 +23,7 @@
     <script src="js/ktDrawWalls.js"></script>
     <!-- endbuild -->
     <script>
+
         function setCanvas() {
             var canvasNode = document.getElementById('canvas');
 
@@ -280,7 +281,7 @@
 <section  data-role="page" id="section-show-game" >
     <div class="container">
         <div class="title">
-            <h1>Kissing Turtles</h1>
+            <div  class="kids--big">Kissing Turtles </div>
             <div readonly id="error">
 
             </div>
@@ -293,7 +294,7 @@
         </div>
         <div id="blockScriptChat">
             <div data-role="collapsible" id="script">
-                <h4><span>Script</span>
+                <h4><span class="kids--small">Script</span>
                     <span style="float:right"><img id="belldsl" width="25px" src="images/redhat_games.png"/></span></h4>
                 <ul data-role="listview" data-inset="true">
                     <li style="" id="dsl-text" data-role="fieldcontain">
@@ -305,7 +306,7 @@
                 </ul>
             </div>
             <div data-role="collapsible" id="chat" >
-                <h4><span>Chat</span>
+                <h4><span class="kids--small">Chat</span>
                     <span style="float:right"><img id="bell" width="25px" src="images/ringtone.png"/></span></h4>
                 <ul data-role="listview" data-inset="true">
                     <li style="" id="chat-text" data-role="fieldcontain">
@@ -318,10 +319,24 @@
                     </li>
                 </ul>
             </div>
-
+            <div style="width:100%;height:8em">&nbsp;</div>
         </div>
+        <!--<div class="boxed-text clear">-->
+        <!--<div class="col1">move up<br/>-->
+            <!--move left by 2<br/>-->
+            <!--meet x:12, y:1 <br/>-->
+            <!--kiss<br/>-->
+            <!--ask "Change meeting?" assign to response <br/>-->
+        <!--</div>-->
+        <!--<div class="col2">I move up<br/>-->
+            <!--I move left by 2<br/>-->
+            <!--meet (12, 1) <br/>-->
+            <!--I kiss;<br/>-->
+            <!--val response = I ask "Change meeting?"<br/>-->
+        <!--</div>-->
+        <!--</div>-->
     </div>
-    <input type="hidden" name="id" id="input-game-id"/>
+     <input type="hidden" name="id" id="input-game-id"/>
     <input type="hidden" name="user-id" id="input-user1-move"/>
     <input type="hidden" name="version" id="input-game-version"/>
     <input type="hidden" name="class" id="input-game-class"/>

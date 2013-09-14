@@ -12,6 +12,7 @@
     display:inline-block;
     float:left;
     width:60%;
+    height:60%;
     position:relative;
 }
 
@@ -20,9 +21,20 @@
     margin-left: auto;
     margin-right: auto;
 }
+.kids--big {
+    font-family: "kids";
+    font-size: 3em;
+}
+
+.kids--small {
+    font-family: "kids";
+    font-size: 1.5em;
+}
 
 .title {
+    margin-top: 1em;
     width:80%;
+
     margin-left: 2em;
 }
 
@@ -42,6 +54,32 @@
 
 .scala {
     background-color: #f0ced2;
+}
+
+.clear {
+    clear:both;
+}
+.col1 {
+    width:50%; float:left;
+
+}
+.col2 {
+    width:45%; float:left;
+
+}
+.boxed-text {
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: 200;
+    line-height: 1.5rem;
+
+    letter-spacing: 1px;
+    display:inline-block;
 }
 
 /* =====================================================================================================================
@@ -127,6 +165,10 @@ canvas {
         width: 20%;
     }
 
+    .boxed-text {
+        display:none;
+    }
+
 }
 @media only screen and (max-width: 550px) {
     #blockCanvas {
@@ -155,5 +197,14 @@ canvas {
     .turtle {
         width: 25%;
     }
+
+}
+
+
+@font-face {
+    font-family: 'kids';
+    src: url('kids.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
 
 }
