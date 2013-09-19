@@ -1,0 +1,40 @@
+{
+	"name": "my-awesome-cujoJS-app",
+	"version": "0.2.4",
+	"description": "An application created with cujoJS! http://github.com/cujojs/seed.",
+	"keywords": ["modules", "ioc", "promises", "aop", "rest", "cujo", "cujojs"],
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "http://www.opensource.org/licenses/mit-license.php"
+		}
+	],
+	"repositories": [
+		{
+			"type": "git",
+			"url": "https://github.com/cujojs/quickstart"
+		}
+	],
+	"maintainers": [
+		{
+			"name": "Brian Cavalier",
+			"web": "http://hovercraftstudios.com"
+		},
+		{
+			"name": "John Hann",
+			"web": "http://unscriptable.com"
+		}
+	],
+	"dependencies": {},
+	"devDependencies": {
+		"serv": "",
+		"bower": ""
+	},
+	"scripts": {
+		"postinstall": "bower install",
+		"start": "serv --port 8000"
+	},
+	"ignore": [
+		"lib/"
+	]
+}

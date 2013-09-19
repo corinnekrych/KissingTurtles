@@ -1,0 +1,41 @@
+<div class="hidden" >
+    <div class="container">
+        <div readonly id="message"></div>
+        <div style="display:inline-block;float:left;width:2%">&nbsp;</div> <br/>
+        <div class="blockCanvas">
+            <canvas id="canvasGrid" width="1000" height="1000"></canvas>
+            <canvas id="canvasWalls" width="1000" height="1000"></canvas>
+            <canvas id="canvasTurtles" width="1000" height="1000"></canvas>
+        </div>
+        <div class="blockScriptChat">
+            <div class="script">
+                <h4><span>Script</span>
+                    <span ><img class="belldsl" width="25px" src="theme/images/bell.png"/></span></h4>
+                <ul>
+                    <li class="dsl-text">
+                        <textarea class="topcoat-textarea" rows="6" cols="30" name="name" id="input-move-name"></textarea><br/><br/>
+                        <button class="topcoat-button submit-game">Execute</button>
+                    </li>
+                </ul>
+            </div>
+            <div class="chat" >
+                <h4><span>Chat</span>
+                    <span ><img class="bell" width="25px" src="theme/images/ringtone.png"/></span></h4>
+                <ul >
+                    <li class="chat-text" >
+                        <div class="interaction2">
+                            <textarea class="topcoat-textarea" rows="6" cols="30" readonly id="interaction"></textarea>
+                            <br/><br/>
+                            <input class="width--100 topcoat-text-input" disabled="true" id="response" placeholder="Place your answer here"></input><br/><br/>
+                            <button class=" topcoat-button answer">Answer</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="id" class="input-game-id"/>
+    <input type="hidden" name="user-id" class="input-user1-move"/>
+    <input type="hidden" name="version" class="input-game-version"/>
+    <input type="hidden" name="class" class="input-game-class"/>
+</div>

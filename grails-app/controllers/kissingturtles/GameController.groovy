@@ -327,17 +327,18 @@ class GameController {
         if (params.language == "scala") initTurtle("franklin",gameInstance,params.userIdNotification)
         gameInstance.user1_language = params.language
 
-        def oooo = [
+        def newGame = [
                 id : gameInstance.id,
                 version : gameInstance.version,
                 user1: gameInstance.user1,
                 mazeDefinition: mazeDefinition
         ]
-        render oooo as JSON
+        render newGame as JSON
     }
 
     def update() {
-        JSONObject jsonObject = JSON.parse(params.game)
+		JSONObject jsonObject = JSON.parse(params.game)
+
         def gameInstance = Game.get(jsonObject.gameId)
         def language = jsonObject.language
 
@@ -349,7 +350,10 @@ class GameController {
         // only two users game
         if (gameInstance.user2) {
             flash.message = message(code: 'default.game.already.started', args: [message(code: 'game.label', default: 'Game'), params.id])
+            flash.userIdNotification = params.userIdNotification
+            flash.id = jsonObject.gameId
             render flash as JSON
+            return
         }
 
 
@@ -372,14 +376,14 @@ class GameController {
         if (language == "scala") initTurtle("emily",gameInstance,params.userIdNotification)
         gameInstance.user2_language = language
 
-        def oooo = [
+        def returnGame = [
                 id : gameInstance.id,
                 version : gameInstance.version,
                 user1: gameInstance.user1,
                 user2: gameInstance.user2,
                 mazeDefinition: mazeDefinition
         ]
-        render oooo as JSON
+        render returnGame as JSON
     }
 
     def delete() {
@@ -391,7 +395,7 @@ class GameController {
         }
         if (gameInstance) {
             gameInstance.delete(flush: true)
-            event topic: "delete-game", data: builder.toString()
+            event topic: "delete-game", data: [userIdNotification: params.userIdNotification, id:gameInstance.id]
         }
         render builder as JSON
     }

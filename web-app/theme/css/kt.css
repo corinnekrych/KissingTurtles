@@ -1,0 +1,132 @@
+.center-wrapper {
+    text-align: center;
+}
+
+.center-wrapper * {
+    margin: 0 auto;
+}
+
+.layout-columns {
+    display:inline-block;
+}
+
+.layout-columns,
+.layout-columns--3 * {
+    display:inline-block;
+    width: 33.33%;
+    float:left;
+}
+
+.layout-columns,
+.layout-columns--2 * {
+    display:inline-block;
+    width: 50%;
+    float:left;
+}
+
+.layout-columns,
+.layout-columns--4 * {
+    display:inline-block;
+    width: 25%;
+    float:left;
+}
+
+.clear {
+    clear:both;
+}
+
+.width--100 {
+    width:100%;
+}
+.padding-vertical,
+.padding-vertical--big,
+.padding-vertical--small {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    /*background-color: #d3d7d7;*/
+}
+
+.padding-vertical--small {
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+}
+
+.padding-vertical--big {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+}
+
+.hidden {
+    display:none;
+}
+
+.visible {
+    display:block;
+}
+
+
+
+ul,li {
+    display: table;
+    -webkit-margin-before: 0em;
+    -webkit-margin-after: 0em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    -webkit-padding-start: 0px;
+}
+
+li {
+    display: table-row;
+}
+
+h2 {
+    font-weight: 300;
+    margin: 10px 0 25px;
+    font-size: 20px;
+    position: relative;
+    display: inline-block;
+    padding-right: 10px;
+}
+
+h1 {
+    font-weight: 600;
+    margin: 10px 10px 25px 10px;
+    font-size: 20px;
+    position: relative;
+    display: inline-block;
+    padding-right: 10px;
+}
+/* Settings layout for settings.css*/
+/* TODO Fabrice: when i move those to settings.css it won t override topcoat css */
+
+.settings-group__item--fixed-length {
+    width: 17rem;
+}
+
+.setting-group {
+    display:table-row
+}
+.settings-group__item {
+    margin-left: 10em;
+    margin-right: 10em;
+    display:table-cell;
+    vertical-align: middle;
+}
+
+
+/* Override for games.css*/
+.topcoat-textarea,
+.topcoat-textarea--large {
+    padding: 0.7rem;
+    font-size: 1.2em;
+    line-height: 1.5rem;
+}
+
+.groovy {
+    background-color: rgb(162, 245, 253);
+}
+
+.scala {
+    background-color: #f0ced2;
+}
+

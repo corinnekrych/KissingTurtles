@@ -18,7 +18,15 @@ class UserInteraction {
     }
 
     String waitForAnswer(question) {
-        gameController.event topic: "ask-game", data: "{\"question\": \"$question\", \"gameId\": \"" + this.gameId + "\", \"user\" : \"" + this.user + "\", \"role\" : \"" + this.role +"\", \"userIdNotification\":\"" + this.userIdNotification+ "\"}"
+
+        def ask = [
+                question: question,
+                gameId: this.gameId,
+                user: this.user,
+                role: this.role,
+                userIdNotification: this.userIdNotification
+        ]
+        gameController.event topic: "ask-game", data: ask
         def sharedResponse = sharedContext.addToGames(gameId)
         synchronized(sharedResponse) {
             sharedResponse.wait()
