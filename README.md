@@ -55,7 +55,7 @@ if(response == "y") meet (12, 1)
 For grown-up kids who want to bring new ideas/challenges to KissingTurtles, you are welcome! This repo is a place to
 have fun, try new technos, new languages.
 
-Let's discuss your idea. Create an issue on github, send a Pull Request.
+Let's discuss your idea. Create an issue on github, send a Pull Request. We also have a list of [TODO](https://github.com/corinnekrych/KissingTurtles/blob/master/TODO.md)
 
 ### What is it made of
 
@@ -64,6 +64,12 @@ Let's discuss your idea. Create an issue on github, send a Pull Request.
 3. HTML5 Canvas API for displaying turtle moves and positions. .
 4. html5-mobile-scaffolding for the UI. No GSP, only HTML and JS. http://3musket33rs.github.com/ To go further if time permit:
 5. Push notification (atmosphere with SSE): multi players joining a virtual room.
+
+### How to build your dev environment
+See [dev environment](https://github.com/corinnekrych/KissingTurtles/blob/master/DEV.md "Deploy to Heroku") instruction
+
+### How to deploy to Heroku
+See [deploy](https://github.com/corinnekrych/KissingTurtles/blob/master/DEPLOY.md "Deploy to Heroku") instruction.
 
 ### Where's it all started 
 
