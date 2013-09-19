@@ -12,9 +12,12 @@ Franklin is lost in the maze, help him to meet Emily at the Heart before Birdy r
 ![KissingTurtles](/kissing.png)
 
 ### Requirements
-KissingTurtles is a collaborative game for 2 players.
-You will need two separate browsers (like use Chrome for player1, FireFox for player2) if player son the same computer. 
+* KissingTurtles is a collaborative game for 2 players.
+* You will need two separate browsers (like use Chrome for player1, FireFox for player2) if player son the same computer.
 Some data like player's name are stored on your browser local storage.
+* First time you use KissingTurtles you will be prompted to enter your speudo/name which will be displayed in the list of open games
+* When you create a game you become Franklin and you should wait until emily is joining the game. If nobody joins the game will be closed after 10mins.
+* You can also join a game as emily bu clicking on the list of available game waiting for their Emily.
 
 ### Rules
 * Each player takes turn.
@@ -50,7 +53,9 @@ if(response == "y") meet (12, 1)
 ## Contributing to KissingTurtles Game
 
 For grown-up kids who want to bring new ideas/challenges to KissingTurtles, you are welcome! This repo is a place to
-have fun, try new technos, new languages. Let's discuss your idea. Create an issue on github, send a Pull Request.
+have fun, try new technos, new languages.
+
+Let's discuss your idea. Create an issue on github, send a Pull Request.
 
 ### What is it made of
 
@@ -69,3 +74,4 @@ Let's carry on the fun an d improve the game.
 
 ### Developers
 Fabrice, Mathieu, Pascal, Martyn, and Corinne are the coders behind it.
+Milou, Lulu are the testers.
