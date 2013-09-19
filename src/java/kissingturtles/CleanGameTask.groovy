@@ -24,7 +24,8 @@ class CleanGameTask extends TimerTask {
                     userIdNotification "server"
                     id gameId
                 }
-                controller.event topic: "delete-game", data: builder.toString()
+				def notificationForDelete = [userIdNotification: "server", id:gameInstance.id]
+                controller.event topic: "delete-game", data: notificationForDelete
                 cancel()
             }
         } else {

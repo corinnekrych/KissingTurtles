@@ -1,0 +1,27 @@
+.boxed-text {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    font-size: 1.5rem;
+    font-weight: 200;
+    border-radius: 6px;
+    line-height: 2rem;
+    border: 1px solid #a5a8a8;
+    background-color: #d3d7d7;
+    box-shadow: inset 0 1px rgba(0,0,0,0.12);
+    color: #454545;
+    letter-spacing: 1px;
+}
+
+/*
+=====================================================================================================================
+==              Bigger Screen                                                                                      ==
+===================================================================================================================== */
+@media all and (min-width: 699px) {
+    .boxed-text {
+        width: 60%;
+    }
+}
