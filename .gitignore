@@ -22,7 +22,5 @@ target-eclipse
 .DS_Store
 */.DS_Store
 
-lib
-
 /node_modules
 /dist
