@@ -236,7 +236,8 @@ class GameController {
         binding.setVariable("meet", turtle.&meet)
 
         def config = new CompilerConfiguration()
-        config.addCompilationCustomizers(new GameCustomizer(), new ASTTransformationCustomizer(TypeChecked, extensions:['TurtleExtension.groovy']))
+        config.addCompilationCustomizers(new GameCustomizer(),
+                new ASTTransformationCustomizer(TypeChecked, extensions:['TurtleExtension.groovy']))
         config.scriptBaseClass = GameScript.class.name
 
         def shell = new GroovyShell(this.class.classLoader,

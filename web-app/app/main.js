@@ -151,6 +151,8 @@ define({
     ktDrawWalls: { module: 'app/game/ktDrawWalls' },
     userIdNotification: { create: 'app/userIdNotification' },
     gameURL: 'http://localhost:8090/KissingTurtles',
+    //gameURL: 'http://kisscujo2.herokuapp.com',
+    //gameURL: 'http://kisscujo.herokuapp.com',
     grailsEvents: { module: 'js/vendor/grailsEvents/grailsEvents' },
     form: { module: 'cola/dom/form' },
 	// Wire.js plugins
