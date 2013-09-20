@@ -19,7 +19,6 @@ define(function () {
 	};
 
 	function objectToForm(form, object, filter) {
-        console.log("in form " + object.user1);
 		var els;
 
 		els = form.elements;

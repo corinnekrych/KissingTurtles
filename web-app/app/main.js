@@ -153,6 +153,7 @@ define({
     gameURL: 'http://localhost:8090/KissingTurtles',
     //gameURL: 'http://kisscujo2.herokuapp.com',
     //gameURL: 'http://kisscujo.herokuapp.com',
+    //gameURL: 'http://kts.herokuapp.com',
     grailsEvents: { module: 'js/vendor/grailsEvents/grailsEvents' },
     form: { module: 'cola/dom/form' },
 	// Wire.js plugins
