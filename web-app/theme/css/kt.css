@@ -96,8 +96,8 @@ h1 {
     display: inline-block;
     padding-right: 10px;
 }
+
 /* Settings layout for settings.css*/
-/* TODO Fabrice: when i move those to settings.css it won t override topcoat css */
 
 .settings-group__item--fixed-length {
     width: 17rem;
@@ -122,11 +122,17 @@ h1 {
     line-height: 1.5rem;
 }
 
-.groovy {
+/*.topcoat-textarea:focus, .topcoat-textarea--large:focus {*/
+    /*background-color: inherit !important;*/
+/*}*/
+
+.groovy,
+.groovy:focus{
     background-color: rgb(162, 245, 253);
 }
 
-.scala {
+.scala,
+.scala:focus{
     background-color: #f0ced2;
 }
 
