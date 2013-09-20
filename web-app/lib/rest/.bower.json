@@ -1,0 +1,18 @@
+{
+  "name": "rest",
+  "version": "0.9.4",
+  "main": "./rest.js",
+  "dependencies": {
+    "when": ">1.8.0 <=3.0.0"
+  },
+  "homepage": "https://github.com/cujojs/rest",
+  "_release": "0.9.4",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.9.4",
+    "commit": "3a651aff6c9c429a1b9341a5b7ad9bb296bbd6e5"
+  },
+  "_source": "git://github.com/cujojs/rest.git",
+  "_target": "~0.9",
+  "_originalSource": "rest"
+}
