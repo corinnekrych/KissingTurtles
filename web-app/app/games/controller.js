@@ -97,7 +97,7 @@
                     content: content,
                     gameId: this.game.id,
                     user: localStorage.getItem('kissingturtles.userid'),
-                    role: this.game.role
+                    role: this.role
                 };
                 this._gameRepository.answer(response);
                 document.querySelector('#interaction').value += '\n' + localStorage.getItem('kissingturtles.userid') + '\t: ' + content;
