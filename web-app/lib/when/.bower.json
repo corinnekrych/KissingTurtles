@@ -1,0 +1,14 @@
+{
+  "name": "when",
+  "homepage": "https://github.com/cujojs/when",
+  "version": "2.4.0",
+  "_release": "2.4.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "2.4.0",
+    "commit": "a2acf1d86d150f5e9617e761b4c69c3158ed01ea"
+  },
+  "_source": "git://github.com/cujojs/when.git",
+  "_target": "~2",
+  "_originalSource": "when"
+}
