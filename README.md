@@ -62,7 +62,7 @@ Let's discuss your idea. Create an issue on github, send a Pull Request. We also
 1. DSL to move the turtle/robot is written in Groovy, Scala
 2. Grails for Server side Controller part that will do shell.evaluate and return position value for the turtle.
 3. HTML5 Canvas API for displaying turtle moves and positions. .
-4. html5-mobile-scaffolding for the UI. No GSP, only HTML and JS. http://3musket33rs.github.com/ To go further if time permit:
+4. Cujo JS an architectural toolkit including MVC, modules, test : great, fast and reliable.
 5. Push notification (atmosphere with SSE): multi players joining a virtual room.
 
 ### How to build your dev environment
