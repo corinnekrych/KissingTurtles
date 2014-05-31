@@ -1,7 +1,7 @@
 
 ### Pre-requesites
 * Grails install. Because we are using TypeChecked we need at least v2.3.0
-* Scala 2.11.0-M4
+* Scala 2.11.0-M7
 * sbt
 
 ### Septup
