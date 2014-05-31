@@ -1,6 +1,6 @@
 
 ### Pre-requesites
-* Grails install. Because we are using TypeChecked we need at least v2.3
+* Grails install. Because we are using TypeChecked we need at least v2.3.0
 * Scala 2.11.0-M4
 * sbt
 
@@ -25,7 +25,7 @@ To get all Scala libraries, lift-son and continuations libs.
 > setLib.sh
 ```
 
-#### Get update from Scala DSL
+#### Step4: Get update from Scala DSL
 The Scala code for the DSL is under another repo. Given that you clone the 3 Scala repos, you can fetch and build the
 latest just by running
 ```  
